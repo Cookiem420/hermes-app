@@ -128,6 +128,7 @@ const FILES = {
   maj:      'maj.json',
   moins1:   'maj_moins1.json',
   graph:    'maj_graph.json',
+  table:    'table_infos_valeurs.json',
 };
 
 const STEPS = [
@@ -151,6 +152,7 @@ const D = {
 
 // Données existantes
 let MAJ_GRAPH = null;
+let TABLE_INFOS = null;
 
 const AV_FONDS = [
   'Fonds en euros','Echiquier Agenor Mid Cap Europ','Pictet Global Megatrend',
@@ -169,9 +171,13 @@ async function init() {
   if(D.av.length===0)  D.av  = AV_FONDS.map(n=>({nom:n,valeur:0}));
   if(D.pee.length===0) D.pee = PEE_FONDS.map(n=>({nom:n,valeur:0}));
   try {
-    const r = await fetch(RAW_BASE+FILES.graph+'?t='+Date.now());
-    if(r.ok) MAJ_GRAPH = await r.json();
-  } catch(e) { console.warn('graph non chargé:', e); }
+    const [gr, tr] = await Promise.all([
+      fetch(RAW_BASE+FILES.graph+'?t='+Date.now()),
+      fetch(RAW_BASE+'table_infos_valeurs.json?t='+Date.now()),
+    ]);
+    if(gr.ok) MAJ_GRAPH    = await gr.json();
+    if(tr.ok) TABLE_INFOS  = await tr.json();
+  } catch(e) { console.warn('init load error:', e); }
   renderStep();
 }
 
@@ -696,6 +702,58 @@ async function save(){
     const ok4 = await ghPut(token, FILES.graph, graph, `📈 Graph MAJ ${date}`);
     if(!ok4) throw new Error('Échec écriture graph');
 
+    // ── Réconciliation table_infos_valeurs ──────────────────────
+    // Comparer positions CSV avec la table pour détecter nouveautés/changements qté
+    const alertes = [];
+    const allCSVPos = [...tampon.pea_positions, ...tampon.cto_positions, ...tampon.pme_positions];
+    if(TABLE_INFOS?.valeurs) {
+      const tableV = TABLE_INFOS.valeurs;
+      let tableChanged = false;
+
+      allCSVPos.forEach(p => {
+        const key = p.isin || p.nom;
+        const existing = tableV[key];
+        if(!existing) {
+          // Nouvelle position — l'ajouter à la table avec alerte zones manquantes
+          tableV[key] = {
+            isin: p.isin, nom: p.nom, quantite: p.quantite,
+            cours: 0,
+            zones: {basse_min:0,basse_max:0,surveillance:0,complement:0,breakout:0},
+            risque: null, categorie: null, thematique: null, enveloppe: 'À définir',
+            ancien_etat: null, etat_actuel: 'NOUVEAU',
+            achat_vente: null, q_achat_vente: 0, prix_achat_vente: 0,
+          };
+          alertes.push(`🆕 Nouvelle position : ${p.nom} — zones à définir`);
+          tableChanged = true;
+        } else if(existing.quantite !== p.quantite) {
+          // Quantité changée
+          const diff = p.quantite - existing.quantite;
+          alertes.push(`📊 ${p.nom} : quantité ${existing.quantite} → ${p.quantite} (${diff>0?'+':''}${diff})`);
+          existing.quantite = p.quantite;
+          tableChanged = true;
+        }
+      });
+
+      // Positions dans la table avec qté > 0 mais absentes du CSV → passage watchlist
+      Object.entries(tableV).forEach(([key, tv]) => {
+        if(tv.quantite > 0) {
+          const inCSV = allCSVPos.find(p => (p.isin && p.isin === key) || p.nom === tv.nom);
+          if(!inCSV) {
+            alertes.push(`👁️ ${tv.nom} : absent du CSV → passage watchlist (qté 0)`);
+            tv.quantite = 0;
+            tv.etat_actuel = 'WATCHLIST';
+            tableChanged = true;
+          }
+        }
+      });
+
+      if(tableChanged) {
+        TABLE_INFOS.meta = TABLE_INFOS.meta || {};
+        TABLE_INFOS.meta.derniere_maj = date;
+        await ghPut(token, FILES.table, TABLE_INFOS, `🔄 Réconciliation table ${date}`);
+      }
+    }
+
     // Succès
     MAJ_GRAPH = graph;
     document.getElementById('step-content').innerHTML=`
@@ -707,6 +765,9 @@ async function save(){
           MAJ tampon → MAJ-1 → MAJ → Graph<br>
           ${graph.snapshots.length} point(s) d'historique<br>
           ${hasPrevMAJ?'✅ Delta disponible — rechargez le tableau de bord':'ℹ️ Faites une 2ème MAJ pour voir les écarts de performance'}
+          ${alertes.length>0?'<div style="margin-top:12px;text-align:left;background:var(--bg3);border-radius:6px;padding:10px 14px">'+
+            alertes.map(a=>`<div style="font-family:var(--mono);font-size:10px;color:var(--gold);padding:2px 0">${a}</div>`).join('')+
+          '</div>':''}
         </div>
       </div>`;
 
