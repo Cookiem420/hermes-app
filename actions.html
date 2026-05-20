@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Actions</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#06090f;--bg2:#0b0f18;--bg3:#111722;--bg4:#1a2133;
+  --border:#1e2a3d;--border2:#2a3a52;
+  --text:#e8eef7;--text2:#7a8fa8;--text3:#3d5068;
+  --green:#00d68f;--green2:rgba(0,214,143,.12);
+  --red:#ff4d6a;--red2:rgba(255,77,106,.12);
+  --blue:#4d9fff;--blue2:rgba(77,159,255,.12);
+  --gold:#f0b429;--gold2:rgba(240,180,41,.12);
+  --orange:#fb923c;--orange2:rgba(251,146,60,.12);
+  --purple:#a78bfa;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-y:auto}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.page{padding:24px 32px 60px;max-width:1100px;margin:0 auto}
+
+/* SECTION TITLES */
+.sec{display:flex;align-items:center;gap:10px;margin-bottom:14px;margin-top:28px}
+.sec:first-child{margin-top:0}
+.sec-t{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+.sec-l{flex:1;height:1px;background:var(--border)}
+.sec-ct{font-family:var(--mono);font-size:9px;color:var(--text3);padding:2px 8px;border:1px solid var(--border2);border-radius:10px}
+
+/* CARTOUCHES */
+.cartouches{display:flex;flex-direction:column;gap:12px}
+.cart{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.cart-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.cart-badge{font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
+.b-achat  {background:var(--green2);color:var(--green);border:1px solid rgba(0,214,143,.25)}
+.b-renfort{background:var(--blue2);color:var(--blue);border:1px solid rgba(77,159,255,.25)}
+.b-conserver{background:var(--border);color:var(--text2);border:1px solid var(--border2)}
+.b-alleger{background:var(--orange2);color:var(--orange);border:1px solid rgba(251,146,60,.25)}
+.b-vente  {background:var(--red2);color:var(--red);border:1px solid rgba(255,77,106,.25)}
+.cart-nom{font-weight:600;font-size:14px;flex:1}
+.cart-env{font-family:var(--mono);font-size:9px;color:var(--text3);padding:2px 8px;background:var(--bg3);border-radius:4px}
+
+.cart-body{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1px;background:var(--border)}
+.cart-cell{background:var(--bg2);padding:12px 18px}
+.cart-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.cart-val{font-family:var(--mono);font-size:16px;font-weight:700}
+.cart-sub{font-size:10px;color:var(--text2);margin-top:2px}
+.cart-etat{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:4px;margin-top:4px}
+
+/* Etat colors */
+.e-full       {background:var(--blue2);color:var(--blue)}
+.e-building   {background:var(--blue2);color:var(--blue)}
+.e-alert      {background:var(--gold2);color:var(--gold)}
+.e-watchlist  {background:var(--border);color:var(--text2)}
+.e-weakening  {background:var(--orange2);color:var(--orange)}
+.e-exit       {background:var(--red2);color:var(--red)}
+.e-protection {background:var(--gold2);color:var(--gold)}
+
+.cart-actions{background:var(--bg3);padding:12px 18px;display:flex;flex-direction:column;gap:8px;justify-content:center}
+.btn-confirm{background:var(--green);color:var(--bg);border:none;border-radius:6px;padding:8px 16px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s;white-space:nowrap}
+.btn-confirm:hover{opacity:.85}
+.btn-refuse{background:transparent;color:var(--red);border:1px solid rgba(255,77,106,.3);border-radius:6px;padding:7px 16px;font-family:var(--sans);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-refuse:hover{background:var(--red2)}
+
+/* FORMULAIRE INLINE */
+.cart-form{display:none;border-top:1px solid var(--border);padding:18px;background:var(--bg3)}
+.cart-form.open{display:block}
+.form-title{font-family:var(--mono);font-size:10px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fg-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fl{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.fi{background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:8px 12px;color:var(--text);font-family:var(--mono);font-size:12px;outline:none;transition:border-color .15s;width:100%}
+.fi:focus{border-color:var(--blue)}
+.fi-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a8fa8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.form-actions{display:flex;gap:8px;margin-top:16px}
+.btn-valider{flex:1;background:var(--green);color:var(--bg);border:none;border-radius:6px;padding:10px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.btn-valider:hover{opacity:.85}
+.btn-annuler{background:var(--bg4);color:var(--text2);border:1px solid var(--border2);border-radius:6px;padding:10px 16px;font-family:var(--sans);font-size:13px;cursor:pointer}
+.btn-annuler:hover{background:var(--bg3)}
+
+/* ZONES MANQUANTES */
+.zones-list{display:flex;flex-direction:column;gap:10px}
+.zone-card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:8px;overflow:hidden}
+.zone-head{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:background .12s}
+.zone-head:hover{background:var(--bg3)}
+.zone-head-nom{flex:1;font-weight:500}
+.zone-head-isin{font-family:var(--mono);font-size:9px;color:var(--text3)}
+.zone-head-alert{font-family:var(--mono);font-size:8px;color:var(--gold);background:var(--gold2);padding:2px 8px;border-radius:4px}
+.zone-form{display:none;padding:16px;border-top:1px solid var(--border);background:var(--bg3)}
+.zone-form.open{display:block}
+.zones-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+
+/* ESPACE AUTONOME */
+.autonome{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px}
+.auto-search{display:grid;grid-template-columns:1fr auto;gap:10px;margin-bottom:16px}
+.auto-result{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px}
+.auto-result-nom{font-weight:600;margin-bottom:6px}
+.auto-result-meta{font-family:var(--mono);font-size:10px;color:var(--text2)}
+.auto-result-state{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.auto-fields{display:none}
+.auto-fields.visible{display:block}
+
+/* ETAT VIDE */
+.empty{text-align:center;padding:40px 20px;color:var(--text3);font-family:var(--mono);font-size:11px}
+.empty-icon{font-size:32px;margin-bottom:10px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 18px;font-family:var(--mono);font-size:11px;color:var(--green);opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
+.toast.show{opacity:1}
+
+/* SAVING */
+.saving{display:inline-block;width:12px;height:12px;border:2px solid var(--text3);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="page" id="root">
+  <div class="empty"><div class="empty-icon">⏳</div>Chargement...</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════════════════════
+const GH_USER = 'Cookiem420';
+const GH_REPO_DATA = 'hermes-data';
+const RAW = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO_DATA}/main/`;
+const GH_API = `https://api.github.com/repos/${GH_USER}/${GH_REPO_DATA}/contents/`;
+
+const MOTIFS_REFUS = ['TIMING','CASH','CONVICTION','SIGNAL_FAIBLE'];
+const ETATS_LIST = ['FULL','BUILDING','ALERT_SENT','WATCHLIST','EXITED',
+  'WEAKENING_STRUCT','WEAKENING_TECH','EXIT_READY','PROFIT_PROTECTION'];
+const CATS = ['ETF_large','ETF_sectoriel','Qualite','Cyclique','Croissance','Speculatif'];
+const RISQUES = ['Faible','Modéré','Élevé','Spéculatif'];
+const THEMES = ['Tech','Finance','Eau & Env.','Défense','Global','Asie','Matières 1ères','Santé','Infrastructure','Diversifié'];
+
+let TABLE = null; // table_infos_valeurs.json complet
+
+// ══════════════════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════════════════
+function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
+function fmtPct(n){if(!n&&n!==0)return'—';return(n>0?'+':'')+n.toFixed(1)+'%'}
+function pc(v){return v>0?'pos':v<0?'neg':'neu'}
+function getToken(){return sessionStorage.getItem('hermes_gh_token')||'';}
+function toast(msg,color='var(--green)'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.style.color=color;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// LOAD
+// ══════════════════════════════════════════════════════════════════════════════
+async function load() {
+  try {
+    const r = await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    TABLE = await r.json();
+    render();
+  } catch(e) {
+    document.getElementById('root').innerHTML =
+      `<div class="empty"><div class="empty-icon">⚠️</div>Erreur chargement : ${e.message}</div>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GITHUB SAVE
+// ══════════════════════════════════════════════════════════════════════════════
+async function ghPut(data, message) {
+  const token = getToken();
+  if(!token) { toast('Token GitHub requis — saisissez-le dans le Produit MAJ','var(--red)'); return false; }
+  const url = GH_API+'table_infos_valeurs.json';
+  let sha = null;
+  try {
+    const gr = await fetch(url, {headers:{Authorization:`token ${token}`}});
+    if(gr.ok) { const j=await gr.json(); sha=j.sha; }
+  } catch(e){}
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  const body = {message, content};
+  if(sha) body.sha = sha;
+  const r = await fetch(url, {
+    method:'PUT',
+    headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+    body: JSON.stringify(body),
+  });
+  return r.ok;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ETAT CSS
+// ══════════════════════════════════════════════════════════════════════════════
+function etatCss(e) {
+  const map = {
+    FULL:'e-full',BUILDING:'e-building',ALERT_SENT:'e-alert',
+    WATCHLIST:'e-watchlist',WEAKENING_STRUCT:'e-weakening',WEAKENING_TECH:'e-weakening',
+    EXIT_READY:'e-exit',EXITED:'e-exit',PROFIT_PROTECTION:'e-protection'
+  };
+  return map[e]||'e-watchlist';
+}
+
+function badgeCss(av) {
+  const m={ACHAT:'b-achat',RENFORT:'b-renfort',CONSERVER:'b-conserver',ALLEGER:'b-alleger',VENTE:'b-vente'};
+  return m[av]||'b-conserver';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RENDER PRINCIPAL
+// ══════════════════════════════════════════════════════════════════════════════
+function render() {
+  const vals = TABLE?.valeurs || {};
+  const entries = Object.entries(vals);
+
+  // Section 1 : cartouches avec achat_vente défini
+  const withAction = entries.filter(([,v]) => v.achat_vente && v.achat_vente !== null);
+
+  // Section 2 : zones manquantes (basse_min=0 ou risque=null) - positions détenues uniquement
+  const missingZones = entries.filter(([,v]) =>
+    v.quantite > 0 && (!(v.zones?.basse_min) || !v.risque || !v.categorie)
+  );
+
+  document.getElementById('root').innerHTML = `
+    <!-- SECTION 1 : CARTOUCHES -->
+    <div class="sec">
+      <div class="sec-t">Actions en attente</div>
+      <div class="sec-l"></div>
+      ${withAction.length>0?`<div class="sec-ct">${withAction.length}</div>`:''}
+    </div>
+    <div id="s1">
+      ${withAction.length===0
+        ? `<div class="empty"><div class="empty-icon">✅</div>Aucune action en attente</div>`
+        : `<div class="cartouches">${withAction.map(([isin,v])=>renderCart(isin,v)).join('')}</div>`}
+    </div>
+
+    <!-- SECTION 2 : ZONES MANQUANTES -->
+    <div class="sec">
+      <div class="sec-t">Infos manquantes</div>
+      <div class="sec-l"></div>
+      ${missingZones.length>0?`<div class="sec-ct">${missingZones.length}</div>`:''}
+    </div>
+    <div id="s2">
+      ${missingZones.length===0
+        ? `<div class="empty"><div class="empty-icon">✅</div>Toutes les zones sont renseignées</div>`
+        : `<div class="zones-list">${missingZones.map(([isin,v])=>renderZoneCard(isin,v)).join('')}</div>`}
+    </div>
+
+    <!-- SECTION 3 : ESPACE AUTONOME -->
+    <div class="sec">
+      <div class="sec-t">Espace autonome</div>
+      <div class="sec-l"></div>
+    </div>
+    <div id="s3">${renderAutonome()}</div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SECTION 1 — CARTOUCHE
+// ══════════════════════════════════════════════════════════════════════════════
+function renderCart(isin, v) {
+  const av     = v.achat_vente||'';
+  const isBuy  = ['ACHAT','RENFORT'].includes(av);
+  const isSell = ['VENTE','ALLEGER'].includes(av);
+  const cours  = v.cours||0;
+  const qty    = v.quantite||0;
+  const pru    = v.pru||0;
+  const valeur = cours * qty;
+  const pnlEur = pru && qty ? (cours - pru) * qty : null;
+  const pnlPct = pru ? (cours - pru) / pru * 100 : null;
+
+  // Suggestion sizing
+  const qSugg  = v.q_achat_vente || 0;
+  const pSugg  = v.prix_achat_vente || cours || 0;
+  const montSugg = qSugg * pSugg;
+
+  return `
+    <div class="cart" id="cart-${isin}">
+      <div class="cart-head">
+        <div class="cart-badge ${badgeCss(av)}">${av}</div>
+        <div class="cart-nom">${v.nom||isin}</div>
+        <div class="cart-env">${v.enveloppe||'—'}</div>
+      </div>
+      <div class="cart-body">
+        <div class="cart-cell">
+          <div class="cart-lbl">Quantité ${isBuy?'suggérée à acheter':'à vendre'}</div>
+          <div class="cart-val ${isBuy?'pos':'neg'}">${qSugg||'—'} titres</div>
+          ${montSugg>0?`<div class="cart-sub">${fmt(montSugg,2)} €</div>`:''}
+        </div>
+        <div class="cart-cell">
+          <div class="cart-lbl">Prix ${isBuy?'d\'entrée suggéré':'de sortie suggéré'}</div>
+          <div class="cart-val">${pSugg>0?fmt(pSugg,2)+' €':'—'}</div>
+          ${isBuy&&v.zones?.basse_min?`<div class="cart-sub">Zone : ${v.zones.basse_min}–${v.zones.basse_max} €</div>`:''}
+        </div>
+        <div class="cart-cell">
+          <div class="cart-lbl">État &amp; P&L</div>
+          <div class="cart-etat ${etatCss(v.etat_actuel)}">${v.etat_actuel||'—'}</div>
+          ${pnlPct!=null?`<div class="cart-sub ${pc(pnlPct)}" style="margin-top:4px">${fmtPct(pnlPct)} · ${pnlEur!=null?(pnlEur>=0?'+':'')+fmt(pnlEur,0)+' €':''}</div>`:''}
+        </div>
+        <div class="cart-actions">
+          <button class="btn-confirm" onclick="openCartForm('${isin}','confirmer')">✓ Confirmer</button>
+          <button class="btn-refuse" onclick="openCartForm('${isin}','refuser')">✗ Refuser</button>
+        </div>
+      </div>
+      <!-- Formulaire inline -->
+      <div class="cart-form" id="cform-${isin}">
+        <div id="cform-content-${isin}"></div>
+      </div>
+    </div>`;
+}
+
+function openCartForm(isin, type) {
+  const v = TABLE.valeurs[isin];
+  const form = document.getElementById(`cform-${isin}`);
+  const content = document.getElementById(`cform-content-${isin}`);
+  const av = v.achat_vente||'';
+  const isBuy = ['ACHAT','RENFORT'].includes(av);
+  const cours = v.cours||0;
+  const qty   = v.quantite||0;
+  const qSugg = v.q_achat_vente||0;
+  const pSugg = v.prix_achat_vente||cours||0;
+
+  if(form.classList.contains('open') && form._lastType === type) {
+    form.classList.remove('open'); return;
+  }
+  form._lastType = type;
+  form.classList.add('open');
+
+  if(type==='confirmer') {
+    content.innerHTML = `
+      <div class="form-title">${isBuy?'Confirmer l\'achat':'Confirmer la vente'} — ${v.nom||isin}</div>
+      <div class="fg-row">
+        <div class="fg"><label class="fl">Quantité réelle</label>
+          <input class="fi" id="cq-${isin}" type="number" step="1" value="${qSugg||''}" placeholder="0">
+        </div>
+        <div class="fg"><label class="fl">Prix réel / titre (€)</label>
+          <input class="fi" id="cp-${isin}" type="number" step="0.01" value="${pSugg>0?pSugg.toFixed(2):''}" placeholder="0.00">
+        </div>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label class="fl">Nouvel état</label>
+          <select class="fi fi-select" id="ce-${isin}">
+            ${ETATS_LIST.map(e=>`<option value="${e}" ${e===(isBuy?'FULL':'WATCHLIST')?'selected':''}>${e}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Notes (optionnel)</label>
+          <input class="fi" id="cn-${isin}" type="text" placeholder="Ex: achat en zone basse">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-valider" onclick="validerAction('${isin}','confirmer')">✅ Valider</button>
+        <button class="btn-annuler" onclick="closeCartForm('${isin}')">Annuler</button>
+      </div>`;
+  } else {
+    content.innerHTML = `
+      <div class="form-title">Refuser le signal — ${v.nom||isin}</div>
+      <div class="fg-row">
+        <div class="fg"><label class="fl">Motif du refus</label>
+          <select class="fi fi-select" id="cm-${isin}">
+            ${MOTIFS_REFUS.map(m=>`<option value="${m}">${m}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fg"><label class="fl">Notes (optionnel)</label>
+          <input class="fi" id="cn-${isin}" type="text" placeholder="Détail du refus...">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-valider" style="background:var(--red)" onclick="validerAction('${isin}','refuser')">✗ Refuser ce signal</button>
+        <button class="btn-annuler" onclick="closeCartForm('${isin}')">Annuler</button>
+      </div>`;
+  }
+}
+
+function closeCartForm(isin) {
+  document.getElementById(`cform-${isin}`)?.classList.remove('open');
+}
+
+async function validerAction(isin, type) {
+  const v = TABLE.valeurs[isin];
+  const qty   = parseFloat(document.getElementById(`cq-${isin}`)?.value)||0;
+  const prix  = parseFloat(document.getElementById(`cp-${isin}`)?.value)||0;
+  const motif = document.getElementById(`cm-${isin}`)?.value||'';
+  const etat  = document.getElementById(`ce-${isin}`)?.value||v.etat_actuel;
+  const notes = document.getElementById(`cn-${isin}`)?.value||'';
+
+  if(type==='confirmer') {
+    // Mettre à jour la quantité et effacer le signal
+    v.ancien_etat  = v.etat_actuel;
+    v.etat_actuel  = etat;
+    if(qty>0) v.quantite = qty;
+    if(prix>0) v.pru = prix;
+    v.achat_vente      = null;
+    v.q_achat_vente    = 0;
+    v.prix_achat_vente = 0;
+    toast(`⏳ Sauvegarde…`,'var(--text3)');
+  } else {
+    // Refus : on efface le signal et stocke le motif dans historique
+    v.achat_vente      = null;
+    v.q_achat_vente    = 0;
+    v.prix_achat_vente = 0;
+    if(!v.historique_refus) v.historique_refus = [];
+    v.historique_refus.push({
+      date: new Date().toISOString().split('T')[0],
+      signal: v.achat_vente,
+      motif,
+      notes,
+    });
+    toast(`⏳ Sauvegarde refus…`,'var(--text3)');
+  }
+
+  const ok = await ghPut(TABLE, `${type==='confirmer'?'✅':'✗'} ${type} ${v.nom||isin}`);
+  if(ok) {
+    toast(`${type==='confirmer'?'✅':'✗'} ${v.nom||isin} — ${type} enregistré`);
+    closeCartForm(isin);
+    setTimeout(render, 500);
+  } else {
+    toast('❌ Erreur sauvegarde','var(--red)');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SECTION 2 — ZONES MANQUANTES
+// ══════════════════════════════════════════════════════════════════════════════
+function renderZoneCard(isin, v) {
+  const manquant = [];
+  if(!v.zones?.basse_min) manquant.push('zones');
+  if(!v.risque) manquant.push('risque');
+  if(!v.categorie) manquant.push('catégorie');
+  if(!v.thematique) manquant.push('thématique');
+
+  return `
+    <div class="zone-card">
+      <div class="zone-head" onclick="toggleZoneForm('zf-${isin}')">
+        <div class="zone-head-nom">${v.nom||isin}</div>
+        <div class="zone-head-isin">${isin}</div>
+        <div class="zone-head-alert">⚠ ${manquant.join(', ')} manquant(s)</div>
+        <div style="color:var(--text3);font-size:12px">›</div>
+      </div>
+      <div class="zone-form" id="zf-${isin}">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">5 zones de cours (€)</div>
+        <div class="zones-grid">
+          <div class="fg"><label class="fl">Basse min</label>
+            <input class="fi" id="z1-${isin}" type="number" step="0.01" value="${v.zones?.basse_min||''}" placeholder="0">
+          </div>
+          <div class="fg"><label class="fl">Basse max</label>
+            <input class="fi" id="z2-${isin}" type="number" step="0.01" value="${v.zones?.basse_max||''}" placeholder="0">
+          </div>
+          <div class="fg"><label class="fl">Surveillance</label>
+            <input class="fi" id="z3-${isin}" type="number" step="0.01" value="${v.zones?.surveillance||''}" placeholder="0">
+          </div>
+          <div class="fg"><label class="fl">Complément</label>
+            <input class="fi" id="z4-${isin}" type="number" step="0.01" value="${v.zones?.complement||''}" placeholder="0">
+          </div>
+          <div class="fg"><label class="fl">Breakout</label>
+            <input class="fi" id="z5-${isin}" type="number" step="0.01" value="${v.zones?.breakout||''}" placeholder="0">
+          </div>
+        </div>
+        <div class="meta-grid">
+          <div class="fg"><label class="fl">Risque</label>
+            <select class="fi fi-select" id="zr-${isin}">
+              <option value="">— Sélectionner</option>
+              ${RISQUES.map(r=>`<option value="${r}" ${r===v.risque?'selected':''}>${r}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Catégorie</label>
+            <select class="fi fi-select" id="zc-${isin}">
+              <option value="">— Sélectionner</option>
+              ${CATS.map(c=>`<option value="${c}" ${c===v.categorie?'selected':''}>${c}</option>`).join('')}
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Thématique</label>
+            <select class="fi fi-select" id="zt-${isin}">
+              <option value="">— Sélectionner</option>
+              ${THEMES.map(t=>`<option value="${t}" ${t===v.thematique?'selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-valider" onclick="saveZones('${isin}')">💾 Sauvegarder</button>
+          <button class="btn-annuler" onclick="toggleZoneForm('zf-${isin}')">Annuler</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleZoneForm(id) {
+  document.getElementById(id)?.classList.toggle('open');
+}
+
+async function saveZones(isin) {
+  const v = TABLE.valeurs[isin];
+  v.zones = {
+    basse_min:   parseFloat(document.getElementById(`z1-${isin}`)?.value)||0,
+    basse_max:   parseFloat(document.getElementById(`z2-${isin}`)?.value)||0,
+    surveillance:parseFloat(document.getElementById(`z3-${isin}`)?.value)||0,
+    complement:  parseFloat(document.getElementById(`z4-${isin}`)?.value)||0,
+    breakout:    parseFloat(document.getElementById(`z5-${isin}`)?.value)||0,
+  };
+  v.risque     = document.getElementById(`zr-${isin}`)?.value||v.risque||null;
+  v.categorie  = document.getElementById(`zc-${isin}`)?.value||v.categorie||null;
+  v.thematique = document.getElementById(`zt-${isin}`)?.value||v.thematique||null;
+
+  toast('⏳ Sauvegarde…','var(--text3)');
+  const ok = await ghPut(TABLE, `📍 Zones ${v.nom||isin}`);
+  if(ok) {
+    toast(`✅ Zones de ${v.nom||isin} sauvegardées`);
+    setTimeout(render, 500);
+  } else {
+    toast('❌ Erreur sauvegarde — vérifier le token','var(--red)');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SECTION 3 — ESPACE AUTONOME
+// ══════════════════════════════════════════════════════════════════════════════
+function renderAutonome() {
+  return `
+    <div class="autonome">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">
+        Saisir ou modifier une position manuellement
+      </div>
+      <div class="fg-row">
+        <div class="fg" style="grid-column:span 1">
+          <label class="fl">ISIN ou nom de la valeur</label>
+          <input class="fi" id="auto-isin" type="text" placeholder="Ex: FR0010307819 ou Legrand" oninput="autoSearch(this.value)">
+        </div>
+        <div class="fg">
+          <label class="fl">Type d'opération</label>
+          <select class="fi fi-select" id="auto-type">
+            <option value="ACHAT">ACHAT — Nouvelle position</option>
+            <option value="RENFORT">RENFORT — Renforcer existant</option>
+            <option value="ALLEGER">ALLEGER — Réduire position</option>
+            <option value="VENTE">VENTE — Clôturer position</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Résultat de recherche -->
+      <div id="auto-result" style="display:none"></div>
+
+      <!-- Champs dynamiques -->
+      <div class="auto-fields" id="auto-fields">
+        <div class="fg-row" style="margin-top:12px">
+          <div class="fg"><label class="fl">Quantité (titres)</label>
+            <input class="fi" id="auto-qty" type="number" step="1" placeholder="0">
+          </div>
+          <div class="fg"><label class="fl">Prix d'exécution (€)</label>
+            <input class="fi" id="auto-prix" type="number" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+
+        <!-- Zones (visibles seulement si nouvelle valeur) -->
+        <div id="auto-zones-section" style="display:none">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin:14px 0 10px">
+            Nouvelle valeur — définir les zones et métadonnées
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:8px">Zones de cours (€)</div>
+          <div class="zones-grid" style="margin-bottom:12px">
+            <div class="fg"><label class="fl">Basse min</label>
+              <input class="fi" id="az1" type="number" step="0.01" placeholder="0"></div>
+            <div class="fg"><label class="fl">Basse max</label>
+              <input class="fi" id="az2" type="number" step="0.01" placeholder="0"></div>
+            <div class="fg"><label class="fl">Surveillance</label>
+              <input class="fi" id="az3" type="number" step="0.01" placeholder="0"></div>
+            <div class="fg"><label class="fl">Complément</label>
+              <input class="fi" id="az4" type="number" step="0.01" placeholder="0"></div>
+            <div class="fg"><label class="fl">Breakout</label>
+              <input class="fi" id="az5" type="number" step="0.01" placeholder="0"></div>
+          </div>
+          <div class="meta-grid">
+            <div class="fg"><label class="fl">Risque</label>
+              <select class="fi fi-select" id="az-risque">
+                <option value="">— Sélectionner</option>
+                ${RISQUES.map(r=>`<option value="${r}">${r}</option>`).join('')}
+              </select></div>
+            <div class="fg"><label class="fl">Catégorie</label>
+              <select class="fi fi-select" id="az-cat">
+                <option value="">— Sélectionner</option>
+                ${CATS.map(c=>`<option value="${c}">${c}</option>`).join('')}
+              </select></div>
+            <div class="fg"><label class="fl">Thématique</label>
+              <select class="fi fi-select" id="az-theme">
+                <option value="">— Sélectionner</option>
+                ${THEMES.map(t=>`<option value="${t}">${t}</option>`).join('')}
+              </select></div>
+          </div>
+          <div class="fg" style="margin-bottom:12px"><label class="fl">Enveloppe</label>
+            <select class="fi fi-select" id="az-env">
+              <option value="PEA">PEA</option>
+              <option value="CTO">CTO</option>
+              <option value="PEA-PME">PEA-PME</option>
+            </select></div>
+          <div class="fg" style="margin-bottom:14px"><label class="fl">Nom complet</label>
+            <input class="fi" id="az-nom" type="text" placeholder="Nom de la valeur"></div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-valider" onclick="validerAutonome()">💾 Enregistrer</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+let autoCurrentIsin = null;
+let autoIsNew = false;
+
+function autoSearch(query) {
+  query = query.trim();
+  const resultEl = document.getElementById('auto-result');
+  const fieldsEl = document.getElementById('auto-fields');
+  const zonesEl  = document.getElementById('auto-zones-section');
+
+  if(!query || query.length < 3) {
+    resultEl.style.display='none';
+    fieldsEl.classList.remove('visible');
+    autoCurrentIsin = null;
+    return;
+  }
+
+  const vals = TABLE?.valeurs || {};
+  // Recherche par ISIN exact ou nom partiel
+  const found = Object.entries(vals).find(([isin,v]) =>
+    isin.toUpperCase() === query.toUpperCase() ||
+    v.nom?.toLowerCase().includes(query.toLowerCase())
+  );
+
+  if(found) {
+    const [isin, v] = found;
+    autoCurrentIsin = isin;
+    autoIsNew = false;
+    zonesEl.style.display='none';
+
+    const etatHtml = `<span class="cart-etat ${etatCss(v.etat_actuel)}">${v.etat_actuel}</span>`;
+    resultEl.style.display='block';
+    resultEl.innerHTML = `
+      <div class="auto-result">
+        <div class="auto-result-nom">📈 ${v.nom||isin}</div>
+        <div class="auto-result-meta">${isin} · ${v.enveloppe||'?'} · q=${v.quantite||0}</div>
+        <div class="auto-result-state">
+          ${etatHtml}
+          ${v.risque?`<span style="font-family:var(--mono);font-size:9px;color:var(--text2);padding:2px 8px;background:var(--bg3);border-radius:4px">${v.risque}</span>`:''}
+          ${v.categorie?`<span style="font-family:var(--mono);font-size:9px;color:var(--text2);padding:2px 8px;background:var(--bg3);border-radius:4px">${v.categorie}</span>`:''}
+        </div>
+      </div>`;
+
+    // Pré-remplir quantité avec la quantité actuelle
+    document.getElementById('auto-qty').value = v.quantite||'';
+    fieldsEl.classList.add('visible');
+
+  } else {
+    // Nouvelle valeur inconnue
+    autoCurrentIsin = query;
+    autoIsNew = true;
+    resultEl.style.display='block';
+    resultEl.innerHTML = `
+      <div class="auto-result" style="border-left:3px solid var(--gold)">
+        <div class="auto-result-nom">🆕 Nouvelle valeur : <strong>${query}</strong></div>
+        <div class="auto-result-meta">Non trouvée dans la table — renseignez les métadonnées ci-dessous</div>
+      </div>`;
+    zonesEl.style.display='block';
+    document.getElementById('az-nom').value = '';
+    fieldsEl.classList.add('visible');
+  }
+}
+
+async function validerAutonome() {
+  const type  = document.getElementById('auto-type')?.value||'ACHAT';
+  const qty   = parseFloat(document.getElementById('auto-qty')?.value)||0;
+  const prix  = parseFloat(document.getElementById('auto-prix')?.value)||0;
+
+  if(!autoCurrentIsin) { toast('Saisissez un ISIN ou un nom','var(--red)'); return; }
+
+  const isin = autoCurrentIsin;
+  const vals = TABLE.valeurs;
+
+  if(autoIsNew) {
+    // Créer nouvelle entrée
+    const nom = document.getElementById('az-nom')?.value||isin;
+    const env = document.getElementById('az-env')?.value||'PEA';
+    vals[isin] = {
+      isin, nom, quantite: qty,
+      enveloppe: env,
+      cours: prix,
+      pru: prix,
+      zones: {
+        basse_min:   parseFloat(document.getElementById('az1')?.value)||0,
+        basse_max:   parseFloat(document.getElementById('az2')?.value)||0,
+        surveillance:parseFloat(document.getElementById('az3')?.value)||0,
+        complement:  parseFloat(document.getElementById('az4')?.value)||0,
+        breakout:    parseFloat(document.getElementById('az5')?.value)||0,
+      },
+      risque:     document.getElementById('az-risque')?.value||null,
+      categorie:  document.getElementById('az-cat')?.value||null,
+      thematique: document.getElementById('az-theme')?.value||null,
+      ancien_etat: null,
+      etat_actuel: qty>0?'FULL':'WATCHLIST',
+      achat_vente: null, q_achat_vente:0, prix_achat_vente:0,
+    };
+  } else {
+    const v = vals[isin];
+    const isVente = ['VENTE','ALLEGER'].includes(type);
+
+    if(isVente) {
+      const newQty = Math.max(0, (v.quantite||0) - qty);
+      v.ancien_etat = v.etat_actuel;
+      v.quantite    = newQty;
+      if(newQty === 0) v.etat_actuel = 'WATCHLIST';
+    } else {
+      // Achat / Renfort → mise à jour PRU pondéré
+      const oldQty = v.quantite||0;
+      const oldPRU = v.pru||0;
+      const newQty = oldQty + qty;
+      if(prix>0 && oldPRU>0) {
+        v.pru = (oldPRU*oldQty + prix*qty) / newQty;
+      } else if(prix>0) {
+        v.pru = prix;
+      }
+      v.quantite    = newQty;
+      v.ancien_etat = v.etat_actuel;
+      v.etat_actuel = 'FULL';
+    }
+  }
+
+  toast('⏳ Sauvegarde…','var(--text3)');
+  const ok = await ghPut(TABLE, `📝 ${type} ${isin} — ${qty} titres`);
+  if(ok) {
+    toast(`✅ ${type} enregistré — ${isin}`);
+    // Reset formulaire
+    document.getElementById('auto-isin').value='';
+    document.getElementById('auto-result').style.display='none';
+    document.getElementById('auto-fields').classList.remove('visible');
+    autoCurrentIsin=null; autoIsNew=false;
+    setTimeout(render, 500);
+  } else {
+    toast('❌ Erreur sauvegarde','var(--red)');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// START
+// ══════════════════════════════════════════════════════════════════════════════
+load();
+</script>
+</body>
+</html>
