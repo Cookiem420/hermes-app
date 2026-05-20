@@ -19,402 +19,366 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;overflow-y:auto;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.page{padding:28px 36px 60px}
+.page{padding:24px 32px 60px}
 
-/* HEADER */
-.hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px}
-.hdr-total{font-family:var(--mono);font-size:34px;font-weight:700;letter-spacing:-1px}
-.hdr-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
-.hdr-delta{display:flex;align-items:center;gap:8px;margin-top:6px;font-family:var(--mono);font-size:12px}
-.hdr-meta{text-align:right;font-family:var(--mono);font-size:10px;color:var(--text3);line-height:1.9}
+.hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px}
+.hdr-lbl{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.hdr-tot{font-family:var(--mono);font-size:32px;font-weight:700;letter-spacing:-1px}
+.hdr-delta{display:flex;align-items:center;gap:8px;margin-top:6px;font-family:var(--mono);font-size:11px}
+.hdr-meta{text-align:right;font-family:var(--mono);font-size:9px;color:var(--text3);line-height:2}
 .pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text2)}
 
-/* KPIS */
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
-.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
-.kpi-label{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
-.kpi-val{font-family:var(--mono);font-size:22px;font-weight:700}
-.kpi-sub{font-size:11px;color:var(--text2);margin-top:4px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.kpi-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
+.kpi-val{font-family:var(--mono);font-size:20px;font-weight:700}
+.kpi-sub{font-size:11px;color:var(--text2);margin-top:3px}
 .kpi.g .kpi-val{color:var(--green)}.kpi.b .kpi-val{color:var(--blue)}.kpi.o .kpi-val{color:var(--gold)}
 
-/* SECTION */
-.sec{display:flex;align-items:center;gap:10px;margin-bottom:12px;margin-top:28px}
-.sec-title{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
-.sec-line{flex:1;height:1px;background:var(--border)}
+.sec{display:flex;align-items:center;gap:10px;margin-bottom:12px;margin-top:24px}
+.sec-t{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+.sec-l{flex:1;height:1px;background:var(--border)}
 
-/* TABLEAU ENVELOPPES */
-.env-table{width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.env-table th{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;padding:10px 16px;text-align:right;background:var(--bg3);border-bottom:1px solid var(--border)}
-.env-table th:first-child{text-align:left}
+/* TABLEAU */
+.env-tbl{width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.env-tbl th{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;padding:10px 14px;text-align:right;background:var(--bg3);border-bottom:1px solid var(--border)}
+.env-tbl th:first-child{text-align:left}
 .env-row{cursor:pointer;transition:background .1s}
 .env-row:hover{background:var(--bg3)}
-.env-row td{padding:13px 16px;border-top:1px solid var(--border)}
-.env-name-cell{display:flex;align-items:center;gap:10px}
+.env-row td{padding:12px 14px;border-top:1px solid var(--border)}
+.env-nc{display:flex;align-items:center;gap:9px}
 .env-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .env-nom{font-weight:500}
-.env-chev{color:var(--text3);font-size:11px;margin-left:4px;transition:transform .2s;display:inline-block}
-.env-chev.open{transform:rotate(90deg)}
-.cell-r{text-align:right}.cell-mono{font-family:var(--mono)}
-.cell-sub{font-size:10px;color:var(--text2);margin-top:2px}
-.total-row td{padding:12px 16px;border-top:2px solid var(--border2);background:var(--bg3);font-family:var(--mono);font-weight:700}
+.chev{color:var(--text3);font-size:11px;margin-left:4px;transition:transform .2s;display:inline-block}
+.chev.open{transform:rotate(90deg)}
+.cr{text-align:right}.cm{font-family:var(--mono)}
+.cs{font-size:10px;color:var(--text2);margin-top:2px}
+.tot-row td{padding:11px 14px;border-top:2px solid var(--border2);background:var(--bg3);font-family:var(--mono);font-weight:700}
 
 /* DRILL */
-.drill-row{display:none}
-.drill-row.open{display:table-row}
-.drill-wrap{background:var(--bg3);border-top:1px solid var(--border)}
-.drill-inner{padding:0 0 4px 36px}
-.drill-line{display:flex;align-items:center;padding:8px 16px 8px 0;border-bottom:1px solid var(--border)}
-.drill-line:last-child{border-bottom:none}
-.drill-lname{flex:1}
-.drill-lname-main{font-size:12px}
-.drill-lname-sub{font-size:10px;color:var(--text2);margin-top:1px}
-.badge{font-family:var(--mono);font-size:8px;padding:2px 5px;border-radius:3px;margin-left:6px;vertical-align:middle}
+.dr-row{display:none}
+.dr-row.open{display:table-row}
+.dr-wrap{background:var(--bg3);border-top:1px solid var(--border)}
+.dr-inner{padding:0 0 4px 32px}
+.dr-line{display:flex;align-items:center;padding:7px 14px 7px 0;border-bottom:1px solid var(--border)}
+.dr-line:last-child{border-bottom:none}
+.dr-name{flex:1}
+.dr-nm{font-size:12px}
+.dr-sub{font-size:10px;color:var(--text2);margin-top:1px}
+.bge{font-family:var(--mono);font-size:8px;padding:2px 5px;border-radius:3px;margin-left:5px;vertical-align:middle}
 .b-full{background:var(--blue2);color:var(--blue)}
-.b-build{background:var(--blue2);color:var(--blue)}
 .b-weak{background:var(--red2);color:var(--red)}
-.b-profit{background:var(--gold2);color:var(--gold)}
-.b-exit{background:var(--red2);color:var(--red)}
-.b-other{background:var(--bg4);color:var(--text2)}
-.drill-val{font-family:var(--mono);font-size:12px;font-weight:600;min-width:90px;text-align:right}
-.drill-pnl{font-family:var(--mono);font-size:11px;min-width:90px;text-align:right}
-.drill-delta{font-family:var(--mono);font-size:11px;min-width:80px;text-align:right;color:var(--text3)}
-.cash-line{color:var(--blue);font-family:var(--mono);font-size:11px;font-weight:600}
+.b-prof{background:var(--gold2);color:var(--gold)}
+.dr-val{font-family:var(--mono);font-size:12px;font-weight:600;min-width:90px;text-align:right}
+.dr-pnl{font-family:var(--mono);font-size:11px;min-width:90px;text-align:right}
+.dr-dlt{font-family:var(--mono);font-size:11px;min-width:80px;text-align:right;color:var(--text3)}
+.cash-ln{color:var(--blue);font-family:var(--mono);font-size:11px;font-weight:600}
 
 /* CHARTS */
-.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px}
-.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px}
-.chart-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
-.chart-empty{text-align:center;padding:48px;font-family:var(--mono);font-size:10px;color:var(--text3)}
+.ch-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.ch-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:18px}
+.ch-lbl{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.ch-empty{text-align:center;padding:44px;font-family:var(--mono);font-size:10px;color:var(--text3)}
 
 /* ANALYSE */
-.ana-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.ana-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px}
-.ana-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
-.bar-item{margin-bottom:11px}
-.bar-head{display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px}
-.bar-name{color:var(--text)}
-.bar-info{font-family:var(--mono);font-size:10px;color:var(--text2)}
+.ana-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ana-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:18px}
+.ana-lbl{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.bar-item{margin-bottom:10px}
+.bar-hd{display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px}
+.bar-nm{color:var(--text)}
+.bar-nfo{font-family:var(--mono);font-size:10px;color:var(--text2)}
 .bar-track{height:4px;background:var(--bg4);border-radius:2px}
 .bar-fill{height:100%;border-radius:2px;transition:width .4s}
+.leg{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px}
+.leg-i{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)}
+.leg-d{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 
-.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)}
-.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-
-/* ÉTAT */
-.loading{display:flex;align-items:center;justify-content:center;height:60vh;font-family:var(--mono);font-size:11px;color:var(--text3)}
-.error-msg{background:var(--red2);border:1px solid var(--red);border-radius:6px;padding:12px 16px;font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:20px}
+/* VIDE */
+.empty-screen{display:flex;align-items:center;justify-content:center;height:75vh;flex-direction:column;gap:14px;text-align:center}
+.empty-icon{font-size:44px}
+.empty-ttl{font-family:var(--mono);font-size:13px;color:var(--text)}
+.empty-sub{font-family:var(--mono);font-size:10px;color:var(--text3);max-width:380px;line-height:1.9}
 </style>
 </head>
 <body>
-<div class="page" id="root"><div class="loading">Chargement...</div></div>
+<div class="page" id="root"><div class="empty-screen"><div class="empty-icon">⏳</div><div class="empty-ttl">Chargement...</div></div></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-// ── Config ────────────────────────────────────────────────────────
-const GITHUB_USER = 'Cookiem420';
-const STATE_URL  = `https://raw.githubusercontent.com/${GITHUB_USER}/hermes-data/main/portfolio_state.json`;
-const CONFIG_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/hermes-data/main/config_watchlist.json`;
+// ══════════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════════
+const GH_USER  = 'Cookiem420';
+const GH_REPO  = 'hermes-data';
+const RAW      = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/`;
 
-const ENV_COLORS = {
-  PEA:'#4d9fff',CTO:'#a78bfa','PEA-PME':'#00d68f',
-  AV:'#f0b429',PEE:'#fb923c',Livrets:'#38bdf8',
-  SCPI:'#e879f9',Revolut:'#34d399',
-};
+// Couleurs
+const EC = {PEA:'#4d9fff',CTO:'#a78bfa','PEA-PME':'#00d68f',AV:'#f0b429',PEE:'#fb923c',Livrets:'#38bdf8',SCPI:'#e879f9',Revolut:'#34d399'};
+const ANA_C = ['#4d9fff','#a78bfa','#00d68f','#f0b429','#fb923c','#38bdf8','#e879f9','#34d399','#ff4d6a'];
+const RISQ_C = {Faible:'#00d68f',Modéré:'#f0b429',Élevé:'#fb923c',Spéculatif:'#ff4d6a'};
+const RISQ_MAP = {ETF_large:'Faible',ETF_sectoriel:'Modéré',Qualite:'Modéré',Cyclique:'Modéré',Croissance:'Élevé',Speculatif:'Spéculatif'};
 
-const BADGE_MAP = {
-  FULL:'b-full',BUILDING:'b-build',PARTIAL:'b-build',
-  WEAKENING_STRUCT:'b-weak',WEAKENING_TECH:'b-weak',
-  PROFIT_PROTECTION:'b-profit',EXIT_READY:'b-exit',EXITED:'b-exit',
-};
+let DONNEE = null, HISTORIQUE = null, TABLE_INFOS = null;
+let chartLine = null, chartDonut = null;
 
-const RISQUE_MAP = {
-  ETF_large:'Faible',ETF_sectoriel:'Modéré',Qualite:'Modéré',
-  Cyclique:'Modéré',Croissance:'Élevé',Speculatif:'Spéculatif',
-};
-
-const RISQUE_COLORS = {Faible:'#00d68f',Modéré:'#f0b429',Élevé:'#fb923c',Spéculatif:'#ff4d6a'};
-const ANA_COLORS = ['#4d9fff','#a78bfa','#00d68f','#f0b429','#fb923c','#38bdf8','#e879f9','#34d399','#ff4d6a','#94a3b8'];
-
-let STATE = null, CONFIG = null, chartLine = null, chartDonut = null;
-
-// ── Utils ─────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════
 function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function fmtPct(n){if(n==null||isNaN(n))return'—';return(n>0?'+':'')+n.toFixed(2)+'%'}
 function pc(v){return v>0.01?'pos':v<-0.01?'neg':'neu'}
 
-// ── Load ──────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+// CHARGEMENT
+// ══════════════════════════════════════════════════════════════════
 async function load() {
   try {
-    const [sr,cr] = await Promise.all([
-      fetch(STATE_URL+'?t='+Date.now()),
-      fetch(CONFIG_URL+'?t='+Date.now()),
+    const [dr, hr, tr] = await Promise.all([
+      fetch(RAW+'donnee_maj.json?t='+Date.now()),
+      fetch(RAW+'historique_maj.json?t='+Date.now()),
+      fetch(RAW+'table_infos_valeurs.json?t='+Date.now()),
     ]);
-    if(!sr.ok) throw new Error('portfolio_state '+sr.status);
-    if(!cr.ok) throw new Error('config_watchlist '+cr.status);
-    STATE  = await sr.json();
-    CONFIG = await cr.json();
+    if(dr.ok) DONNEE     = await dr.json();
+    if(hr.ok) HISTORIQUE = await hr.json();
+    if(tr.ok) TABLE_INFOS = await tr.json();
     render();
   } catch(e) {
     document.getElementById('root').innerHTML =
-      `<div class="error-msg">Erreur chargement : ${e.message}</div>`;
+      `<div class="empty-screen"><div class="empty-icon">⚠️</div><div class="empty-ttl">Erreur chargement</div><div class="empty-sub">${e.message}</div></div>`;
   }
 }
 
-// ── Build envelopes ───────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+// BUILD ENVELOPPES depuis donnee_maj
+// ══════════════════════════════════════════════════════════════════
 function buildEnvelopes() {
-  const snaps = STATE?.snapshots_patrimoine || [];
-  const last  = snaps[snaps.length-1] || {};
-  const prev  = snaps[snaps.length-2] || {};
-  const pos   = STATE?.positions || {};
-  const cfg   = CONFIG?.positions_detenues || {};
-  const cash  = STATE?.cash || {};
+  if(!DONNEE || !DONNEE.totaux || !DONNEE.meta.date_maj) return [];
+
+  const T  = DONNEE.totaux;
+  const cash = DONNEE.cash || {};
+
+  // MAJ-1 : dernier snapshot dans historique AVANT aujourd'hui
+  const snaps   = (HISTORIQUE?.snapshots||[]);
+  const prevSnap= snaps.length>=2 ? snaps[snaps.length-2] : null;
+  const prevT   = prevSnap?.totaux || {};
 
   const defs = [
-    {key:'PEA',    nom:'PEA',         snap:'pea',     cashK:'pea',  cote:true},
-    {key:'CTO',    nom:'CTO',         snap:'cto',     cashK:'cto',  cote:true},
-    {key:'PEA-PME',nom:'PEA-PME',     snap:'pme',     cashK:'pme',  cote:true},
-    {key:'AV',     nom:'Ass. Vie',    snap:'av',      cote:false,   detailK:'av_detail'},
-    {key:'PEE',    nom:'PEE',         snap:'pee',     cote:false,   detailK:'pee_detail'},
-    {key:'Livrets',nom:'Livrets & CC',snap:'livrets', cote:false,   detailK:'livrets_detail'},
-    {key:'SCPI',   nom:'SCPI',        snap:'scpi',    cote:false,   detailK:'scpi_detail'},
-    {key:'Revolut',nom:'Revolut',     snap:'revolut', cote:false,   detailK:'revolut_detail'},
-  ];
+    {key:'PEA',   nom:'PEA',        tot:T.pea,  prev:prevT.pea||0,  cashVal:cash.pea||0,  positions:DONNEE.pea_positions||[]},
+    {key:'CTO',   nom:'CTO',        tot:T.cto,  prev:prevT.cto||0,  cashVal:cash.cto||0,  positions:DONNEE.cto_positions||[]},
+    {key:'PEA-PME',nom:'PEA-PME',   tot:T.pme,  prev:prevT.pme||0,  cashVal:cash.pme||0,  positions:DONNEE.pme_positions||[]},
+    {key:'AV',    nom:'Ass. Vie',   tot:T.av,   prev:prevT.av||0,   detail:DONNEE.av||[]},
+    {key:'PEE',   nom:'PEE',        tot:T.pee,  prev:prevT.pee||0,  detail:DONNEE.pee||[]},
+    {key:'Livrets',nom:'Livrets & CC',tot:T.livrets,prev:prevT.livrets||0, detail:DONNEE.livrets||[]},
+    {key:'SCPI',  nom:'SCPI',       tot:T.scpi, prev:prevT.scpi||0, detail:[{nom:'SCPI Corum Origin',valeur:T.scpi}]},
+    {key:'Revolut',nom:'Revolut',   tot:T.revolut,prev:prevT.revolut||0,detail:[{nom:'Revolut ETF Trading',valeur:T.revolut}]},
+  ].filter(e=>e.tot>0);
 
-  return defs
-    .map(d => {
-      const total     = last[d.snap] || 0;
-      const prevTotal = prev[d.snap] || 0;
-      if (total === 0 && prevTotal === 0) return null;
+  return defs.map(e => {
+    const lines = [];
+    const isCote = ['PEA','CTO','PEA-PME'].includes(e.key);
 
-      const lines = [];
+    if(isCote) {
+      // Cash
+      if(e.cashVal>0) lines.push({type:'cash', nom:'Espèces', val:e.cashVal});
+      // Positions depuis CSV
+      (e.positions||[]).forEach(p=>{
+        const cost   = p.pru * p.quantite;
+        const pnlEur = p.montant - cost;
+        const pnlPct = cost>0 ? pnlEur/cost*100 : null;
+        lines.push({type:'pos', nom:p.nom, isin:p.isin,
+          val:p.montant, pnlEur, pnlPct, quantite:p.quantite, pru:p.pru});
+      });
+    } else {
+      (e.detail||[]).forEach(d=>lines.push({type:'detail',nom:d.nom,val:d.valeur||0}));
+    }
 
-      if (d.cote) {
-        // Cash
-        const cashVal = cash[d.cashK] || 0;
-        if (cashVal > 0) lines.push({type:'cash',nom:'Espèces',val:cashVal});
-        // Positions
-        Object.entries(pos).forEach(([ticker,p]) => {
-          if (p.etat === 'EXITED' || (p.quantite_detenue||0) === 0) return;
-          const c = cfg[ticker];
-          if (!c || c.enveloppe !== d.key) return;
-          const val    = p.derniere_valorisation || 0;
-          const pru    = p.prix_moyen_entree || 0;
-          const qty    = p.quantite_detenue || 0;
-          const cost   = pru * qty;
-          const pnlEur = val - cost;
-          const pnlPct = cost > 0 ? pnlEur/cost*100 : null;
-          lines.push({type:'pos',nom:c.nom||ticker,ticker,etat:p.etat,
-            val,pnlEur,pnlPct,categorie:c.categorie||''});
-        });
-      } else {
-        // Détail depuis snapshot
-        const detail = last[d.detailK] || [];
-        detail.forEach(dd => lines.push({type:'detail',nom:dd.nom,val:dd.valeur||0}));
-      }
-
-      return {key:d.key,nom:d.nom,color:ENV_COLORS[d.key]||'#888',total,prevTotal,lines};
-    })
-    .filter(Boolean);
+    return {...e, color:EC[e.key]||'#888', lines};
+  });
 }
 
-// ── Build analysis ────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+// ANALYSE Risque/Thème/Catégorie
+// depuis donnee_maj.positions + table_infos_valeurs
+// ══════════════════════════════════════════════════════════════════
 function buildAnalysis(envelopes) {
-  const pos = STATE?.positions || {};
-  const cfg = CONFIG?.positions_detenues || {};
-  const investiCote = envelopes.filter(e=>['PEA','CTO','PEA-PME'].includes(e.key))
-    .reduce((s,e)=>s+e.total,0) || 1;
+  const infos   = TABLE_INFOS?.valeurs || {};
+  const risque  = {}, themes = {}, cats = {};
+  const base    = (DONNEE?.totaux?.pea||0)+(DONNEE?.totaux?.cto||0)+(DONNEE?.totaux?.pme||0)||1;
 
-  const risque={}, themes={}, cats={};
-  const THEME_RULES = [
-    [/eau|water|WATR|EAU/i,'Eau & Env.'],
-    [/tech|digital|logiciel|software/i,'Tech'],
-    [/banque|bank|financ|EXV/i,'Finance'],
-    [/défense|defense|armement|HENSOLDT|EXAIL/i,'Défense'],
+  const THEME_RULES=[
+    [/eau|water|AWAT/i,'Eau & Env.'],
+    [/banque|bank|EXV/i,'Finance'],
+    [/défense|defense|EXAIL|HENSOLDT/i,'Défense'],
     [/monde|world|CW8/i,'Global'],
     [/japon|japan|IJPE/i,'Asie'],
-    [/asie|asia|pacif|AEEM/i,'Asie'],
-    [/ressource|miner|AMRS|ABRE/i,'Matières 1ères'],
-    [/biotech|pharma|medic/i,'Santé'],
+    [/asie|asia|AEEM/i,'Asie'],
+    [/ressource|miner|AMRS/i,'Matières 1ères'],
+    [/biotech|pharma/i,'Santé'],
+    [/tech|logiciel|software/i,'Tech'],
   ];
 
-  Object.entries(pos).forEach(([ticker,p]) => {
-    if (p.etat==='EXITED'||(p.quantite_detenue||0)===0) return;
-    const c = cfg[ticker];
-    if (!c) return;
-    const val = p.derniere_valorisation || 0;
-    const cat = c.categorie || 'Autre';
-    const ris = RISQUE_MAP[cat] || 'Autre';
-    const these = (c.these||'') + ' ' + (c.nom||'') + ' ' + ticker;
+  const allPos = [
+    ...(DONNEE?.pea_positions||[]),
+    ...(DONNEE?.cto_positions||[]),
+    ...(DONNEE?.pme_positions||[]),
+  ];
 
-    cats[cat] = (cats[cat]||0) + val;
-    risque[ris] = (risque[ris]||0) + val;
+  allPos.forEach(p => {
+    const val = p.montant||0;
+    if(!val) return;
 
-    let theme = 'Diversifié';
-    for (const [re, label] of THEME_RULES) {
-      if (re.test(these)) { theme = label; break; }
+    // Chercher dans table_infos par ISIN ou nom
+    const info = p.isin ? infos[p.isin] : null;
+    const cat  = info?.categorie || 'Non classé';
+    const ris  = info?.risque || RISQ_MAP[cat] || 'Non classé';
+    let theme  = info?.thematique || null;
+    if(!theme) {
+      for(const [re,label] of THEME_RULES) {
+        if(re.test((p.nom||'')+(p.isin||''))) {theme=label;break;}
+      }
+      theme = theme||'Autre';
     }
-    themes[theme] = (themes[theme]||0) + val;
+
+    cats[cat]   = (cats[cat]||0)+val;
+    risque[ris] = (risque[ris]||0)+val;
+    themes[theme]=(themes[theme]||0)+val;
   });
 
-  return {risque,themes,cats,investiCote};
+  return {risque,themes,cats,base};
 }
 
-// ── Render tableau ────────────────────────────────────────────────
-function renderTableau(envelopes, total) {
-  const prev = (STATE?.snapshots_patrimoine||[]).slice(-2,-1)[0]?.total || total;
-  const totalDelta = total - prev;
-  const totalDeltaPct = prev>0 ? totalDelta/prev*100 : 0;
+// ══════════════════════════════════════════════════════════════════
+// RENDER TABLEAU
+// ══════════════════════════════════════════════════════════════════
+function renderTableau(envs, total) {
+  const snaps   = HISTORIQUE?.snapshots||[];
+  const prevTot = snaps.length>=2 ? snaps[snaps.length-2].totaux.total : total;
+  const totDlt  = total - prevTot;
+  const totDltP = prevTot>0 ? totDlt/prevTot*100 : 0;
 
-  let rows = '';
-  envelopes.forEach((env, i) => {
-    const delta    = env.total - env.prevTotal;
-    const deltaPct = env.prevTotal>0 ? delta/env.prevTotal*100 : 0;
-    const pct      = total>0 ? env.total/total*100 : 0;
+  let rows='';
+  envs.forEach((env,i)=>{
+    const delta   = env.tot - env.prev;
+    const deltaPct= env.prev>0 ? delta/env.prev*100 : 0;
+    const pct     = total>0 ? env.tot/total*100 : 0;
 
-    // P&L global (positions cotées)
-    let pnlEurSum = null, costSum = 0;
-    (env.lines||[]).forEach(l => {
-      if (l.type==='pos') {
-        pnlEurSum = (pnlEurSum||0) + (l.pnlEur||0);
-        costSum  += (l.val||0) - (l.pnlEur||0);
-      }
+    // P&L global (cotées uniquement)
+    let pnlSum=null, costSum=0;
+    (env.lines||[]).forEach(l=>{
+      if(l.type==='pos'){pnlSum=(pnlSum||0)+(l.pnlEur||0);costSum+=(l.val||0)-(l.pnlEur||0);}
     });
-    const pnlPctGlob = costSum>0 && pnlEurSum!=null ? pnlEurSum/costSum*100 : null;
+    const pnlPctG = costSum>0&&pnlSum!=null ? pnlSum/costSum*100 : null;
 
-    rows += `
-      <tr class="env-row" onclick="toggleDrill(${i})">
-        <td>
-          <div class="env-name-cell">
-            <div class="env-dot" style="background:${env.color}"></div>
-            <span class="env-nom">${env.nom}</span>
-            <span class="env-chev" id="chev-${i}">›</span>
-          </div>
+    rows+=`
+      <tr class="env-row" onclick="drillToggle(${i})">
+        <td><div class="env-nc">
+          <div class="env-dot" style="background:${env.color}"></div>
+          <span class="env-nom">${env.nom}</span>
+          <span class="chev" id="chv-${i}">›</span>
+        </div></td>
+        <td class="cr"><div class="cm" style="font-weight:600">${fmt(env.tot)} €</div>
+          <div class="cs">${pct.toFixed(1)}% patrim.</div></td>
+        <td class="cr">
+          ${pnlPctG!=null
+            ?`<div class="cm ${pc(pnlPctG)}">${fmtPct(pnlPctG)}</div><div class="cs ${pc(pnlSum)}">${fmt(pnlSum)} €</div>`
+            :'<div class="neu">—</div>'}
         </td>
-        <td class="cell-r">
-          <div class="cell-mono" style="font-weight:600">${fmt(env.total)} €</div>
-          <div class="cell-sub">${pct.toFixed(1)}% patrim.</div>
-        </td>
-        <td class="cell-r">
-          ${pnlPctGlob!=null
-            ? `<div class="cell-mono ${pc(pnlPctGlob)}">${fmtPct(pnlPctGlob)}</div>
-               <div class="cell-sub ${pc(pnlEurSum)}">${fmt(pnlEurSum)} €</div>`
-            : '<div class="neu">—</div>'}
-        </td>
-        <td class="cell-r">
+        <td class="cr">
           ${delta!==0
-            ? `<div class="cell-mono ${pc(delta)}">${delta>0?'+':''}${fmt(delta)} €</div>
-               <div class="cell-sub ${pc(deltaPct)}">${fmtPct(deltaPct)}</div>`
-            : '<div class="neu">—</div>'}
+            ?`<div class="cm ${pc(delta)}">${delta>0?'+':''}${fmt(delta)} €</div><div class="cs ${pc(deltaPct)}">${fmtPct(deltaPct)}</div>`
+            :'<div class="neu">—</div>'}
         </td>
       </tr>
-      <tr class="drill-row" id="drill-${i}">
+      <tr class="dr-row" id="dr-${i}">
         <td colspan="4" style="padding:0">${renderDrill(env)}</td>
-      </tr>
-    `;
+      </tr>`;
   });
 
-  rows += `
-    <tr class="total-row">
-      <td>TOTAL</td>
-      <td class="cell-r" style="font-size:15px">${fmt(total)} €</td>
-      <td class="cell-r neu">—</td>
-      <td class="cell-r ${pc(totalDelta)}">${totalDelta!==0?(totalDelta>0?'+':'')+fmt(totalDelta)+' €':''}</td>
-    </tr>`;
+  rows+=`<tr class="tot-row">
+    <td>TOTAL</td>
+    <td class="cr" style="font-size:15px">${fmt(total)} €</td>
+    <td class="cr neu">—</td>
+    <td class="cr ${pc(totDlt)}">${totDlt!==0?(totDlt>0?'+':'')+fmt(totDlt)+' €':''}</td>
+  </tr>`;
 
-  return `<table class="env-table">
+  return `<table class="env-tbl">
     <thead><tr>
       <th style="width:30%">Enveloppe</th>
       <th style="width:22%;text-align:right">Montant</th>
       <th style="width:22%;text-align:right">P&L historique</th>
-      <th style="width:26%;text-align:right">Δ dernière MAJ</th>
+      <th style="width:26%;text-align:right">Δ MAJ précédente</th>
     </tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
 }
 
 function renderDrill(env) {
-  if (!env.lines || env.lines.length === 0) {
-    return `<div class="drill-wrap"><div class="drill-inner" style="padding:12px 16px 12px 0;font-family:var(--mono);font-size:10px;color:var(--text3)">
-      Faire une MAJ pour voir le détail</div></div>`;
-  }
-  let html = '<div class="drill-wrap"><div class="drill-inner">';
-  env.lines.forEach(l => {
-    if (l.type === 'cash') {
-      html += `<div class="drill-line">
-        <div class="drill-lname"><span class="cash-line">💵 ${l.nom}</span></div>
-        <div class="drill-val" style="color:var(--blue)">${fmt(l.val,2)} €</div>
-        <div class="drill-pnl">—</div><div class="drill-delta">—</div>
-      </div>`;
-    } else if (l.type === 'pos') {
-      const bc = BADGE_MAP[l.etat] || 'b-other';
-      html += `<div class="drill-line">
-        <div class="drill-lname">
-          <div class="drill-lname-main">${l.nom}<span class="badge ${bc}">${l.etat}</span></div>
-          ${l.categorie?`<div class="drill-lname-sub">${l.categorie}</div>`:''}
+  if(!env.lines||env.lines.length===0)
+    return `<div class="dr-wrap"><div class="dr-inner" style="padding:12px 14px;font-family:var(--mono);font-size:10px;color:var(--text3)">Faire une MAJ pour voir le détail</div></div>`;
+
+  let h='<div class="dr-wrap"><div class="dr-inner">';
+  env.lines.forEach(l=>{
+    if(l.type==='cash'){
+      h+=`<div class="dr-line"><div class="dr-name"><span class="cash-ln">💵 ${l.nom}</span></div>
+        <div class="dr-val" style="color:var(--blue)">${fmt(l.val,2)} €</div>
+        <div class="dr-pnl">—</div><div class="dr-dlt">—</div></div>`;
+    } else if(l.type==='pos'){
+      h+=`<div class="dr-line">
+        <div class="dr-name">
+          <div class="dr-nm">${l.nom}${l.isin?`<span style="color:var(--text3);font-family:var(--mono);font-size:9px;margin-left:6px">${l.isin}</span>`:''}</div>
+          <div class="dr-sub">${l.quantite} titres · PRU ${fmt(l.pru,2)} €</div>
         </div>
-        <div class="drill-val">${fmt(l.val)} €</div>
-        <div class="drill-pnl ${pc(l.pnlEur)}">
+        <div class="dr-val">${fmt(l.val)} €</div>
+        <div class="dr-pnl ${pc(l.pnlEur)}">
           ${l.pnlEur!=null?(l.pnlEur>=0?'+':'')+fmt(l.pnlEur)+' €':'—'}
           ${l.pnlPct!=null?`<div style="font-size:10px">${fmtPct(l.pnlPct)}</div>`:''}
         </div>
-        <div class="drill-delta">—</div>
+        <div class="dr-dlt">—</div>
       </div>`;
     } else {
-      html += `<div class="drill-line">
-        <div class="drill-lname"><div class="drill-lname-main">${l.nom}</div></div>
-        <div class="drill-val">${fmt(l.val,2)} €</div>
-        <div class="drill-pnl">—</div><div class="drill-delta">—</div>
-      </div>`;
+      h+=`<div class="dr-line"><div class="dr-name"><div class="dr-nm">${l.nom}</div></div>
+        <div class="dr-val">${fmt(l.val,2)} €</div><div class="dr-pnl">—</div><div class="dr-dlt">—</div></div>`;
     }
   });
-  html += '</div></div>';
-  return html;
+  h+='</div></div>';
+  return h;
 }
 
-function toggleDrill(i) {
-  const dr   = document.getElementById('drill-'+i);
-  const chev = document.getElementById('chev-'+i);
-  if (!dr) return;
-  const isOpen = dr.classList.contains('open');
-  document.querySelectorAll('.drill-row').forEach(r=>r.classList.remove('open'));
-  document.querySelectorAll('.env-chev').forEach(c=>c.classList.remove('open'));
-  if (!isOpen) { dr.classList.add('open'); chev?.classList.add('open'); }
+function drillToggle(i) {
+  const dr=document.getElementById('dr-'+i);
+  const chev=document.getElementById('chv-'+i);
+  if(!dr)return;
+  const was=dr.classList.contains('open');
+  document.querySelectorAll('.dr-row').forEach(r=>r.classList.remove('open'));
+  document.querySelectorAll('.chev').forEach(c=>c.classList.remove('open'));
+  if(!was){dr.classList.add('open');chev?.classList.add('open');}
 }
 
-// ── Render charts ─────────────────────────────────────────────────
-function renderChartLine() {
-  const snaps = STATE?.snapshots_patrimoine || [];
-  if (snaps.length < 2) return `<div class="chart-empty">Pas encore assez de MAJ pour afficher la courbe</div>`;
-  return `<canvas id="chart-line"></canvas>`;
-}
-
+// ══════════════════════════════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════════════════════════════
 function initChartLine() {
-  const snaps = STATE?.snapshots_patrimoine || [];
-  if (snaps.length < 2) return;
-  const canvas = document.getElementById('chart-line');
-  if (!canvas) return;
-  if (chartLine) chartLine.destroy();
+  const snaps = HISTORIQUE?.snapshots||[];
+  if(snaps.length<2) return;
+  const canvas=document.getElementById('ch-line');
+  if(!canvas)return;
+  if(chartLine)chartLine.destroy();
 
-  const labels = snaps.map(s => new Date(s.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}));
-  const dsets = [
-    {key:'pea',label:'PEA'},{key:'cto',label:'CTO'},{key:'pme',label:'PEA-PME'},
-    {key:'av',label:'AV'},{key:'pee',label:'PEE'},{key:'livrets',label:'Livrets'},
-    {key:'scpi',label:'SCPI'},
-  ].filter(d => snaps.some(s=>(s[d.key]||0)>0))
-   .map(d => ({
-     label:d.label,
-     data:snaps.map(s=>s[d.key]||0),
-     borderColor:ENV_COLORS[d.label]||ENV_COLORS[Object.keys(ENV_COLORS).find(k=>k===d.label||k.toUpperCase()===d.label)||'PEA'],
-     backgroundColor:(ENV_COLORS[d.label]||'#4d9fff')+'18',
-     fill:true,tension:.3,pointRadius:snaps.length>8?2:4,borderWidth:2,
-   }));
+  const labels=snaps.map(s=>new Date(s.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}));
+  const keys=[{k:'pea',l:'PEA'},{k:'cto',l:'CTO'},{k:'pme',l:'PEA-PME'},{k:'av',l:'AV'},
+    {k:'pee',l:'PEE'},{k:'livrets',l:'Livrets'},{k:'scpi',l:'SCPI'},{k:'revolut',l:'Revolut'}]
+    .filter(d=>snaps.some(s=>(s.totaux?.[d.k]||0)>0));
 
-  chartLine = new Chart(canvas,{
-    type:'line',data:{labels,datasets:dsets},
+  chartLine=new Chart(canvas,{
+    type:'line',
+    data:{labels,datasets:keys.map(d=>({
+      label:d.l,data:snaps.map(s=>s.totaux?.[d.k]||0),
+      borderColor:EC[d.l]||EC[d.k]||'#4d9fff',
+      backgroundColor:(EC[d.l]||'#4d9fff')+'15',
+      fill:true,tension:.3,pointRadius:snaps.length>10?2:4,borderWidth:2,
+    }))},
     options:{
-      responsive:true,
-      interaction:{mode:'index',intersect:false},
+      responsive:true,interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{labels:{color:'#7a8fa8',font:{family:"'IBM Plex Mono'",size:10},boxWidth:10}},
         tooltip:{backgroundColor:'#111722',borderColor:'#1e2a3d',borderWidth:1,
@@ -428,72 +392,79 @@ function initChartLine() {
   });
 }
 
-function initChartDonut(envelopes, total) {
-  const canvas = document.getElementById('chart-donut');
-  if (!canvas) return;
-  if (chartDonut) chartDonut.destroy();
-  const data = envelopes.filter(e=>e.total>0);
-  chartDonut = new Chart(canvas,{
+function initChartDonut(envs,total){
+  const canvas=document.getElementById('ch-donut');
+  if(!canvas)return;
+  if(chartDonut)chartDonut.destroy();
+  chartDonut=new Chart(canvas,{
     type:'doughnut',
-    data:{
-      labels:data.map(e=>e.nom),
-      datasets:[{data:data.map(e=>e.total),backgroundColor:data.map(e=>e.color),borderWidth:0,hoverOffset:4}]
-    },
-    options:{
-      cutout:'68%',
-      plugins:{
-        legend:{display:false},
-        tooltip:{backgroundColor:'#111722',borderColor:'#1e2a3d',borderWidth:1,
-          callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.raw)} € (${(ctx.raw/total*100).toFixed(1)}%)`}}
-      }
-    }
+    data:{labels:envs.map(e=>e.nom),datasets:[{data:envs.map(e=>e.tot),backgroundColor:envs.map(e=>e.color),borderWidth:0,hoverOffset:4}]},
+    options:{cutout:'68%',plugins:{
+      legend:{display:false},
+      tooltip:{backgroundColor:'#111722',borderColor:'#1e2a3d',borderWidth:1,
+        callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.raw)} € (${(ctx.raw/total*100).toFixed(1)}%)`}}
+    }}
   });
-  document.getElementById('donut-legend').innerHTML = data.map(e=>`
-    <div class="leg-item"><div class="leg-dot" style="background:${e.color}"></div>
-    <span>${e.nom} ${(e.total/total*100).toFixed(0)}%</span></div>`).join('');
+  const leg=document.getElementById('donut-leg');
+  if(leg) leg.innerHTML=envs.map(e=>`
+    <div class="leg-i"><div class="leg-d" style="background:${e.color}"></div>
+    <span>${e.nom} ${(e.tot/total*100).toFixed(0)}%</span></div>`).join('');
 }
 
-// ── Render bars analyse ───────────────────────────────────────────
-function renderBars(data, base) {
-  const items = Object.entries(data).sort((a,b)=>b[1]-a[1]);
-  if (!items.length) return '<div style="font-family:var(--mono);font-size:10px;color:var(--text3);padding:8px 0">Aucune donnée — faire une MAJ</div>';
-  return items.map(([label,val],i)=>{
-    const pct  = base>0 ? val/base*100 : 0;
-    const color= RISQUE_COLORS[label] || ANA_COLORS[i%ANA_COLORS.length];
-    return `<div class="bar-item">
-      <div class="bar-head">
-        <span class="bar-name" style="color:${color}">${label}</span>
-        <span class="bar-info">${fmt(val)} € · ${pct.toFixed(1)}%</span>
-      </div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(pct,100)}%;background:${color}"></div></div>
+function renderBars(data, base, colorMap) {
+  const items=Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  if(!items.length)return`<div style="font-family:var(--mono);font-size:10px;color:var(--text3);padding:6px 0">Aucune donnée — faire une MAJ</div>`;
+  return items.map(([lbl,val],i)=>{
+    const pct=base>0?val/base*100:0;
+    const col=colorMap?.[lbl]||ANA_C[i%ANA_C.length];
+    return`<div class="bar-item">
+      <div class="bar-hd"><span class="bar-nm" style="color:${col}">${lbl}</span>
+        <span class="bar-nfo">${fmt(val)} € · ${pct.toFixed(1)}%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(pct,100)}%;background:${col}"></div></div>
     </div>`;
   }).join('');
 }
 
-// ── Render principal ──────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+// RENDER PRINCIPAL
+// ══════════════════════════════════════════════════════════════════
 function render() {
-  const snaps  = STATE?.snapshots_patrimoine || [];
-  const last   = snaps[snaps.length-1] || {};
-  const prev   = snaps[snaps.length-2] || {};
-  const cash   = STATE?.cash || {};
+  // Vérifier si des données existent
+  const hasDonnee = DONNEE && DONNEE.meta?.date_maj;
+  if(!hasDonnee) {
+    document.getElementById('root').innerHTML=`
+      <div class="empty-screen">
+        <div class="empty-icon">◈</div>
+        <div class="empty-ttl">Tableau de bord vide</div>
+        <div class="empty-sub">
+          Faites une première <strong style="color:var(--gold)">Mise à jour</strong> dans l'onglet ↑<br>
+          pour initialiser votre patrimoine.<br><br>
+          Importez vos CSV Boursorama et saisissez vos valeurs manuelles.
+        </div>
+      </div>`;
+    return;
+  }
 
-  const envelopes = buildEnvelopes();
-  const total     = last.total || 0;
-  const prevTot   = prev.total || total;
-  const delta     = total - prevTot;
-  const deltaPct  = prevTot>0 ? delta/prevTot*100 : 0;
-  const cashTotal = (cash.pea||0)+(cash.cto||0)+(cash.pme||0);
-  const investiCote = envelopes.filter(e=>['PEA','CTO','PEA-PME'].includes(e.key)).reduce((s,e)=>s+e.total,0);
-  const garanti   = envelopes.filter(e=>['AV','PEE','Livrets','SCPI'].includes(e.key)).reduce((s,e)=>s+e.total,0);
-  const majDate   = STATE?.meta?.derniere_maj_manuelle || '—';
-  const {risque,themes,cats,investiCote:ic} = buildAnalysis(envelopes);
+  const envs    = buildEnvelopes();
+  const T       = DONNEE.totaux;
+  const snaps   = HISTORIQUE?.snapshots||[];
+  const prevSnap= snaps.length>=2 ? snaps[snaps.length-2] : null;
+  const prevTot = prevSnap?.totaux?.total || T.total;
+  const delta   = T.total - prevTot;
+  const deltaPct= prevTot>0 ? delta/prevTot*100 : 0;
+  const cashTot = (DONNEE.cash?.pea||0)+(DONNEE.cash?.cto||0)+(DONNEE.cash?.pme||0);
+  const invCote = (T.pea||0)+(T.cto||0)+(T.pme||0);
+  const garanti = (T.av||0)+(T.pee||0)+(T.livrets||0)+(T.scpi||0);
+  const majDate = DONNEE.meta.date_maj;
+  const nSnaps  = snaps.length;
 
-  document.getElementById('root').innerHTML = `
-    <!-- HEADER -->
+  const {risque,themes,cats,base} = buildAnalysis(envs);
+
+  document.getElementById('root').innerHTML=`
     <div class="hdr">
       <div>
-        <div class="hdr-label">Patrimoine total</div>
-        <div class="hdr-total ${pc(delta)}">${fmt(total)} €</div>
+        <div class="hdr-lbl">Patrimoine total</div>
+        <div class="hdr-tot ${pc(delta)}">${fmt(T.total)} €</div>
         <div class="hdr-delta">
           <span class="${pc(delta)}">${delta>=0?'+':''}${fmt(delta)} €</span>
           <span class="${pc(deltaPct)}" style="font-size:10px">${fmtPct(deltaPct)}</span>
@@ -502,61 +473,46 @@ function render() {
       </div>
       <div class="hdr-meta">
         <div>Dernière MAJ : <span style="color:var(--text)">${majDate}</span></div>
-        <div>${envelopes.length} enveloppes · ${snaps.length} points historique</div>
+        <div>${envs.length} enveloppes · ${nSnaps} point(s) historique</div>
       </div>
     </div>
 
-    <!-- KPIs -->
     <div class="kpis">
-      <div class="kpi g"><div class="kpi-label">Investi coté</div>
-        <div class="kpi-val">${fmt(investiCote)} €</div><div class="kpi-sub">PEA · CTO · PME</div></div>
-      <div class="kpi o"><div class="kpi-label">Garanti & non coté</div>
+      <div class="kpi g"><div class="kpi-lbl">Investi coté</div>
+        <div class="kpi-val">${fmt(invCote)} €</div><div class="kpi-sub">PEA · CTO · PME</div></div>
+      <div class="kpi o"><div class="kpi-lbl">Garanti & non coté</div>
         <div class="kpi-val">${fmt(garanti)} €</div><div class="kpi-sub">AV · PEE · Livrets · SCPI</div></div>
-      <div class="kpi b"><div class="kpi-label">Cash disponible</div>
-        <div class="kpi-val">${fmt(cashTotal)} €</div><div class="kpi-sub">Espèces PEA+CTO+PME</div></div>
-      <div class="kpi"><div class="kpi-label">Total</div>
-        <div class="kpi-val">${fmt(total)} €</div>
+      <div class="kpi b"><div class="kpi-lbl">Cash disponible</div>
+        <div class="kpi-val">${fmt(cashTot)} €</div><div class="kpi-sub">Espèces PEA+CTO+PME</div></div>
+      <div class="kpi"><div class="kpi-lbl">Total</div>
+        <div class="kpi-val">${fmt(T.total)} €</div>
         <div class="kpi-sub ${pc(delta)}">${delta>=0?'+':''}${fmt(delta)} € vs MAJ préc.</div></div>
     </div>
 
-    <!-- N1 TABLEAU -->
-    <div class="sec"><div class="sec-title">Niveau 1 — Enveloppes</div><div class="sec-line"></div></div>
-    ${renderTableau(envelopes, total)}
+    <div class="sec"><div class="sec-t">Niveau 1 — Enveloppes</div><div class="sec-l"></div></div>
+    ${renderTableau(envs, T.total)}
 
-    <!-- N2 COURBE -->
-    <div class="sec"><div class="sec-title">Niveau 2 — Évolution patrimoine</div><div class="sec-line"></div></div>
-    <div class="charts-row">
-      <div class="chart-card">
-        <div class="chart-label">Évolution par enveloppe</div>
-        ${renderChartLine()}
+    <div class="sec"><div class="sec-t">Niveau 2 — Évolution</div><div class="sec-l"></div></div>
+    <div class="ch-grid">
+      <div class="ch-card"><div class="ch-lbl">Patrimoine par enveloppe</div>
+        ${nSnaps>=2?'<canvas id="ch-line"></canvas>':`<div class="ch-empty">Il faut au moins 2 MAJ pour afficher la courbe (${nSnaps}/2)</div>`}
       </div>
-      <div class="chart-card">
-        <div class="chart-label">Répartition actuelle</div>
-        <canvas id="chart-donut" style="max-height:180px"></canvas>
-        <div class="legend" id="donut-legend"></div>
+      <div class="ch-card"><div class="ch-lbl">Répartition</div>
+        <canvas id="ch-donut" style="max-height:180px"></canvas>
+        <div class="leg" id="donut-leg"></div>
       </div>
     </div>
 
-    <!-- N3/4/5 ANALYSE -->
-    <div class="sec"><div class="sec-title">Niveaux 3/4/5 — Analyse</div><div class="sec-line"></div></div>
-    <div class="ana-row">
-      <div class="ana-card">
-        <div class="ana-label">Niveau 3 — Risque</div>
-        ${renderBars(risque, ic)}
-      </div>
-      <div class="ana-card">
-        <div class="ana-label">Niveau 4 — Thématiques</div>
-        ${renderBars(themes, ic)}
-      </div>
-      <div class="ana-card">
-        <div class="ana-label">Niveau 5 — Catégories</div>
-        ${renderBars(cats, ic)}
-      </div>
+    <div class="sec"><div class="sec-t">Niveaux 3/4/5 — Risque · Thématique · Catégorie</div><div class="sec-l"></div></div>
+    <div class="ana-grid">
+      <div class="ana-card"><div class="ana-lbl">Niveau 3 — Risque</div>${renderBars(risque,base,RISQ_C)}</div>
+      <div class="ana-card"><div class="ana-lbl">Niveau 4 — Thématiques</div>${renderBars(themes,base,null)}</div>
+      <div class="ana-card"><div class="ana-lbl">Niveau 5 — Catégories</div>${renderBars(cats,base,null)}</div>
     </div>
   `;
 
   initChartLine();
-  initChartDonut(envelopes, total);
+  initChartDonut(envs, T.total);
 }
 
 load();

@@ -13,440 +13,153 @@
   --green:#00d68f;--green2:rgba(0,214,143,.1);
   --red:#ff4d6a;--red2:rgba(255,77,106,.1);
   --blue:#4d9fff;--blue2:rgba(77,159,255,.1);
-  --gold:#f0b429;
+  --gold:#f0b429;--gold2:rgba(240,180,41,.1);
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;overflow-y:auto}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.page{max-width:900px;margin:0 auto;padding:32px 32px 80px}
+.page{max-width:920px;margin:0 auto;padding:28px 28px 80px}
+.page-title{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:4px}
+.page-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:28px;letter-spacing:1px}
 
-/* HEADER */
-.page-title{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:4px}
-.page-sub{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:32px}
-
-/* STEPS INDICATOR */
-.steps{display:flex;gap:0;margin-bottom:32px}
-.step-item{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
-.step-item:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:1px;background:var(--border2);z-index:0}
-.step-num{width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--text3);z-index:1;position:relative}
-.step-num.active{background:var(--blue);border-color:var(--blue);color:#fff}
-.step-num.done{background:var(--green2);border-color:var(--green);color:var(--green)}
-.step-label{font-family:var(--mono);font-size:8px;color:var(--text3);margin-top:5px;letter-spacing:1px;text-align:center}
+/* STEPS */
+.steps{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.step-btn{flex:1;padding:10px 8px;text-align:center;cursor:pointer;font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--text3);background:var(--bg2);border-right:1px solid var(--border);transition:background .12s,color .12s}
+.step-btn:last-child{border-right:none}
+.step-btn.active{background:var(--blue2);color:var(--blue)}
+.step-btn.done{background:var(--green2);color:var(--green)}
 
 /* CARD */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:16px}
-.card-title{font-family:var(--mono);font-size:10px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.card-title-badge{background:var(--blue2);color:var(--blue);padding:2px 7px;border-radius:3px;font-size:8px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:14px}
+.card-title{font-family:var(--mono);font-size:9px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.badge{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px}
+.badge-blue{background:var(--blue2);color:var(--blue)}
+.badge-green{background:var(--green2);color:var(--green)}
+.badge-gold{background:var(--gold2);color:var(--gold)}
 
-/* DROP ZONE */
-.dropzone{border:2px dashed var(--border2);border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:12px}
-.dropzone:hover,.dropzone.drag{border-color:var(--blue);background:var(--blue2)}
-.dropzone-icon{font-size:28px;margin-bottom:8px}
-.dropzone-label{font-family:var(--mono);font-size:10px;color:var(--text3)}
-.dropzone-label strong{color:var(--text2)}
+/* DROPZONE */
+.dz{border:2px dashed var(--border2);border-radius:8px;padding:28px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:10px}
+.dz:hover,.dz.drag{border-color:var(--blue);background:var(--blue2)}
+.dz-icon{font-size:24px;margin-bottom:6px}
+.dz-label{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.dz-label strong{color:var(--text2)}
 input[type=file]{display:none}
 
-/* TABLEAU CSV PREVIEW */
-.csv-preview{margin-bottom:12px}
-.csv-badge{display:inline-flex;align-items:center;gap:6px;background:var(--green2);border:1px solid var(--green);border-radius:4px;padding:4px 10px;font-family:var(--mono);font-size:10px;color:var(--green);margin-bottom:8px}
-.csv-table{width:100%;border-collapse:collapse;font-size:11px}
-.csv-table th{background:var(--bg3);font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;padding:7px 10px;text-align:right;border-bottom:1px solid var(--border)}
-.csv-table th:first-child{text-align:left}
-.csv-table td{padding:7px 10px;border-bottom:1px solid var(--border);text-align:right;font-family:var(--mono)}
-.csv-table td:first-child{text-align:left;color:var(--text)}
-.csv-table tr:last-child td{border-bottom:none}
-.csv-total{font-weight:700;background:var(--bg3);color:var(--gold)}
+/* CSV PREVIEW */
+.csv-ok{display:inline-flex;align-items:center;gap:6px;background:var(--green2);border:1px solid rgba(0,214,143,.3);border-radius:4px;padding:4px 10px;font-family:var(--mono);font-size:10px;color:var(--green);margin-bottom:8px}
+.csv-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:4px}
+.csv-tbl th{background:var(--bg3);font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;padding:7px 10px;border-bottom:1px solid var(--border)}
+.csv-tbl th:not(:first-child){text-align:right}
+.csv-tbl td{padding:7px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px}
+.csv-tbl td:not(:first-child){text-align:right}
+.csv-tbl tr:last-child td{border-bottom:none}
+.csv-tbl .trow-total{background:var(--bg3);font-weight:700;color:var(--gold)}
 
 /* INPUTS */
-.fi-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.fi-group{display:flex;flex-direction:column;gap:5px}
-.fi-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
-.fi-input{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:10px 12px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .15s;width:100%}
-.fi-input:focus{border-color:var(--blue)}
-.fi-input[readonly]{color:var(--text2);cursor:default}
+.fi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.fi-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fl{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.fi{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 12px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;transition:border-color .15s;width:100%}
+.fi:focus{border-color:var(--blue)}
+.fi[readonly]{color:var(--text2)}
 
-/* TABLE SAISIE */
-.saisie-table{width:100%;border-collapse:collapse;margin-bottom:8px}
-.saisie-table th{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;padding:8px 10px;text-align:left;background:var(--bg3);border-bottom:1px solid var(--border)}
-.saisie-table th:last-child{text-align:right}
-.saisie-table td{padding:6px 10px;border-bottom:1px solid var(--border)}
-.saisie-table td:last-child{text-align:right}
-.saisie-input{background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;padding:3px 6px;width:100%;outline:none;text-align:right;transition:border-color .15s}
-.saisie-input:focus{border-color:var(--blue)}
-.saisie-nom{font-size:12px;color:var(--text)}
-.saisie-total-row td{background:var(--bg3);font-family:var(--mono);font-weight:700;color:var(--gold)}
+/* SAISIE TABLE */
+.st{width:100%;border-collapse:collapse;margin-bottom:8px}
+.st th{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;padding:8px 10px;background:var(--bg3);border-bottom:1px solid var(--border);text-align:left}
+.st th:last-child{text-align:right;width:140px}
+.st td{padding:5px 10px;border-bottom:1px solid var(--border);font-size:12px}
+.st td:last-child{text-align:right}
+.st tr:last-child td{border-bottom:none}
+.si{background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;padding:3px 4px;width:100%;outline:none;text-align:right;transition:border-color .15s}
+.si:focus{border-color:var(--blue)}
+.st .tr-tot{background:var(--bg3);font-weight:700;font-family:var(--mono);color:var(--gold)}
 
 /* TOTAUX */
-.totaux-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.tot-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 14px}
-.tot-label{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-.tot-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--gold)}
+.tot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.tot-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px}
+.tot-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.tot-val{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--gold)}
+.tot-val.big{font-size:22px}
 
 /* BOUTONS */
 .btn-row{display:flex;gap:10px;margin-top:16px}
 .btn{padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:500;transition:opacity .15s}
 .btn:hover{opacity:.85}
-.btn-p{background:var(--border2);color:var(--text2)}
-.btn-n{background:var(--blue);color:#fff;flex:1}
-.btn-save{background:var(--green);color:var(--bg);flex:1;font-weight:700}
-.btn-sm{padding:6px 12px;font-size:11px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer}
-.btn-sm:hover{background:var(--bg4)}
+.btn-back{background:var(--border2);color:var(--text2)}
+.btn-next{background:var(--blue);color:#fff;flex:1}
+.btn-save{background:var(--green);color:var(--bg);flex:1;font-weight:700;font-size:14px}
+.btn-add{padding:6px 12px;font-size:11px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;margin-top:6px}
+.btn-add:hover{background:var(--bg4)}
 
 /* TOKEN */
-.token-info{background:var(--blue2);border:1px solid rgba(77,159,255,.2);border-radius:6px;padding:10px 14px;font-family:var(--mono);font-size:10px;color:var(--blue);margin-bottom:14px}
+.token-info{background:var(--blue2);border:1px solid rgba(77,159,255,.2);border-radius:6px;padding:10px 14px;font-family:var(--mono);font-size:10px;color:var(--blue);margin-bottom:14px;line-height:1.8}
 
 /* SUCCESS */
-.success-card{text-align:center;padding:40px 20px}
-.success-icon{font-size:48px;margin-bottom:16px}
-.success-title{font-size:16px;font-weight:600;margin-bottom:8px}
+.success{text-align:center;padding:48px 20px}
+.success-icon{font-size:52px;margin-bottom:16px}
+.success-ttl{font-size:16px;font-weight:600;margin-bottom:8px}
+.success-tot{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--gold);margin:12px 0}
 .success-sub{font-family:var(--mono);font-size:11px;color:var(--green)}
-.success-total{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--gold);margin:12px 0}
 
-/* UTIL */
-.sec-line{height:1px;background:var(--border);margin:16px 0}
-.helper{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:12px}
+.helper{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:12px;line-height:1.7}
+.divider{height:1px;background:var(--border);margin:16px 0}
 </style>
 </head>
 <body>
 <div class="page">
   <div class="page-title">↑ Mise à jour</div>
-  <div class="page-sub">MISE À JOUR MANUELLE DU PATRIMOINE</div>
-
-  <!-- Indicateur étapes -->
-  <div class="steps" id="steps-indicator"></div>
-
-  <!-- Contenu de l'étape courante -->
+  <div class="page-sub">ACTUALISATION MANUELLE DU PATRIMOINE</div>
+  <div class="steps" id="steps-bar"></div>
   <div id="step-content"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 // ══════════════════════════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════════════════════════
-const GITHUB_USER = 'Cookiem420';
-const DATA_REPO   = 'hermes-data';
-const STATE_URL   = `https://raw.githubusercontent.com/${GITHUB_USER}/${DATA_REPO}/main/portfolio_state.json`;
-const CONFIG_URL  = `https://raw.githubusercontent.com/${GITHUB_USER}/${DATA_REPO}/main/config_watchlist.json`;
+const GH_USER   = 'Cookiem420';
+const GH_REPO   = 'hermes-data';
+const GH_API    = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/`;
+const RAW_BASE  = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/`;
 
-// Définition des étapes du wizard
-const STEPS = [
-  { id:'csv',    label:'CSV cotés' },
-  { id:'cash',   label:'Cash' },
-  { id:'av',     label:'AV' },
-  { id:'pee',    label:'PEE' },
-  { id:'autres', label:'Livrets & +' },
-  { id:'recap',  label:'Récap' },
-  { id:'token',  label:'Sauvegarde' },
-];
-
-// Données collectées
-const MAJ = {
-  pea_positions: [],   // [{isin, nom, quantite, pru, montant}]
-  cto_positions: [],
-  pme_positions: [],
-  cash_pea: 0, cash_cto: 0, cash_pme: 0,
-  av: [],              // [{nom, valeur}]
-  pee: [],             // [{nom, valeur}]
-  livret_a: 0, livret_usd: 0, livret_eur: 0,
-  scpi: 0, revolut: 0, cc: 0,
+const FILES = {
+  donnee:    'donnee_maj.json',
+  historique:'historique_maj.json',
+  infos:     'table_infos_valeurs.json',
 };
 
-// Données depuis GitHub
-let STATE_DATA = null;
-
-let currentStep = 0;
-
 // ══════════════════════════════════════════════════════════════════
-// INIT
+// ÉTAT WIZARD
 // ══════════════════════════════════════════════════════════════════
-async function init() {
-  // Charger state existant pour conserver l'historique
-  try {
-    const r = await fetch(STATE_URL + '?t=' + Date.now());
-    if (r.ok) STATE_DATA = await r.json();
-  } catch(e) { console.warn('State non chargé:', e); }
+const STEPS = [
+  {id:'csv',   label:'CSV cotés'},
+  {id:'av',    label:'Ass. Vie'},
+  {id:'pee',   label:'PEE'},
+  {id:'autres',label:'Livrets & +'},
+  {id:'recap', label:'Récap'},
+  {id:'token', label:'Sauvegarde'},
+];
 
-  renderStep();
-}
+let step = 0;
 
-// ══════════════════════════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════════════════════════
-function renderStepsIndicator() {
-  document.getElementById('steps-indicator').innerHTML = STEPS.map((s,i)=>`
-    <div class="step-item">
-      <div class="step-num ${i<currentStep?'done':i===currentStep?'active':''}">
-        ${i<currentStep?'✓':(i+1)}
-      </div>
-      <div class="step-label">${s.label}</div>
-    </div>`).join('');
-}
+// Données collectées
+const D = {
+  pea: [], cto: [], pme: [],          // positions CSV
+  cash_pea:0, cash_cto:0, cash_pme:0,
+  av:  [],                             // [{nom, valeur}]
+  pee: [],                             // [{nom, valeur}]
+  livret_a:0, livret_usd:0, livret_eur:0,
+  scpi:0, revolut:0, cc:0,
+};
 
-function renderStep() {
-  renderStepsIndicator();
-  const s = STEPS[currentStep];
-  const renderers = {
-    csv:    renderStepCSV,
-    cash:   renderStepCash,
-    av:     renderStepAV,
-    pee:    renderStepPEE,
-    autres: renderStepAutres,
-    recap:  renderStepRecap,
-    token:  renderStepToken,
-  };
-  document.getElementById('step-content').innerHTML = renderers[s.id]();
-  initStepListeners(s.id);
-}
+// Données existantes chargées depuis GitHub
+let EXISTING_DONNEE     = null;
+let EXISTING_HISTORIQUE = null;
 
-function next() { if (currentStep < STEPS.length-1) { currentStep++; renderStep(); } }
-function prev() { if (currentStep > 0) { currentStep--; renderStep(); } }
-
-// ══════════════════════════════════════════════════════════════════
-// ÉTAPE 1 — CSV cotés (PEA / CTO / PEA-PME)
-// ══════════════════════════════════════════════════════════════════
-function renderStepCSV() {
-  return `
-    <div class="card">
-      <div class="card-title">📂 Import CSV / XLSX Boursorama <span class="card-title-badge">PEA</span></div>
-      <div class="helper">Exporter depuis Boursorama : Mes comptes → PEA → Télécharger</div>
-      <div class="dropzone" id="dz-pea" onclick="document.getElementById('f-pea').click()"
-        ondragover="dzOver(event,'dz-pea')" ondragleave="dzLeave('dz-pea')" ondrop="dzDrop(event,'pea')">
-        <div class="dropzone-icon">📄</div>
-        <div class="dropzone-label"><strong>Glisser le CSV/XLSX PEA</strong> ou cliquer pour parcourir</div>
-      </div>
-      <input type="file" id="f-pea" accept=".csv,.xlsx,.xls" onchange="parseFile(this,'pea')">
-      <div id="preview-pea"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">📂 Import CSV / XLSX Boursorama <span class="card-title-badge">CTO</span></div>
-      <div class="dropzone" id="dz-cto" onclick="document.getElementById('f-cto').click()"
-        ondragover="dzOver(event,'dz-cto')" ondragleave="dzLeave('dz-cto')" ondrop="dzDrop(event,'cto')">
-        <div class="dropzone-icon">📄</div>
-        <div class="dropzone-label"><strong>Glisser le CSV/XLSX CTO</strong> ou cliquer pour parcourir</div>
-      </div>
-      <input type="file" id="f-cto" accept=".csv,.xlsx,.xls" onchange="parseFile(this,'cto')">
-      <div id="preview-cto"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">📂 Import CSV / XLSX Boursorama <span class="card-title-badge">PEA-PME</span></div>
-      <div class="dropzone" id="dz-pme" onclick="document.getElementById('f-pme').click()"
-        ondragover="dzOver(event,'dz-pme')" ondragleave="dzLeave('dz-pme')" ondrop="dzDrop(event,'pme')">
-        <div class="dropzone-icon">📄</div>
-        <div class="dropzone-label"><strong>Glisser le CSV/XLSX PEA-PME</strong> ou cliquer pour parcourir</div>
-      </div>
-      <input type="file" id="f-pme" accept=".csv,.xlsx,.xls" onchange="parseFile(this,'pme')">
-      <div id="preview-pme"></div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-n" onclick="next()">Suivant →</button>
-    </div>
-  `;
-}
-
-// ── Parsing CSV / XLSX ────────────────────────────────────────────
-function dzOver(e, id) { e.preventDefault(); document.getElementById(id).classList.add('drag'); }
-function dzLeave(id) { document.getElementById(id).classList.remove('drag'); }
-function dzDrop(e, env) {
-  e.preventDefault();
-  dzLeave('dz-'+env);
-  const file = e.dataTransfer.files[0];
-  if (file) parseFileObj(file, env);
-}
-
-function parseFile(input, env) {
-  const file = input.files[0];
-  if (file) parseFileObj(file, env);
-}
-
-function parseFileObj(file, env) {
-  const ext = file.name.split('.').pop().toLowerCase();
-  const reader = new FileReader();
-
-  reader.onload = function(e) {
-    try {
-      let rows = [];
-      if (ext === 'csv') {
-        rows = parseCSV(e.target.result);
-      } else {
-        const wb = XLSX.read(e.target.result, { type: 'array' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
-      }
-      const positions = extractPositions(rows, env);
-      MAJ[env + '_positions'] = positions;
-      renderCSVPreview(env, positions, file.name);
-    } catch(err) {
-      document.getElementById('preview-'+env).innerHTML =
-        `<div style="color:var(--red);font-family:var(--mono);font-size:10px;padding:8px 0">Erreur lecture : ${err.message}</div>`;
-    }
-  };
-
-  if (ext === 'csv') reader.readAsText(file, 'UTF-8');
-  else reader.readAsArrayBuffer(file);
-}
-
-function parseCSV(text) {
-  const lines = text.split('\n');
-  const sep = text.includes(';') ? ';' : ',';
-  return lines.map(l => l.split(sep).map(c => c.trim().replace(/^"|"$/g,'')));
-}
-
-function extractPositions(rows, env) {
-  // Chercher les colonnes clés dans les headers
-  const positions = [];
-  let headerRow = -1;
-  let cols = { nom:-1, isin:-1, qty:-1, pru:-1, montant:-1 };
-
-  for (let i = 0; i < Math.min(rows.length, 15); i++) {
-    const row = rows[i].map(c => String(c||'').toLowerCase());
-    // Chercher la ligne d'entête
-    const hasHeader = row.some(c =>
-      c.includes('isin') || c.includes('quantit') || c.includes('cours') ||
-      c.includes('valoris') || c.includes('titre') || c.includes('valeur'));
-    if (hasHeader) {
-      headerRow = i;
-      row.forEach((c, j) => {
-        if (c.includes('titre') || c.includes('libel') || c.includes('nom') || c.includes('valeur mob')) cols.nom = j;
-        if (c.includes('isin') || c.includes('code')) cols.isin = j;
-        if (c.includes('quantit') || c.includes('nbr') || c.includes('nbre')) cols.qty = j;
-        if (c.includes('pru') || c.includes('prix rev') || c.includes('prix moyen') || c.includes('cours achat')) cols.pru = j;
-        if (c.includes('valoris') || c.includes('montant') || c.includes('valeur') && !c.includes('mob')) cols.montant = j;
-      });
-      break;
-    }
-  }
-
-  if (headerRow === -1) {
-    // Essayer une détection par contenu (lignes avec des valeurs numériques)
-    return extractPositionsFallback(rows);
-  }
-
-  for (let i = headerRow + 1; i < rows.length; i++) {
-    const row = rows[i];
-    if (!row || row.every(c => !c)) continue;
-
-    const nom     = cols.nom >= 0 ? String(row[cols.nom]||'').trim() : '';
-    const isin    = cols.isin >= 0 ? String(row[cols.isin]||'').trim() : '';
-    const qty     = cols.qty >= 0 ? parseNum(row[cols.qty]) : 0;
-    const pru     = cols.pru >= 0 ? parseNum(row[cols.pru]) : 0;
-    const montant = cols.montant >= 0 ? parseNum(row[cols.montant]) : (qty * pru);
-
-    if (!nom || (!qty && !montant)) continue;
-    if (nom.toLowerCase().includes('total') || nom.toLowerCase().includes('sous-total')) continue;
-
-    positions.push({ nom, isin, quantite: qty, pru, montant });
-  }
-
-  return positions;
-}
-
-function extractPositionsFallback(rows) {
-  // Fallback : chercher lignes avec ISIN (12 chars commençant par 2 lettres)
-  const positions = [];
-  const isinRe = /^[A-Z]{2}[A-Z0-9]{10}$/;
-  rows.forEach(row => {
-    const rowStr = row.map(c => String(c||''));
-    const isinIdx = rowStr.findIndex(c => isinRe.test(c.trim()));
-    if (isinIdx >= 0) {
-      const isin = rowStr[isinIdx].trim();
-      const nom  = rowStr.find((c,i) => i < isinIdx && c.length > 3 && !/^\d/.test(c)) || '';
-      const nums = rowStr.filter(c => parseNum(c) > 0).map(parseNum);
-      positions.push({
-        nom: nom.trim(), isin, quantite: nums[0]||0,
-        pru: nums[1]||0, montant: nums[nums.length-1]||0,
-      });
-    }
-  });
-  return positions;
-}
-
-function parseNum(v) {
-  if (v == null) return 0;
-  return parseFloat(String(v).replace(/\s/g,'').replace(',','.')) || 0;
-}
-
-function renderCSVPreview(env, positions, filename) {
-  const total = positions.reduce((s,p) => s + p.montant, 0);
-  const envLabel = env.toUpperCase();
-
-  let rows = positions.map(p => `
-    <tr>
-      <td>${p.nom}</td>
-      <td>${p.isin||'—'}</td>
-      <td>${p.quantite}</td>
-      <td>${p.pru > 0 ? p.pru.toFixed(2)+' €' : '—'}</td>
-      <td>${p.montant.toFixed(2)} €</td>
-    </tr>`).join('');
-
-  rows += `<tr class="csv-total">
-    <td colspan="4">Total ${envLabel}</td>
-    <td>${total.toFixed(2)} €</td>
-  </tr>`;
-
-  document.getElementById('preview-'+env).innerHTML = `
-    <div class="csv-badge">✅ ${filename} — ${positions.length} lignes</div>
-    <table class="csv-table">
-      <thead><tr>
-        <th>Titre</th><th>ISIN</th><th>Qté</th><th>PRU</th><th>Valeur</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
-}
-
-// ══════════════════════════════════════════════════════════════════
-// ÉTAPE 2 — Cash
-// ══════════════════════════════════════════════════════════════════
-function renderStepCash() {
-  return `
-    <div class="card">
-      <div class="card-title">💵 Espèces disponibles</div>
-      <div class="helper">Saisir le solde espèces de chaque compte (hors titres)</div>
-      <div class="fi-row">
-        <div class="fi-group">
-          <label class="fi-label">Espèces PEA (€)</label>
-          <input class="fi-input" id="cash-pea" type="number" step="0.01" placeholder="0"
-            value="${MAJ.cash_pea||''}" oninput="MAJ.cash_pea=parseFloat(this.value)||0;updateCashTotal()">
-        </div>
-        <div class="fi-group">
-          <label class="fi-label">Espèces CTO (€)</label>
-          <input class="fi-input" id="cash-cto" type="number" step="0.01" placeholder="0"
-            value="${MAJ.cash_cto||''}" oninput="MAJ.cash_cto=parseFloat(this.value)||0;updateCashTotal()">
-        </div>
-      </div>
-      <div class="fi-row">
-        <div class="fi-group">
-          <label class="fi-label">Espèces PEA-PME (€)</label>
-          <input class="fi-input" id="cash-pme" type="number" step="0.01" placeholder="0"
-            value="${MAJ.cash_pme||''}" oninput="MAJ.cash_pme=parseFloat(this.value)||0;updateCashTotal()">
-        </div>
-        <div class="fi-group">
-          <label class="fi-label">Total espèces</label>
-          <input class="fi-input" id="cash-total" readonly value="0">
-        </div>
-      </div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-p" onclick="prev()">← Retour</button>
-      <button class="btn btn-n" onclick="next()">Suivant →</button>
-    </div>
-  `;
-}
-
-function updateCashTotal() {
-  const t = (MAJ.cash_pea||0)+(MAJ.cash_cto||0)+(MAJ.cash_pme||0);
-  const el = document.getElementById('cash-total');
-  if (el) el.value = t.toFixed(2)+' €';
-}
-
-// ══════════════════════════════════════════════════════════════════
-// ÉTAPE 3 — AV
-// ══════════════════════════════════════════════════════════════════
-const AV_FONDS = [
+// Fonds AV fixes (personnalisables dans l'étape)
+const AV_FONDS_DEFAULT = [
   'Fonds en euros',
   'Echiquier Agenor Mid Cap Europ',
   'Pictet Global Megatrend',
@@ -456,57 +169,7 @@ const AV_FONDS = [
   'ANDERA Dette Privée',
 ];
 
-function renderStepAV() {
-  if (MAJ.av.length === 0) {
-    MAJ.av = AV_FONDS.map(nom => ({ nom, valeur: 0 }));
-  }
-
-  const rows = MAJ.av.map((f,i) => `
-    <tr>
-      <td class="saisie-nom">${f.nom}</td>
-      <td><input class="saisie-input" type="number" step="0.01" placeholder="0"
-        value="${f.valeur||''}" oninput="MAJ.av[${i}].valeur=parseFloat(this.value)||0;updateAVTotal()"></td>
-    </tr>`).join('');
-
-  return `
-    <div class="card">
-      <div class="card-title">🏦 Assurance Vie</div>
-      <div class="helper">Saisir la valeur actuelle de chaque fonds</div>
-      <table class="saisie-table">
-        <thead><tr><th>Fonds</th><th style="text-align:right;width:160px">Valeur (€)</th></tr></thead>
-        <tbody>
-          ${rows}
-          <tr class="saisie-total-row">
-            <td>Total AV</td>
-            <td><input class="saisie-input" id="av-total" readonly style="color:var(--gold);font-weight:700"></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="sec-line"></div>
-      <button class="btn-sm" onclick="addAVLine()">+ Ajouter un fonds</button>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-p" onclick="prev()">← Retour</button>
-      <button class="btn btn-n" onclick="next()">Suivant →</button>
-    </div>
-  `;
-}
-
-function updateAVTotal() {
-  const t = MAJ.av.reduce((s,f)=>s+(f.valeur||0),0);
-  const el = document.getElementById('av-total');
-  if (el) el.value = t.toFixed(2)+' €';
-}
-
-function addAVLine() {
-  MAJ.av.push({ nom: 'Nouveau fonds', valeur: 0 });
-  renderStep();
-}
-
-// ══════════════════════════════════════════════════════════════════
-// ÉTAPE 4 — PEE
-// ══════════════════════════════════════════════════════════════════
-const PEE_FONDS = [
+const PEE_FONDS_DEFAULT = [
   'HSBC EE EURO PME F',
   'HSBC EE ACTIONS EUROPE SOLUTIONS CLIMAT F',
   'HSBC EE ISR ACTIONS EURO F',
@@ -514,393 +177,578 @@ const PEE_FONDS = [
   'HSBC EE ISR ACTIONS MONDE F',
 ];
 
-function renderStepPEE() {
-  if (MAJ.pee.length === 0) {
-    MAJ.pee = PEE_FONDS.map(nom => ({ nom, valeur: 0 }));
-  }
+// ══════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════
+async function init() {
+  // Pré-remplir AV et PEE avec les fonds par défaut
+  if (D.av.length === 0)  D.av  = AV_FONDS_DEFAULT.map(n => ({nom:n,valeur:0}));
+  if (D.pee.length === 0) D.pee = PEE_FONDS_DEFAULT.map(n => ({nom:n,valeur:0}));
 
-  const rows = MAJ.pee.map((f,i) => `
-    <tr>
-      <td class="saisie-nom">${f.nom}</td>
-      <td><input class="saisie-input" type="number" step="0.01" placeholder="0"
-        value="${f.valeur||''}" oninput="MAJ.pee[${i}].valeur=parseFloat(this.value)||0;updatePEETotal()"></td>
-    </tr>`).join('');
+  // Charger les données existantes
+  try {
+    const [dr, hr] = await Promise.all([
+      fetch(RAW_BASE + FILES.donnee  + '?t=' + Date.now()),
+      fetch(RAW_BASE + FILES.historique + '?t=' + Date.now()),
+    ]);
+    if (dr.ok) EXISTING_DONNEE     = await dr.json();
+    if (hr.ok) EXISTING_HISTORIQUE = await hr.json();
+  } catch(e) { console.warn('Chargement données existantes:', e); }
 
-  return `
-    <div class="card">
-      <div class="card-title">💼 PEE HSBC</div>
-      <div class="helper">Saisir la valeur actuelle de chaque fonds</div>
-      <table class="saisie-table">
-        <thead><tr><th>Fonds</th><th style="text-align:right;width:160px">Valeur (€)</th></tr></thead>
-        <tbody>
-          ${rows}
-          <tr class="saisie-total-row">
-            <td>Total PEE</td>
-            <td><input class="saisie-input" id="pee-total" readonly style="color:var(--gold);font-weight:700"></td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="sec-line"></div>
-      <button class="btn-sm" onclick="addPEELine()">+ Ajouter un fonds</button>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-p" onclick="prev()">← Retour</button>
-      <button class="btn btn-n" onclick="next()">Suivant →</button>
-    </div>
-  `;
-}
-
-function updatePEETotal() {
-  const t = MAJ.pee.reduce((s,f)=>s+(f.valeur||0),0);
-  const el = document.getElementById('pee-total');
-  if (el) el.value = t.toFixed(2)+' €';
-}
-
-function addPEELine() {
-  MAJ.pee.push({ nom: 'Nouveau fonds', valeur: 0 });
   renderStep();
 }
 
 // ══════════════════════════════════════════════════════════════════
-// ÉTAPE 5 — Livrets, SCPI, Revolut, CC
+// NAVIGATION
 // ══════════════════════════════════════════════════════════════════
-function renderStepAutres() {
+function renderStepsBar() {
+  document.getElementById('steps-bar').innerHTML = STEPS.map((s,i) => `
+    <div class="step-btn ${i===step?'active':i<step?'done':''}">
+      ${i<step?'✓ ':''}${s.label}
+    </div>`).join('');
+}
+
+function renderStep() {
+  renderStepsBar();
+  const renders = {csv:rCSV, av:rAV, pee:rPEE, autres:rAutres, recap:rRecap, token:rToken};
+  document.getElementById('step-content').innerHTML = renders[STEPS[step].id]();
+  afterRender(STEPS[step].id);
+}
+
+function goNext() { if(step<STEPS.length-1){step++;renderStep();} }
+function goBack() { if(step>0){step--;renderStep();} }
+
+function afterRender(id) {
+  if(id==='csv')    { /* listeners CSV déjà sur elements */ }
+  if(id==='av')     { updAV(); }
+  if(id==='pee')    { updPEE(); }
+  if(id==='autres') { updAutres(); }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════
+function fmt(n,d=0){if(!n&&n!==0)return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
+function parseNum(v){if(v==null)return 0;return parseFloat(String(v).replace(/\s/g,'').replace(',','.'))||0;}
+function today(){return new Date().toISOString().split('T')[0]}
+
+// ══════════════════════════════════════════════════════════════════
+// ÉTAPE 1 — CSV + Cash
+// ══════════════════════════════════════════════════════════════════
+function rCSV() {
+  const mkDZ = (env, label) => `
+    <div class="card">
+      <div class="card-title">${label} <span class="badge badge-blue">${env.toUpperCase()}</span></div>
+      <div class="helper">Exporter depuis Boursorama → Mon compte → Télécharger relevé CSV ou Excel</div>
+      <div class="dz" id="dz-${env}"
+        onclick="document.getElementById('fi-${env}').click()"
+        ondragover="event.preventDefault();document.getElementById('dz-${env}').classList.add('drag')"
+        ondragleave="document.getElementById('dz-${env}').classList.remove('drag')"
+        ondrop="event.preventDefault();document.getElementById('dz-${env}').classList.remove('drag');handleDrop(event,'${env}')">
+        <div class="dz-icon">📄</div>
+        <div class="dz-label"><strong>Glisser CSV / XLSX ${env.toUpperCase()}</strong> ou cliquer</div>
+      </div>
+      <input type="file" id="fi-${env}" accept=".csv,.xlsx,.xls" onchange="handleFile(this,'${env}')">
+      <div id="prev-${env}"></div>
+    </div>`;
+
   return `
-    <div class="card">
-      <div class="card-title">💰 Livrets & Compte courant</div>
-      <div class="fi-row">
-        <div class="fi-group">
-          <label class="fi-label">Livret A (€)</label>
-          <input class="fi-input" id="livret-a" type="number" step="0.01" placeholder="0"
-            value="${MAJ.livret_a||''}" oninput="MAJ.livret_a=parseFloat(this.value)||0;updateAutresTotal()">
-        </div>
-        <div class="fi-group">
-          <label class="fi-label">Livret $ (€ converti)</label>
-          <input class="fi-input" id="livret-usd" type="number" step="0.01" placeholder="0"
-            value="${MAJ.livret_usd||''}" oninput="MAJ.livret_usd=parseFloat(this.value)||0;updateAutresTotal()">
-        </div>
-      </div>
-      <div class="fi-row">
-        <div class="fi-group">
-          <label class="fi-label">Livret euro (€)</label>
-          <input class="fi-input" id="livret-eur" type="number" step="0.01" placeholder="0"
-            value="${MAJ.livret_eur||''}" oninput="MAJ.livret_eur=parseFloat(this.value)||0;updateAutresTotal()">
-        </div>
-        <div class="fi-group">
-          <label class="fi-label">Compte courant (€)</label>
-          <input class="fi-input" id="cc" type="number" step="0.01" placeholder="0"
-            value="${MAJ.cc||''}" oninput="MAJ.cc=parseFloat(this.value)||0;updateAutresTotal()">
-        </div>
-      </div>
-    </div>
+    ${mkDZ('pea','📂 Import Boursorama')}
+    ${mkDZ('cto','📂 Import Boursorama')}
+    ${mkDZ('pme','📂 Import Boursorama')}
 
     <div class="card">
-      <div class="card-title">🏢 SCPI & Trading</div>
-      <div class="fi-row">
-        <div class="fi-group">
-          <label class="fi-label">SCPI Corum Origin (€)</label>
-          <input class="fi-input" id="scpi" type="number" step="0.01" placeholder="0"
-            value="${MAJ.scpi||''}" oninput="MAJ.scpi=parseFloat(this.value)||0;updateAutresTotal()">
-        </div>
-        <div class="fi-group">
-          <label class="fi-label">Trading Revolut ETF (€)</label>
-          <input class="fi-input" id="revolut" type="number" step="0.01" placeholder="0"
-            value="${MAJ.revolut||''}" oninput="MAJ.revolut=parseFloat(this.value)||0;updateAutresTotal()">
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">📊 Sous-totaux calculés</div>
-      <div class="totaux-grid" id="totaux-autres">
-        <div class="tot-card"><div class="tot-label">Livrets</div><div class="tot-val" id="t-livrets">0 €</div></div>
-        <div class="tot-card"><div class="tot-label">SCPI</div><div class="tot-val" id="t-scpi">0 €</div></div>
-        <div class="tot-card"><div class="tot-label">Revolut</div><div class="tot-val" id="t-revolut">0 €</div></div>
-        <div class="tot-card"><div class="tot-label">CC</div><div class="tot-val" id="t-cc">0 €</div></div>
+      <div class="card-title">💵 Espèces disponibles <span class="badge badge-blue">inclus dans le total</span></div>
+      <div class="helper">Saisir le solde en espèces de chaque poche — affiché séparément dans le tableau</div>
+      <div class="fi-grid-3">
+        <div class="fg"><label class="fl">Espèces PEA (€)</label>
+          <input class="fi" id="cash-pea" type="number" step="0.01" placeholder="0.00"
+            value="${D.cash_pea||''}" oninput="D.cash_pea=parseFloat(this.value)||0"></div>
+        <div class="fg"><label class="fl">Espèces CTO (€)</label>
+          <input class="fi" id="cash-cto" type="number" step="0.01" placeholder="0.00"
+            value="${D.cash_cto||''}" oninput="D.cash_cto=parseFloat(this.value)||0"></div>
+        <div class="fg"><label class="fl">Espèces PEA-PME (€)</label>
+          <input class="fi" id="cash-pme" type="number" step="0.01" placeholder="0.00"
+            value="${D.cash_pme||''}" oninput="D.cash_pme=parseFloat(this.value)||0"></div>
       </div>
     </div>
 
     <div class="btn-row">
-      <button class="btn btn-p" onclick="prev()">← Retour</button>
-      <button class="btn btn-n" onclick="next()">Suivant →</button>
-    </div>
-  `;
+      <button class="btn btn-next" onclick="goNext()">Suivant →</button>
+    </div>`;
 }
 
-function updateAutresTotal() {
-  const set = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=(v||0).toFixed(2)+' €'; };
-  const livrets = (MAJ.livret_a||0)+(MAJ.livret_usd||0)+(MAJ.livret_eur||0);
-  set('t-livrets', livrets + (MAJ.cc||0));
-  set('t-scpi', MAJ.scpi);
-  set('t-revolut', MAJ.revolut);
-  set('t-cc', MAJ.cc);
+// ── CSV parsing ───────────────────────────────────────────────────
+function handleDrop(e, env) {
+  const f = e.dataTransfer.files[0];
+  if(f) processFile(f, env);
+}
+function handleFile(input, env) {
+  if(input.files[0]) processFile(input.files[0], env);
 }
 
-// ══════════════════════════════════════════════════════════════════
-// ÉTAPE 6 — RÉCAPITULATIF
-// ══════════════════════════════════════════════════════════════════
-function renderStepRecap() {
-  const totals = computeTotals();
+function processFile(file, env) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      let rows;
+      if(ext==='csv') {
+        rows = parseCSVText(e.target.result);
+      } else {
+        const wb = XLSX.read(e.target.result, {type:'array'});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false});
+      }
+      const positions = parsePositions(rows, env);
+      D[env] = positions;
+      showPreview(env, positions, file.name);
+    } catch(err) {
+      document.getElementById('prev-'+env).innerHTML =
+        `<div style="color:var(--red);font-family:var(--mono);font-size:10px;padding:8px">Erreur : ${err.message}</div>`;
+      console.error(err);
+    }
+  };
+  if(ext==='csv') reader.readAsText(file,'UTF-8');
+  else reader.readAsArrayBuffer(file);
+}
 
-  const rows = [
-    ['PEA',    totals.pea,     totals.pea_positions],
-    ['CTO',    totals.cto,     totals.cto_positions],
-    ['PEA-PME',totals.pme,     totals.pme_positions],
-    ['Ass. Vie',totals.av,     '—'],
-    ['PEE',    totals.pee,     '—'],
-    ['Livrets & CC',totals.livrets,'—'],
-    ['SCPI',   totals.scpi,    '—'],
-    ['Revolut',totals.revolut, '—'],
-  ].filter(r=>r[1]>0);
+function parseCSVText(text) {
+  // Détecter le séparateur
+  const sep = text.split('\n')[0].includes(';') ? ';' : ',';
+  return text.split('\n').map(l => l.split(sep).map(c => c.trim().replace(/^["']|["']$/g,'')));
+}
 
-  const rowsHTML = rows.map(([nom,val,det])=>`
+function parsePositions(rows, env) {
+  // Chercher la ligne d'entête
+  const keywords = {
+    nom:     ['titre','libel','désignat','valeur mobil','name','instrument'],
+    isin:    ['isin','code isin','code'],
+    qty:     ['quantit','qté','nb titre','nombre','qty','shares'],
+    pru:     ['pru','prix rev','cours achat','prix moyen','purchase','avg'],
+    montant: ['valoris','montant','valeur','market value','total'],
+  };
+
+  let headerIdx = -1;
+  let cols = {nom:-1,isin:-1,qty:-1,pru:-1,montant:-1};
+
+  for(let i=0; i<Math.min(rows.length,20); i++) {
+    const row = rows[i].map(c=>String(c||'').toLowerCase().trim());
+    const score = row.filter(c=>
+      Object.values(keywords).flat().some(k=>c.includes(k))).length;
+    if(score>=2) {
+      headerIdx = i;
+      row.forEach((cell,j)=>{
+        for(const [key,kws] of Object.entries(keywords)) {
+          if(cols[key]===-1 && kws.some(k=>cell.includes(k))) cols[key]=j;
+        }
+      });
+      console.log(`[${env}] Header row ${i}:`, row);
+      console.log(`[${env}] Cols:`, cols);
+      break;
+    }
+  }
+
+  const positions = [];
+
+  if(headerIdx>=0) {
+    for(let i=headerIdx+1; i<rows.length; i++) {
+      const row = rows[i];
+      if(!row || row.every(c=>!String(c||'').trim())) continue;
+
+      const nom     = cols.nom>=0     ? String(row[cols.nom]||'').trim() : '';
+      const isin    = cols.isin>=0    ? String(row[cols.isin]||'').trim().replace(/\s/g,'') : '';
+      const qty     = cols.qty>=0     ? parseNum(row[cols.qty]) : 0;
+      const pru     = cols.pru>=0     ? parseNum(row[cols.pru]) : 0;
+      const montant = cols.montant>=0 ? parseNum(row[cols.montant]) : qty*pru;
+
+      if(!nom || nom.toLowerCase().match(/total|sous.total|solde|^\s*$/)) continue;
+      if(!qty && !montant) continue;
+
+      positions.push({nom, isin, quantite:qty, pru, montant: montant||qty*pru});
+    }
+  } else {
+    // Fallback ISIN
+    const isinRe = /^[A-Z]{2}[A-Z0-9]{10}$/;
+    rows.forEach(row => {
+      const strs = row.map(c=>String(c||'').trim());
+      const isinIdx = strs.findIndex(c=>isinRe.test(c));
+      if(isinIdx>=0) {
+        const isin = strs[isinIdx];
+        const nom  = strs.find((c,i)=>i<isinIdx&&c.length>2&&!/^\d/.test(c))||isin;
+        const nums = strs.map(parseNum).filter(n=>n>0);
+        positions.push({nom,isin,quantite:nums[0]||0,pru:nums[1]||0,montant:nums[nums.length-1]||0});
+      }
+    });
+    console.log(`[${env}] Fallback ISIN found:`, positions.length);
+  }
+
+  return positions;
+}
+
+function showPreview(env, positions, fname) {
+  const total = positions.reduce((s,p)=>s+p.montant,0);
+  const envUp = {pea:'PEA',cto:'CTO',pme:'PEA-PME'}[env];
+
+  const trows = positions.map(p=>`
     <tr>
-      <td>${nom}</td>
-      <td style="text-align:right;font-family:var(--mono);font-weight:600">${val.toFixed(2)} €</td>
-      <td style="text-align:right;font-family:var(--mono);font-size:10px;color:var(--text3)">${
-        typeof det==='number'?det+' lignes':det}</td>
+      <td>${p.nom}</td>
+      <td>${p.isin||'—'}</td>
+      <td>${p.quantite}</td>
+      <td>${p.pru>0?p.pru.toFixed(2)+' €':'—'}</td>
+      <td>${p.montant.toFixed(2)} €</td>
+    </tr>`).join('');
+
+  document.getElementById('prev-'+env).innerHTML = `
+    <div class="csv-ok">✅ ${fname} — ${positions.length} ligne(s) importée(s)</div>
+    <table class="csv-tbl">
+      <thead><tr><th>Titre</th><th>ISIN</th><th>Qté</th><th>PRU</th><th>Valeur</th></tr></thead>
+      <tbody>
+        ${trows}
+        <tr class="trow-total">
+          <td colspan="4">Total ${envUp} (positions)</td>
+          <td>${total.toFixed(2)} €</td>
+        </tr>
+      </tbody>
+    </table>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ÉTAPE 2 — AV
+// ══════════════════════════════════════════════════════════════════
+function rAV() {
+  const rows = D.av.map((f,i)=>`
+    <tr>
+      <td><input class="si" style="text-align:left;width:100%" value="${f.nom}"
+        oninput="D.av[${i}].nom=this.value"></td>
+      <td><input class="si" type="number" step="0.01" placeholder="0.00"
+        value="${f.valeur||''}" oninput="D.av[${i}].valeur=parseFloat(this.value)||0;updAV()"></td>
     </tr>`).join('');
 
   return `
     <div class="card">
-      <div class="card-title">📋 Récapitulatif avant sauvegarde</div>
-      <div class="helper">Vérifiez les totaux avant de sauvegarder</div>
-      <table class="saisie-table">
-        <thead><tr><th>Enveloppe</th><th style="text-align:right">Total</th><th style="text-align:right">Détail</th></tr></thead>
+      <div class="card-title">🏦 Assurance Vie <span class="badge badge-gold">Saisie manuelle</span></div>
+      <div class="helper">Valeur liquidative actuelle de chaque fonds — source : portail assureur</div>
+      <table class="st">
+        <thead><tr><th>Fonds</th><th>Valeur (€)</th></tr></thead>
         <tbody>
-          ${rowsHTML}
-          <tr class="saisie-total-row">
+          ${rows}
+          <tr class="tr-tot">
+            <td>Total Ass. Vie</td>
+            <td><input class="si" id="av-total" readonly style="color:var(--gold);font-weight:700"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn-add" onclick="D.av.push({nom:'Nouveau fonds',valeur:0});renderStep()">+ Ajouter un fonds</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goBack()">← Retour</button>
+      <button class="btn btn-next" onclick="goNext()">Suivant →</button>
+    </div>`;
+}
+function updAV(){const t=D.av.reduce((s,f)=>s+(f.valeur||0),0);const el=document.getElementById('av-total');if(el)el.value=t.toFixed(2)+' €';}
+
+// ══════════════════════════════════════════════════════════════════
+// ÉTAPE 3 — PEE
+// ══════════════════════════════════════════════════════════════════
+function rPEE() {
+  const rows = D.pee.map((f,i)=>`
+    <tr>
+      <td><input class="si" style="text-align:left;width:100%" value="${f.nom}"
+        oninput="D.pee[${i}].nom=this.value"></td>
+      <td><input class="si" type="number" step="0.01" placeholder="0.00"
+        value="${f.valeur||''}" oninput="D.pee[${i}].valeur=parseFloat(this.value)||0;updPEE()"></td>
+    </tr>`).join('');
+
+  return `
+    <div class="card">
+      <div class="card-title">💼 PEE <span class="badge badge-gold">Saisie manuelle</span></div>
+      <div class="helper">Valeur liquidative actuelle de chaque fonds — source : portail HSBC EE</div>
+      <table class="st">
+        <thead><tr><th>Fonds</th><th>Valeur (€)</th></tr></thead>
+        <tbody>
+          ${rows}
+          <tr class="tr-tot">
+            <td>Total PEE</td>
+            <td><input class="si" id="pee-total" readonly style="color:var(--gold);font-weight:700"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn-add" onclick="D.pee.push({nom:'Nouveau fonds',valeur:0});renderStep()">+ Ajouter un fonds</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goBack()">← Retour</button>
+      <button class="btn btn-next" onclick="goNext()">Suivant →</button>
+    </div>`;
+}
+function updPEE(){const t=D.pee.reduce((s,f)=>s+(f.valeur||0),0);const el=document.getElementById('pee-total');if(el)el.value=t.toFixed(2)+' €';}
+
+// ══════════════════════════════════════════════════════════════════
+// ÉTAPE 4 — Livrets, SCPI, Revolut, CC
+// ══════════════════════════════════════════════════════════════════
+function rAutres() {
+  return `
+    <div class="card">
+      <div class="card-title">💰 Livrets & Compte courant <span class="badge badge-gold">Saisie manuelle</span></div>
+      <div class="fi-grid">
+        <div class="fg"><label class="fl">Livret A (€)</label>
+          <input class="fi" type="number" step="0.01" placeholder="0.00"
+            value="${D.livret_a||''}" oninput="D.livret_a=parseFloat(this.value)||0;updAutres()"></div>
+        <div class="fg"><label class="fl">Livret $ (€ converti)</label>
+          <input class="fi" type="number" step="0.01" placeholder="0.00"
+            value="${D.livret_usd||''}" oninput="D.livret_usd=parseFloat(this.value)||0;updAutres()"></div>
+        <div class="fg"><label class="fl">Livret euro (€)</label>
+          <input class="fi" type="number" step="0.01" placeholder="0.00"
+            value="${D.livret_eur||''}" oninput="D.livret_eur=parseFloat(this.value)||0;updAutres()"></div>
+        <div class="fg"><label class="fl">Compte courant (€)</label>
+          <input class="fi" type="number" step="0.01" placeholder="0.00"
+            value="${D.cc||''}" oninput="D.cc=parseFloat(this.value)||0;updAutres()"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏢 SCPI & Trading <span class="badge badge-gold">Saisie manuelle</span></div>
+      <div class="fi-grid">
+        <div class="fg"><label class="fl">SCPI Corum Origin (€)</label>
+          <input class="fi" type="number" step="0.01" placeholder="0.00"
+            value="${D.scpi||''}" oninput="D.scpi=parseFloat(this.value)||0;updAutres()"></div>
+        <div class="fg"><label class="fl">Revolut ETF Trading (€)</label>
+          <input class="fi" type="number" step="0.01" placeholder="0.00"
+            value="${D.revolut||''}" oninput="D.revolut=parseFloat(this.value)||0;updAutres()"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Sous-totaux</div>
+      <div class="tot-grid">
+        <div class="tot-card"><div class="tot-lbl">Livrets</div><div class="tot-val" id="t-liv">0 €</div></div>
+        <div class="tot-card"><div class="tot-lbl">Compte courant</div><div class="tot-val" id="t-cc">0 €</div></div>
+        <div class="tot-card"><div class="tot-lbl">SCPI</div><div class="tot-val" id="t-scpi">0 €</div></div>
+        <div class="tot-card"><div class="tot-lbl">Revolut</div><div class="tot-val" id="t-rev">0 €</div></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goBack()">← Retour</button>
+      <button class="btn btn-next" onclick="goNext()">Suivant →</button>
+    </div>`;
+}
+
+function updAutres(){
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=(v||0).toFixed(2)+' €';};
+  set('t-liv',(D.livret_a||0)+(D.livret_usd||0)+(D.livret_eur||0));
+  set('t-cc',D.cc||0);
+  set('t-scpi',D.scpi||0);
+  set('t-rev',D.revolut||0);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ÉTAPE 5 — RÉCAP
+// ══════════════════════════════════════════════════════════════════
+function computeTotaux() {
+  const pea_pos  = D.pea.reduce((s,p)=>s+p.montant,0);
+  const cto_pos  = D.cto.reduce((s,p)=>s+p.montant,0);
+  const pme_pos  = D.pme.reduce((s,p)=>s+p.montant,0);
+  const pea      = pea_pos + (D.cash_pea||0);
+  const cto      = cto_pos + (D.cash_cto||0);
+  const pme      = pme_pos + (D.cash_pme||0);
+  const av       = D.av.reduce((s,f)=>s+(f.valeur||0),0);
+  const pee      = D.pee.reduce((s,f)=>s+(f.valeur||0),0);
+  const livrets  = (D.livret_a||0)+(D.livret_usd||0)+(D.livret_eur||0)+(D.cc||0);
+  const scpi     = D.scpi||0;
+  const revolut  = D.revolut||0;
+  const total    = pea+cto+pme+av+pee+livrets+scpi+revolut;
+  return {pea,cto,pme,av,pee,livrets,scpi,revolut,total,
+          pea_pos,cto_pos,pme_pos,
+          cash_pea:D.cash_pea,cash_cto:D.cash_cto,cash_pme:D.cash_pme};
+}
+
+function rRecap() {
+  const t = computeTotaux();
+  const lines = [
+    ['PEA (positions)', t.pea_pos, D.pea.length+' lignes'],
+    ['  dont espèces',  t.cash_pea, ''],
+    ['CTO (positions)', t.cto_pos, D.cto.length+' lignes'],
+    ['  dont espèces',  t.cash_cto, ''],
+    ['PEA-PME (positions)',t.pme_pos, D.pme.length+' lignes'],
+    ['  dont espèces',  t.cash_pme, ''],
+    ['Ass. Vie',        t.av,   D.av.filter(f=>f.valeur>0).length+' fonds'],
+    ['PEE',            t.pee,  D.pee.filter(f=>f.valeur>0).length+' fonds'],
+    ['Livrets & CC',   t.livrets, ''],
+    ['SCPI',           t.scpi,  ''],
+    ['Revolut',        t.revolut,''],
+  ].filter(l=>l[1]>0);
+
+  const rows = lines.map(([nom,val,det])=>`
+    <tr>
+      <td style="color:${nom.startsWith('  ')?'var(--text3)':'var(--text)'}">${nom}</td>
+      <td style="text-align:right;font-family:var(--mono);font-weight:${nom.startsWith('  ')?'400':'600'}">${val.toFixed(2)} €</td>
+      <td style="text-align:right;font-family:var(--mono);font-size:10px;color:var(--text3)">${det}</td>
+    </tr>`).join('');
+
+  return `
+    <div class="card">
+      <div class="card-title">📋 Récapitulatif</div>
+      <div class="helper">Vérifiez avant de sauvegarder. Cette MAJ va écraser les données courantes et conserver l'historique.</div>
+      <table class="st">
+        <thead><tr><th>Enveloppe</th><th style="text-align:right">Montant</th><th style="text-align:right">Détail</th></tr></thead>
+        <tbody>
+          ${rows}
+          <tr class="tr-tot">
             <td>PATRIMOINE TOTAL</td>
-            <td style="text-align:right;font-size:16px;color:var(--gold)">${totals.total.toFixed(2)} €</td>
+            <td style="text-align:right;font-size:17px;color:var(--gold)">${t.total.toFixed(2)} €</td>
             <td></td>
           </tr>
         </tbody>
       </table>
     </div>
-
-    <div class="totaux-grid">
-      <div class="tot-card"><div class="tot-label">Investi coté</div>
-        <div class="tot-val">${(totals.pea+totals.cto+totals.pme).toFixed(0)} €</div></div>
-      <div class="tot-card"><div class="tot-label">Non coté</div>
-        <div class="tot-val">${(totals.av+totals.pee).toFixed(0)} €</div></div>
-      <div class="tot-card"><div class="tot-label">Garanti</div>
-        <div class="tot-val">${(totals.livrets+totals.scpi).toFixed(0)} €</div></div>
-      <div class="tot-card"><div class="tot-label">TOTAL</div>
-        <div class="tot-val">${totals.total.toFixed(0)} €</div></div>
+    <div class="tot-grid">
+      <div class="tot-card"><div class="tot-lbl">Investi coté</div>
+        <div class="tot-val">${fmt(t.pea+t.cto+t.pme)} €</div></div>
+      <div class="tot-card"><div class="tot-lbl">Non coté</div>
+        <div class="tot-val">${fmt(t.av+t.pee)} €</div></div>
+      <div class="tot-card"><div class="tot-lbl">Garanti & divers</div>
+        <div class="tot-val">${fmt(t.livrets+t.scpi+t.revolut)} €</div></div>
+      <div class="tot-card"><div class="tot-lbl big">TOTAL</div>
+        <div class="tot-val big">${fmt(t.total)} €</div></div>
     </div>
-
     <div class="btn-row">
-      <button class="btn btn-p" onclick="prev()">← Retour</button>
-      <button class="btn btn-n" onclick="next()">Sauvegarder →</button>
-    </div>
-  `;
+      <button class="btn btn-back" onclick="goBack()">← Retour</button>
+      <button class="btn btn-next" onclick="goNext()">Sauvegarder →</button>
+    </div>`;
 }
 
 // ══════════════════════════════════════════════════════════════════
-// ÉTAPE 7 — TOKEN & SAUVEGARDE
+// ÉTAPE 6 — TOKEN & SAVE
 // ══════════════════════════════════════════════════════════════════
-function renderStepToken() {
-  const token = sessionStorage.getItem('hermes_gh_token') || '';
+function rToken() {
+  const tok = sessionStorage.getItem('hermes_gh_token')||'';
   return `
     <div class="card">
-      <div class="card-title">🔑 Token GitHub</div>
-      <div class="token-info">Le token est stocké uniquement en session — il n'est jamais sauvegardé.</div>
-      <div class="fi-group" style="margin-bottom:16px">
-        <label class="fi-label">Personal Access Token (repo scope)</label>
-        <input class="fi-input" id="gh-token" type="password" placeholder="ghp_xxxxxxxxxxxx"
-          value="${token}" oninput="sessionStorage.setItem('hermes_gh_token',this.value)">
+      <div class="card-title">🔑 Token GitHub <span class="badge badge-blue">session uniquement</span></div>
+      <div class="token-info">
+        Le token n'est jamais stocké de façon permanente.<br>
+        Permissions requises : repo (lecture + écriture sur hermes-data).
       </div>
-      <button class="btn btn-save" onclick="sauvegarder()">✅ Sauvegarder la MAJ</button>
+      <div class="fg" style="margin-bottom:16px">
+        <label class="fl">Personal Access Token</label>
+        <input class="fi" id="gh-tok" type="password" placeholder="ghp_xxxxxxxxxxxx"
+          value="${tok}" oninput="sessionStorage.setItem('hermes_gh_token',this.value)">
+      </div>
+      <button class="btn btn-save" onclick="save()">✅ Valider et sauvegarder</button>
     </div>
-    <div id="save-status"></div>
+    <div id="save-msg"></div>
     <div class="btn-row" style="margin-top:8px">
-      <button class="btn btn-p" onclick="prev()">← Retour</button>
-    </div>
-  `;
+      <button class="btn btn-back" onclick="goBack()">← Retour</button>
+    </div>`;
 }
 
 // ══════════════════════════════════════════════════════════════════
-// CALCUL DES TOTAUX
+// SAUVEGARDE — LOGIQUE MÉTIER
 // ══════════════════════════════════════════════════════════════════
-function computeTotals() {
-  const pea_pos   = MAJ.pea_positions.reduce((s,p)=>s+p.montant,0);
-  const cto_pos   = MAJ.cto_positions.reduce((s,p)=>s+p.montant,0);
-  const pme_pos   = MAJ.pme_positions.reduce((s,p)=>s+p.montant,0);
-  const pea       = pea_pos + (MAJ.cash_pea||0);
-  const cto       = cto_pos + (MAJ.cash_cto||0);
-  const pme       = pme_pos + (MAJ.cash_pme||0);
-  const av        = MAJ.av.reduce((s,f)=>s+(f.valeur||0),0);
-  const pee       = MAJ.pee.reduce((s,f)=>s+(f.valeur||0),0);
-  const livrets   = (MAJ.livret_a||0)+(MAJ.livret_usd||0)+(MAJ.livret_eur||0)+(MAJ.cc||0);
-  const scpi      = MAJ.scpi||0;
-  const revolut   = MAJ.revolut||0;
-  const total     = pea+cto+pme+av+pee+livrets+scpi+revolut;
+async function save() {
+  const token = sessionStorage.getItem('hermes_gh_token')||'';
+  if(!token) { alert('Token GitHub requis'); return; }
 
-  return {
-    pea, cto, pme, av, pee, livrets, scpi, revolut, total,
-    pea_positions: MAJ.pea_positions.length,
-    cto_positions: MAJ.cto_positions.length,
-    pme_positions: MAJ.pme_positions.length,
-  };
-}
-
-// ══════════════════════════════════════════════════════════════════
-// SAUVEGARDE
-// ══════════════════════════════════════════════════════════════════
-async function sauvegarder() {
-  const token = sessionStorage.getItem('hermes_gh_token');
-  if (!token) { alert('Token GitHub requis'); return; }
-
-  const status = document.getElementById('save-status');
-  status.innerHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--text3);padding:10px 0">⏳ Sauvegarde en cours...</div>';
+  showMsg('⏳ Sauvegarde en cours...','var(--text3)');
 
   try {
-    const state = buildNewState();
-    const ok    = await pushToGithub(token, state);
+    const t     = computeTotaux();
+    const dateJ = today();
 
-    if (ok) {
+    // ── 1. Construire donnee_maj (nouvelles données courantes) ────
+    const newDonnee = {
+      meta: { date_maj: dateJ, version: '2.0' },
+      cash: { pea: D.cash_pea, cto: D.cash_cto, pme: D.cash_pme },
+      pea_positions: D.pea,
+      cto_positions: D.cto,
+      pme_positions: D.pme,
+      av:  D.av.filter(f=>f.valeur>0),
+      pee: D.pee.filter(f=>f.valeur>0),
+      livrets: [
+        {nom:'Livret A',   valeur:D.livret_a||0},
+        {nom:'Livret $',   valeur:D.livret_usd||0},
+        {nom:'Livret euro',valeur:D.livret_eur||0},
+        {nom:'Compte courant',valeur:D.cc||0},
+      ].filter(l=>l.valeur>0),
+      scpi:    D.scpi||0,
+      revolut: D.revolut||0,
+      totaux: {
+        pea:t.pea, cto:t.cto, pme:t.pme,
+        av:t.av,   pee:t.pee, livrets:t.livrets,
+        scpi:t.scpi, revolut:t.revolut, total:t.total,
+      },
+    };
+
+    // ── 2. Ajouter snapshot dans historique ───────────────────────
+    const hist  = EXISTING_HISTORIQUE || {snapshots:[]};
+    const snap  = {
+      date:    dateJ,
+      totaux: newDonnee.totaux,
+    };
+    // Remplacer si même date, sinon ajouter
+    const idx = hist.snapshots.findIndex(s=>s.date===dateJ);
+    if(idx>=0) hist.snapshots[idx] = snap;
+    else hist.snapshots.push(snap);
+
+    // ── 3. Sauvegarder les 2 fichiers sur GitHub ──────────────────
+    showMsg('⏳ Écriture donnee_maj.json...','var(--text3)');
+    const ok1 = await ghPut(token, FILES.donnee, newDonnee,
+      `📊 MAJ ${dateJ} — Total ${fmt(t.total)} €`);
+
+    showMsg('⏳ Écriture historique_maj.json...','var(--text3)');
+    const ok2 = await ghPut(token, FILES.historique, hist,
+      `📈 Historique MAJ ${dateJ}`);
+
+    if(ok1 && ok2) {
+      EXISTING_DONNEE     = newDonnee;
+      EXISTING_HISTORIQUE = hist;
+      // Afficher succès
       document.getElementById('step-content').innerHTML = `
-        <div class="card success-card">
+        <div class="card success">
           <div class="success-icon">✅</div>
-          <div class="success-title">Mise à jour sauvegardée</div>
-          <div class="success-total">${state.snapshots_patrimoine.slice(-1)[0].total.toFixed(0)} €</div>
-          <div class="success-sub">Snapshot du ${new Date().toLocaleDateString('fr-FR')} enregistré</div>
+          <div class="success-ttl">Mise à jour enregistrée</div>
+          <div class="success-tot">${t.total.toFixed(2)} €</div>
+          <div class="success-sub">
+            Snapshot du ${dateJ} sauvegardé<br>
+            ${hist.snapshots.length} point(s) d'historique
+          </div>
         </div>`;
     } else {
-      status.innerHTML = '<div style="color:var(--red);font-family:var(--mono);font-size:11px;padding:10px 0">❌ Erreur sauvegarde — vérifier le token et les permissions</div>';
+      showMsg('❌ Erreur sauvegarde — vérifier le token et les permissions GitHub','var(--red)');
     }
+
   } catch(e) {
-    status.innerHTML = `<div style="color:var(--red);font-family:var(--mono);font-size:11px;padding:10px 0">❌ ${e.message}</div>`;
+    showMsg('❌ '+e.message,'var(--red)');
   }
 }
 
-function buildNewState() {
-  const existing = STATE_DATA || {};
-  const totals   = computeTotals();
-  const today    = new Date().toISOString().split('T')[0];
-  const positions= existing.positions || {};
-  const config   = {};
-
-  // Mettre à jour les positions depuis CSV
-  const updatePositions = (csvPositions, enveloppe) => {
-    // Marquer comme EXITED les positions absentes du nouveau CSV
-    Object.entries(positions).forEach(([ticker, pos]) => {
-      if (pos.etat === 'EXITED') return;
-      // Trouver l'enveloppe de cette position dans le state existant
-      // (on ne touche pas aux positions d'autres enveloppes)
-    });
-
-    // Mettre à jour / créer les positions présentes dans le CSV
-    csvPositions.forEach(p => {
-      // Chercher par ISIN
-      let ticker = Object.keys(positions).find(k => positions[k].isin === p.isin);
-      if (!ticker) {
-        // Créer un nouveau ticker depuis le nom
-        ticker = p.nom.toUpperCase().replace(/[^A-Z0-9]/g,'_').substring(0,15);
-        positions[ticker] = {
-          isin: p.isin, etat: 'FULL',
-          alert_sent_at: null, zones_a_definir: true,
-          indicateurs_recents: {rsi:[],macd_hist:[]},
-          historique_signaux: [], historique_transactions: [],
-        };
-      }
-      positions[ticker].quantite_detenue    = p.quantite;
-      positions[ticker].prix_moyen_entree   = p.pru;
-      positions[ticker].derniere_valorisation = p.montant;
-      positions[ticker].derniere_maj_csv    = today;
-      if (!positions[ticker].etat || positions[ticker].etat === 'WATCHLIST') {
-        positions[ticker].etat = 'FULL';
-      }
-    });
-  };
-
-  updatePositions(MAJ.pea_positions, 'PEA');
-  updatePositions(MAJ.cto_positions, 'CTO');
-  updatePositions(MAJ.pme_positions, 'PEA-PME');
-
-  // Construire le snapshot
-  const snapshot = {
-    date:    today,
-    total:   totals.total,
-    pea:     totals.pea,
-    cto:     totals.cto,
-    pme:     totals.pme,
-    av:      totals.av,
-    pee:     totals.pee,
-    livrets: totals.livrets,
-    scpi:    totals.scpi,
-    revolut: totals.revolut,
-    cash_pea: MAJ.cash_pea||0,
-    cash_cto: MAJ.cash_cto||0,
-    cash_pme: MAJ.cash_pme||0,
-    // Détails pour drill-down (Produit 1)
-    av_detail:      MAJ.av.filter(f=>f.valeur>0),
-    pee_detail:     MAJ.pee.filter(f=>f.valeur>0),
-    livrets_detail: [
-      {nom:'Livret A',  valeur:MAJ.livret_a||0},
-      {nom:'Livret $',  valeur:MAJ.livret_usd||0},
-      {nom:'Livret euro',valeur:MAJ.livret_eur||0},
-      {nom:'Compte courant',valeur:MAJ.cc||0},
-    ].filter(l=>l.valeur>0),
-    scpi_detail:    [{nom:'SCPI Corum Origin',valeur:totals.scpi}].filter(l=>l.valeur>0),
-    revolut_detail: [{nom:'Revolut ETF Clean Energy',valeur:totals.revolut}].filter(l=>l.valeur>0),
-  };
-
-  // Conserver l'historique et ajouter/remplacer le snapshot du jour
-  const snaps = existing.snapshots_patrimoine || [];
-  const idx   = snaps.findIndex(s => s.date === today);
-  if (idx >= 0) snaps[idx] = snapshot;
-  else snaps.push(snapshot);
-
-  return {
-    ...existing,
-    meta: {
-      ...(existing.meta||{}),
-      derniere_maj_manuelle: today,
-      last_maj_by: 'wizard_v2',
-    },
-    cash: { pea: MAJ.cash_pea||0, cto: MAJ.cash_cto||0, pme: MAJ.cash_pme||0 },
-    positions,
-    snapshots_patrimoine: snaps,
-  };
+function showMsg(msg, color) {
+  document.getElementById('save-msg').innerHTML =
+    `<div style="font-family:var(--mono);font-size:11px;color:${color};padding:10px 0">${msg}</div>`;
 }
 
-async function pushToGithub(token, data) {
-  const url = `https://api.github.com/repos/${GITHUB_USER}/${DATA_REPO}/contents/portfolio_state.json`;
-  // Récupérer SHA actuel
+// ── GitHub API ────────────────────────────────────────────────────
+async function ghPut(token, filename, data, message) {
+  const url = GH_API + filename;
   let sha = null;
   try {
-    const gr = await fetch(url, { headers: { Authorization: `token ${token}` } });
-    if (gr.ok) { const j = await gr.json(); sha = j.sha; }
+    const gr = await fetch(url, {headers:{Authorization:`token ${token}`}});
+    if(gr.ok) { const j=await gr.json(); sha=j.sha; }
   } catch(e) {}
 
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-  const body = {
-    message: `📊 MAJ manuelle ${new Date().toLocaleDateString('fr-FR')}`,
-    content,
-  };
-  if (sha) body.sha = sha;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  const body    = {message, content};
+  if(sha) body.sha = sha;
 
   const r = await fetch(url, {
-    method: 'PUT',
-    headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
+    method:'PUT',
+    headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
     body: JSON.stringify(body),
   });
+  if(!r.ok) console.error('GitHub PUT failed:', filename, r.status, await r.text());
   return r.ok;
 }
 
 // ══════════════════════════════════════════════════════════════════
-// LISTENERS D'ÉTAPE
-// ══════════════════════════════════════════════════════════════════
-function initStepListeners(stepId) {
-  if (stepId === 'cash') setTimeout(updateCashTotal, 50);
-  if (stepId === 'av')   setTimeout(updateAVTotal, 50);
-  if (stepId === 'pee')  setTimeout(updatePEETotal, 50);
-  if (stepId === 'autres') setTimeout(updateAutresTotal, 50);
-}
-
-// ══════════════════════════════════════════════════════════════════
-// INIT
+// START
 // ══════════════════════════════════════════════════════════════════
 init();
 </script>

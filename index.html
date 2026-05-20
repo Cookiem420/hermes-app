@@ -114,21 +114,93 @@ async function sha256(str) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-const PWD_HASH = 'f74fee330886f88ceea28e9bdb43c9db1df048010398f407c9cb67e1c1c80e5e';
+const PWD_HASH     = 'f74fee330886f88ceea28e9bdb43c9db1df048010398f407c9cb67e1c1c80e5e';
+const TG_BOT       = '8675954697:AAHRlyrxA2WwWrLGTEE0Ljq2nkfxLDUj_nw';
+const TG_CHAT      = '8818994234';
+const MAX_ATTEMPTS = 3;
+let   loginAttempts = parseInt(sessionStorage.getItem('hermes_attempts')||'0');
+let   isBlocked     = sessionStorage.getItem('hermes_blocked') === '1';
+
+// Générer un code de déblocage aléatoire 6 chiffres
+function genUnlockCode() {
+  let code = sessionStorage.getItem('hermes_unlock_code');
+  if (!code) {
+    code = Math.floor(100000 + Math.random() * 900000).toString();
+    sessionStorage.setItem('hermes_unlock_code', code);
+  }
+  return code;
+}
+
+async function sendTelegramAlert(code) {
+  const msg = encodeURIComponent(
+    `🔒 HERMÈS — Tentative de connexion suspecte\n` +
+    `━━━━━━━━━━━━━━━━━━\n` +
+    `${MAX_ATTEMPTS} erreurs consécutives détectées.\n` +
+    `Code de déblocage : *${code}*\n` +
+    `━━━━━━━━━━━━━━━━━━\n` +
+    `Si ce n'est pas toi, change ton mot de passe.`
+  );
+  try {
+    await fetch(
+      `https://api.telegram.org/bot${TG_BOT}/sendMessage?chat_id=${TG_CHAT}&text=${msg}&parse_mode=Markdown`
+    );
+  } catch(e) { console.warn('Telegram alert failed:', e); }
+}
 
 async function doLogin() {
+  // Vérifier si bloqué
+  if (isBlocked) {
+    const entered = document.getElementById('pwd').value;
+    const expected = sessionStorage.getItem('hermes_unlock_code');
+    if (entered === expected) {
+      // Débloquer
+      sessionStorage.removeItem('hermes_blocked');
+      sessionStorage.removeItem('hermes_attempts');
+      sessionStorage.removeItem('hermes_unlock_code');
+      isBlocked = false;
+      loginAttempts = 0;
+      document.getElementById('login-err').style.display = 'none';
+      document.getElementById('pwd').placeholder = '••••';
+      return;
+    } else {
+      const err = document.getElementById('login-err');
+      err.textContent = 'Compte bloqué — saisir le code reçu par Telegram';
+      err.style.display = 'block';
+      return;
+    }
+  }
+
   const pwd = document.getElementById('pwd').value;
   const hash = await sha256(pwd);
+
   if (hash === PWD_HASH) {
     sessionStorage.setItem('hermes_auth','1');
+    sessionStorage.removeItem('hermes_attempts');
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     document.getElementById('footer-date').textContent =
       new Date().toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'});
   } else {
+    loginAttempts++;
+    sessionStorage.setItem('hermes_attempts', loginAttempts.toString());
+
     const err = document.getElementById('login-err');
-    err.style.display = 'block';
-    setTimeout(() => err.style.display = 'none', 2000);
+
+    if (loginAttempts >= MAX_ATTEMPTS) {
+      // Bloquer et envoyer Telegram
+      isBlocked = true;
+      sessionStorage.setItem('hermes_blocked','1');
+      const code = genUnlockCode();
+      await sendTelegramAlert(code);
+      err.textContent = `Compte bloqué (${MAX_ATTEMPTS} erreurs) — code de déblocage envoyé par Telegram`;
+      err.style.display = 'block';
+      document.getElementById('pwd').value = '';
+      document.getElementById('pwd').placeholder = 'Code Telegram...';
+    } else {
+      err.textContent = `Mot de passe incorrect (${loginAttempts}/${MAX_ATTEMPTS})`;
+      err.style.display = 'block';
+      setTimeout(() => err.style.display = 'none', 2500);
+    }
   }
 }
 
