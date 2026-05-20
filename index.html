@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HERMÈS</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2306090f'/%3E%3Ctext x='16' y='23' font-family='serif' font-size='20' font-weight='bold' fill='%23f0b429' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#06090f;--bg2:#0b0f18;--bg3:#111722;
+  --border:#1e2a3d;--border2:#2a3a52;
+  --text:#e8eef7;--text2:#7a8fa8;--text3:#3d5068;
+  --green:#00d68f;--red:#ff4d6a;--blue:#4d9fff;--gold:#f0b429;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+  --nav:220px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;overflow:hidden;height:100vh}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center}
+.login-box{width:360px}
+.login-logo{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--gold);letter-spacing:6px;text-align:center;margin-bottom:6px}
+.login-sub{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;letter-spacing:2px;margin-bottom:32px}
+.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:28px}
+.login-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.login-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:12px 16px;color:var(--text);font-family:var(--mono);font-size:20px;letter-spacing:6px;text-align:center;outline:none;margin-bottom:12px;transition:border-color .15s}
+.login-input:focus{border-color:var(--blue)}
+.login-btn{width:100%;padding:12px;background:var(--blue);border:none;border-radius:6px;color:#fff;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.login-btn:hover{opacity:.85}
+.login-err{display:none;text-align:center;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--red)}
+
+/* APP */
+#app{display:none;height:100vh}
+#app.visible{display:flex}
+
+/* SIDEBAR */
+.sidebar{width:var(--nav);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh}
+.sidebar-logo{padding:20px;font-family:var(--mono);font-size:14px;font-weight:700;color:var(--gold);letter-spacing:4px;border-bottom:1px solid var(--border)}
+.sidebar-logo span{color:var(--text3);font-weight:400}
+.nav-items{flex:1;padding:8px 0}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;color:var(--text2);font-size:13px;transition:color .12s,background .12s;border-left:2px solid transparent}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(77,159,255,.08);color:var(--blue);border-left-color:var(--blue)}
+.nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.nav-sep{height:1px;background:var(--border);margin:8px 16px}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);line-height:1.8}
+.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:5px}
+
+/* CONTENT */
+.content-area{flex:1;overflow:hidden;position:relative}
+.content-area iframe{width:100%;height:100%;border:none;display:none}
+.content-area iframe.active{display:block}
+.coming-soon{display:none;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:var(--text3);font-family:var(--mono);font-size:11px}
+.coming-soon.active{display:flex}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">HERM<span>ÈS</span></div>
+    <div class="login-sub">PILOTAGE PATRIMONIAL</div>
+    <div class="login-card">
+      <div class="login-label">Mot de passe</div>
+      <input id="pwd" class="login-input" type="password" placeholder="••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+      <button class="login-btn" onclick="doLogin()">Accéder</button>
+      <div id="login-err" class="login-err">Mot de passe incorrect</div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">HERM<span>ÈS</span></div>
+    <div class="nav-items">
+      <div class="nav-item active" data-page="passif" onclick="nav(this)">
+        <div class="nav-icon">◈</div><div>Patrimoine</div>
+      </div>
+      <div class="nav-item" data-page="actions" onclick="nav(this)">
+        <div class="nav-icon">⚡</div><div>Actions</div>
+      </div>
+      <div class="nav-item" data-page="watchlist" onclick="nav(this)">
+        <div class="nav-icon">◎</div><div>Watchlist</div>
+      </div>
+      <div class="nav-item" data-page="historique" onclick="nav(this)">
+        <div class="nav-icon">◷</div><div>Historique</div>
+      </div>
+      <div class="nav-sep"></div>
+      <div class="nav-item" data-page="maj" onclick="nav(this)">
+        <div class="nav-icon">↑</div><div>Mise à jour</div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div><span class="status-dot"></span>Hermès actif</div>
+      <div id="footer-date"></div>
+    </div>
+  </div>
+
+  <div class="content-area" id="content">
+    <iframe id="frame-passif" class="active" src="passif.html"></iframe>
+    <iframe id="frame-maj" src="about:blank"></iframe>
+    <div id="frame-actions"    class="coming-soon"><div style="font-size:32px">⚡</div><div>Produit 2 — bientôt</div></div>
+    <div id="frame-watchlist"  class="coming-soon"><div style="font-size:32px">◎</div><div>Produit 3 — bientôt</div></div>
+    <div id="frame-historique" class="coming-soon"><div style="font-size:32px">◷</div><div>Produit 4 — bientôt</div></div>
+  </div>
+</div>
+
+<script>
+// ── SHA-256 ───────────────────────────────────────────────────────
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+const PWD_HASH = 'f74fee330886f88ceea28e9bdb43c9db1df048010398f407c9cb67e1c1c80e5e';
+
+async function doLogin() {
+  const pwd = document.getElementById('pwd').value;
+  const hash = await sha256(pwd);
+  if (hash === PWD_HASH) {
+    sessionStorage.setItem('hermes_auth','1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    document.getElementById('footer-date').textContent =
+      new Date().toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'});
+  } else {
+    const err = document.getElementById('login-err');
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 2000);
+  }
+}
+
+// ── Navigation ────────────────────────────────────────────────────
+function nav(el) {
+  const page = el.dataset.page;
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+
+  // Cacher tout
+  document.querySelectorAll('.content-area iframe, .content-area .coming-soon')
+    .forEach(f => { f.classList.remove('active'); });
+
+  const frame = document.getElementById('frame-' + page);
+  if (!frame) return;
+
+  // Charger si iframe pas encore initialisée
+  if (frame.tagName === 'IFRAME' && (frame.src === 'about:blank' || frame.src === '')) {
+    frame.src = page + '.html';
+  }
+  frame.classList.add('active');
+}
+
+// ── Auto-login ────────────────────────────────────────────────────
+if (sessionStorage.getItem('hermes_auth') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  document.getElementById('footer-date').textContent =
+    new Date().toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'});
+}
+</script>
+</body>
+</html>

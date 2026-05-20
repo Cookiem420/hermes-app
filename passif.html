@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Patrimoine</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#06090f;--bg2:#0b0f18;--bg3:#111722;--bg4:#1a2133;
+  --border:#1e2a3d;--border2:#2a3a52;
+  --text:#e8eef7;--text2:#7a8fa8;--text3:#3d5068;
+  --green:#00d68f;--green2:rgba(0,214,143,.1);
+  --red:#ff4d6a;--red2:rgba(255,77,106,.1);
+  --blue:#4d9fff;--blue2:rgba(77,159,255,.1);
+  --gold:#f0b429;--gold2:rgba(240,180,41,.1);
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;overflow-y:auto;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.page{padding:28px 36px 60px}
+
+/* HEADER */
+.hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px}
+.hdr-total{font-family:var(--mono);font-size:34px;font-weight:700;letter-spacing:-1px}
+.hdr-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.hdr-delta{display:flex;align-items:center;gap:8px;margin-top:6px;font-family:var(--mono);font-size:12px}
+.hdr-meta{text-align:right;font-family:var(--mono);font-size:10px;color:var(--text3);line-height:1.9}
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text2)}
+
+/* KPIS */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
+.kpi-label{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.kpi-val{font-family:var(--mono);font-size:22px;font-weight:700}
+.kpi-sub{font-size:11px;color:var(--text2);margin-top:4px}
+.kpi.g .kpi-val{color:var(--green)}.kpi.b .kpi-val{color:var(--blue)}.kpi.o .kpi-val{color:var(--gold)}
+
+/* SECTION */
+.sec{display:flex;align-items:center;gap:10px;margin-bottom:12px;margin-top:28px}
+.sec-title{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+.sec-line{flex:1;height:1px;background:var(--border)}
+
+/* TABLEAU ENVELOPPES */
+.env-table{width:100%;border-collapse:collapse;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.env-table th{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;padding:10px 16px;text-align:right;background:var(--bg3);border-bottom:1px solid var(--border)}
+.env-table th:first-child{text-align:left}
+.env-row{cursor:pointer;transition:background .1s}
+.env-row:hover{background:var(--bg3)}
+.env-row td{padding:13px 16px;border-top:1px solid var(--border)}
+.env-name-cell{display:flex;align-items:center;gap:10px}
+.env-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.env-nom{font-weight:500}
+.env-chev{color:var(--text3);font-size:11px;margin-left:4px;transition:transform .2s;display:inline-block}
+.env-chev.open{transform:rotate(90deg)}
+.cell-r{text-align:right}.cell-mono{font-family:var(--mono)}
+.cell-sub{font-size:10px;color:var(--text2);margin-top:2px}
+.total-row td{padding:12px 16px;border-top:2px solid var(--border2);background:var(--bg3);font-family:var(--mono);font-weight:700}
+
+/* DRILL */
+.drill-row{display:none}
+.drill-row.open{display:table-row}
+.drill-wrap{background:var(--bg3);border-top:1px solid var(--border)}
+.drill-inner{padding:0 0 4px 36px}
+.drill-line{display:flex;align-items:center;padding:8px 16px 8px 0;border-bottom:1px solid var(--border)}
+.drill-line:last-child{border-bottom:none}
+.drill-lname{flex:1}
+.drill-lname-main{font-size:12px}
+.drill-lname-sub{font-size:10px;color:var(--text2);margin-top:1px}
+.badge{font-family:var(--mono);font-size:8px;padding:2px 5px;border-radius:3px;margin-left:6px;vertical-align:middle}
+.b-full{background:var(--blue2);color:var(--blue)}
+.b-build{background:var(--blue2);color:var(--blue)}
+.b-weak{background:var(--red2);color:var(--red)}
+.b-profit{background:var(--gold2);color:var(--gold)}
+.b-exit{background:var(--red2);color:var(--red)}
+.b-other{background:var(--bg4);color:var(--text2)}
+.drill-val{font-family:var(--mono);font-size:12px;font-weight:600;min-width:90px;text-align:right}
+.drill-pnl{font-family:var(--mono);font-size:11px;min-width:90px;text-align:right}
+.drill-delta{font-family:var(--mono);font-size:11px;min-width:80px;text-align:right;color:var(--text3)}
+.cash-line{color:var(--blue);font-family:var(--mono);font-size:11px;font-weight:600}
+
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px}
+.chart-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+.chart-empty{text-align:center;padding:48px;font-family:var(--mono);font-size:10px;color:var(--text3)}
+
+/* ANALYSE */
+.ana-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ana-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px}
+.ana-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.bar-item{margin-bottom:11px}
+.bar-head{display:flex;justify-content:space-between;margin-bottom:4px;font-size:11px}
+.bar-name{color:var(--text)}
+.bar-info{font-family:var(--mono);font-size:10px;color:var(--text2)}
+.bar-track{height:4px;background:var(--bg4);border-radius:2px}
+.bar-fill{height:100%;border-radius:2px;transition:width .4s}
+
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ÉTAT */
+.loading{display:flex;align-items:center;justify-content:center;height:60vh;font-family:var(--mono);font-size:11px;color:var(--text3)}
+.error-msg{background:var(--red2);border:1px solid var(--red);border-radius:6px;padding:12px 16px;font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:20px}
+</style>
+</head>
+<body>
+<div class="page" id="root"><div class="loading">Chargement...</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ── Config ────────────────────────────────────────────────────────
+const GITHUB_USER = 'Cookiem420';
+const STATE_URL  = `https://raw.githubusercontent.com/${GITHUB_USER}/hermes-data/main/portfolio_state.json`;
+const CONFIG_URL = `https://raw.githubusercontent.com/${GITHUB_USER}/hermes-data/main/config_watchlist.json`;
+
+const ENV_COLORS = {
+  PEA:'#4d9fff',CTO:'#a78bfa','PEA-PME':'#00d68f',
+  AV:'#f0b429',PEE:'#fb923c',Livrets:'#38bdf8',
+  SCPI:'#e879f9',Revolut:'#34d399',
+};
+
+const BADGE_MAP = {
+  FULL:'b-full',BUILDING:'b-build',PARTIAL:'b-build',
+  WEAKENING_STRUCT:'b-weak',WEAKENING_TECH:'b-weak',
+  PROFIT_PROTECTION:'b-profit',EXIT_READY:'b-exit',EXITED:'b-exit',
+};
+
+const RISQUE_MAP = {
+  ETF_large:'Faible',ETF_sectoriel:'Modéré',Qualite:'Modéré',
+  Cyclique:'Modéré',Croissance:'Élevé',Speculatif:'Spéculatif',
+};
+
+const RISQUE_COLORS = {Faible:'#00d68f',Modéré:'#f0b429',Élevé:'#fb923c',Spéculatif:'#ff4d6a'};
+const ANA_COLORS = ['#4d9fff','#a78bfa','#00d68f','#f0b429','#fb923c','#38bdf8','#e879f9','#34d399','#ff4d6a','#94a3b8'];
+
+let STATE = null, CONFIG = null, chartLine = null, chartDonut = null;
+
+// ── Utils ─────────────────────────────────────────────────────────
+function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
+function fmtPct(n){if(n==null||isNaN(n))return'—';return(n>0?'+':'')+n.toFixed(2)+'%'}
+function pc(v){return v>0.01?'pos':v<-0.01?'neg':'neu'}
+
+// ── Load ──────────────────────────────────────────────────────────
+async function load() {
+  try {
+    const [sr,cr] = await Promise.all([
+      fetch(STATE_URL+'?t='+Date.now()),
+      fetch(CONFIG_URL+'?t='+Date.now()),
+    ]);
+    if(!sr.ok) throw new Error('portfolio_state '+sr.status);
+    if(!cr.ok) throw new Error('config_watchlist '+cr.status);
+    STATE  = await sr.json();
+    CONFIG = await cr.json();
+    render();
+  } catch(e) {
+    document.getElementById('root').innerHTML =
+      `<div class="error-msg">Erreur chargement : ${e.message}</div>`;
+  }
+}
+
+// ── Build envelopes ───────────────────────────────────────────────
+function buildEnvelopes() {
+  const snaps = STATE?.snapshots_patrimoine || [];
+  const last  = snaps[snaps.length-1] || {};
+  const prev  = snaps[snaps.length-2] || {};
+  const pos   = STATE?.positions || {};
+  const cfg   = CONFIG?.positions_detenues || {};
+  const cash  = STATE?.cash || {};
+
+  const defs = [
+    {key:'PEA',    nom:'PEA',         snap:'pea',     cashK:'pea',  cote:true},
+    {key:'CTO',    nom:'CTO',         snap:'cto',     cashK:'cto',  cote:true},
+    {key:'PEA-PME',nom:'PEA-PME',     snap:'pme',     cashK:'pme',  cote:true},
+    {key:'AV',     nom:'Ass. Vie',    snap:'av',      cote:false,   detailK:'av_detail'},
+    {key:'PEE',    nom:'PEE',         snap:'pee',     cote:false,   detailK:'pee_detail'},
+    {key:'Livrets',nom:'Livrets & CC',snap:'livrets', cote:false,   detailK:'livrets_detail'},
+    {key:'SCPI',   nom:'SCPI',        snap:'scpi',    cote:false,   detailK:'scpi_detail'},
+    {key:'Revolut',nom:'Revolut',     snap:'revolut', cote:false,   detailK:'revolut_detail'},
+  ];
+
+  return defs
+    .map(d => {
+      const total     = last[d.snap] || 0;
+      const prevTotal = prev[d.snap] || 0;
+      if (total === 0 && prevTotal === 0) return null;
+
+      const lines = [];
+
+      if (d.cote) {
+        // Cash
+        const cashVal = cash[d.cashK] || 0;
+        if (cashVal > 0) lines.push({type:'cash',nom:'Espèces',val:cashVal});
+        // Positions
+        Object.entries(pos).forEach(([ticker,p]) => {
+          if (p.etat === 'EXITED' || (p.quantite_detenue||0) === 0) return;
+          const c = cfg[ticker];
+          if (!c || c.enveloppe !== d.key) return;
+          const val    = p.derniere_valorisation || 0;
+          const pru    = p.prix_moyen_entree || 0;
+          const qty    = p.quantite_detenue || 0;
+          const cost   = pru * qty;
+          const pnlEur = val - cost;
+          const pnlPct = cost > 0 ? pnlEur/cost*100 : null;
+          lines.push({type:'pos',nom:c.nom||ticker,ticker,etat:p.etat,
+            val,pnlEur,pnlPct,categorie:c.categorie||''});
+        });
+      } else {
+        // Détail depuis snapshot
+        const detail = last[d.detailK] || [];
+        detail.forEach(dd => lines.push({type:'detail',nom:dd.nom,val:dd.valeur||0}));
+      }
+
+      return {key:d.key,nom:d.nom,color:ENV_COLORS[d.key]||'#888',total,prevTotal,lines};
+    })
+    .filter(Boolean);
+}
+
+// ── Build analysis ────────────────────────────────────────────────
+function buildAnalysis(envelopes) {
+  const pos = STATE?.positions || {};
+  const cfg = CONFIG?.positions_detenues || {};
+  const investiCote = envelopes.filter(e=>['PEA','CTO','PEA-PME'].includes(e.key))
+    .reduce((s,e)=>s+e.total,0) || 1;
+
+  const risque={}, themes={}, cats={};
+  const THEME_RULES = [
+    [/eau|water|WATR|EAU/i,'Eau & Env.'],
+    [/tech|digital|logiciel|software/i,'Tech'],
+    [/banque|bank|financ|EXV/i,'Finance'],
+    [/défense|defense|armement|HENSOLDT|EXAIL/i,'Défense'],
+    [/monde|world|CW8/i,'Global'],
+    [/japon|japan|IJPE/i,'Asie'],
+    [/asie|asia|pacif|AEEM/i,'Asie'],
+    [/ressource|miner|AMRS|ABRE/i,'Matières 1ères'],
+    [/biotech|pharma|medic/i,'Santé'],
+  ];
+
+  Object.entries(pos).forEach(([ticker,p]) => {
+    if (p.etat==='EXITED'||(p.quantite_detenue||0)===0) return;
+    const c = cfg[ticker];
+    if (!c) return;
+    const val = p.derniere_valorisation || 0;
+    const cat = c.categorie || 'Autre';
+    const ris = RISQUE_MAP[cat] || 'Autre';
+    const these = (c.these||'') + ' ' + (c.nom||'') + ' ' + ticker;
+
+    cats[cat] = (cats[cat]||0) + val;
+    risque[ris] = (risque[ris]||0) + val;
+
+    let theme = 'Diversifié';
+    for (const [re, label] of THEME_RULES) {
+      if (re.test(these)) { theme = label; break; }
+    }
+    themes[theme] = (themes[theme]||0) + val;
+  });
+
+  return {risque,themes,cats,investiCote};
+}
+
+// ── Render tableau ────────────────────────────────────────────────
+function renderTableau(envelopes, total) {
+  const prev = (STATE?.snapshots_patrimoine||[]).slice(-2,-1)[0]?.total || total;
+  const totalDelta = total - prev;
+  const totalDeltaPct = prev>0 ? totalDelta/prev*100 : 0;
+
+  let rows = '';
+  envelopes.forEach((env, i) => {
+    const delta    = env.total - env.prevTotal;
+    const deltaPct = env.prevTotal>0 ? delta/env.prevTotal*100 : 0;
+    const pct      = total>0 ? env.total/total*100 : 0;
+
+    // P&L global (positions cotées)
+    let pnlEurSum = null, costSum = 0;
+    (env.lines||[]).forEach(l => {
+      if (l.type==='pos') {
+        pnlEurSum = (pnlEurSum||0) + (l.pnlEur||0);
+        costSum  += (l.val||0) - (l.pnlEur||0);
+      }
+    });
+    const pnlPctGlob = costSum>0 && pnlEurSum!=null ? pnlEurSum/costSum*100 : null;
+
+    rows += `
+      <tr class="env-row" onclick="toggleDrill(${i})">
+        <td>
+          <div class="env-name-cell">
+            <div class="env-dot" style="background:${env.color}"></div>
+            <span class="env-nom">${env.nom}</span>
+            <span class="env-chev" id="chev-${i}">›</span>
+          </div>
+        </td>
+        <td class="cell-r">
+          <div class="cell-mono" style="font-weight:600">${fmt(env.total)} €</div>
+          <div class="cell-sub">${pct.toFixed(1)}% patrim.</div>
+        </td>
+        <td class="cell-r">
+          ${pnlPctGlob!=null
+            ? `<div class="cell-mono ${pc(pnlPctGlob)}">${fmtPct(pnlPctGlob)}</div>
+               <div class="cell-sub ${pc(pnlEurSum)}">${fmt(pnlEurSum)} €</div>`
+            : '<div class="neu">—</div>'}
+        </td>
+        <td class="cell-r">
+          ${delta!==0
+            ? `<div class="cell-mono ${pc(delta)}">${delta>0?'+':''}${fmt(delta)} €</div>
+               <div class="cell-sub ${pc(deltaPct)}">${fmtPct(deltaPct)}</div>`
+            : '<div class="neu">—</div>'}
+        </td>
+      </tr>
+      <tr class="drill-row" id="drill-${i}">
+        <td colspan="4" style="padding:0">${renderDrill(env)}</td>
+      </tr>
+    `;
+  });
+
+  rows += `
+    <tr class="total-row">
+      <td>TOTAL</td>
+      <td class="cell-r" style="font-size:15px">${fmt(total)} €</td>
+      <td class="cell-r neu">—</td>
+      <td class="cell-r ${pc(totalDelta)}">${totalDelta!==0?(totalDelta>0?'+':'')+fmt(totalDelta)+' €':''}</td>
+    </tr>`;
+
+  return `<table class="env-table">
+    <thead><tr>
+      <th style="width:30%">Enveloppe</th>
+      <th style="width:22%;text-align:right">Montant</th>
+      <th style="width:22%;text-align:right">P&L historique</th>
+      <th style="width:26%;text-align:right">Δ dernière MAJ</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderDrill(env) {
+  if (!env.lines || env.lines.length === 0) {
+    return `<div class="drill-wrap"><div class="drill-inner" style="padding:12px 16px 12px 0;font-family:var(--mono);font-size:10px;color:var(--text3)">
+      Faire une MAJ pour voir le détail</div></div>`;
+  }
+  let html = '<div class="drill-wrap"><div class="drill-inner">';
+  env.lines.forEach(l => {
+    if (l.type === 'cash') {
+      html += `<div class="drill-line">
+        <div class="drill-lname"><span class="cash-line">💵 ${l.nom}</span></div>
+        <div class="drill-val" style="color:var(--blue)">${fmt(l.val,2)} €</div>
+        <div class="drill-pnl">—</div><div class="drill-delta">—</div>
+      </div>`;
+    } else if (l.type === 'pos') {
+      const bc = BADGE_MAP[l.etat] || 'b-other';
+      html += `<div class="drill-line">
+        <div class="drill-lname">
+          <div class="drill-lname-main">${l.nom}<span class="badge ${bc}">${l.etat}</span></div>
+          ${l.categorie?`<div class="drill-lname-sub">${l.categorie}</div>`:''}
+        </div>
+        <div class="drill-val">${fmt(l.val)} €</div>
+        <div class="drill-pnl ${pc(l.pnlEur)}">
+          ${l.pnlEur!=null?(l.pnlEur>=0?'+':'')+fmt(l.pnlEur)+' €':'—'}
+          ${l.pnlPct!=null?`<div style="font-size:10px">${fmtPct(l.pnlPct)}</div>`:''}
+        </div>
+        <div class="drill-delta">—</div>
+      </div>`;
+    } else {
+      html += `<div class="drill-line">
+        <div class="drill-lname"><div class="drill-lname-main">${l.nom}</div></div>
+        <div class="drill-val">${fmt(l.val,2)} €</div>
+        <div class="drill-pnl">—</div><div class="drill-delta">—</div>
+      </div>`;
+    }
+  });
+  html += '</div></div>';
+  return html;
+}
+
+function toggleDrill(i) {
+  const dr   = document.getElementById('drill-'+i);
+  const chev = document.getElementById('chev-'+i);
+  if (!dr) return;
+  const isOpen = dr.classList.contains('open');
+  document.querySelectorAll('.drill-row').forEach(r=>r.classList.remove('open'));
+  document.querySelectorAll('.env-chev').forEach(c=>c.classList.remove('open'));
+  if (!isOpen) { dr.classList.add('open'); chev?.classList.add('open'); }
+}
+
+// ── Render charts ─────────────────────────────────────────────────
+function renderChartLine() {
+  const snaps = STATE?.snapshots_patrimoine || [];
+  if (snaps.length < 2) return `<div class="chart-empty">Pas encore assez de MAJ pour afficher la courbe</div>`;
+  return `<canvas id="chart-line"></canvas>`;
+}
+
+function initChartLine() {
+  const snaps = STATE?.snapshots_patrimoine || [];
+  if (snaps.length < 2) return;
+  const canvas = document.getElementById('chart-line');
+  if (!canvas) return;
+  if (chartLine) chartLine.destroy();
+
+  const labels = snaps.map(s => new Date(s.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}));
+  const dsets = [
+    {key:'pea',label:'PEA'},{key:'cto',label:'CTO'},{key:'pme',label:'PEA-PME'},
+    {key:'av',label:'AV'},{key:'pee',label:'PEE'},{key:'livrets',label:'Livrets'},
+    {key:'scpi',label:'SCPI'},
+  ].filter(d => snaps.some(s=>(s[d.key]||0)>0))
+   .map(d => ({
+     label:d.label,
+     data:snaps.map(s=>s[d.key]||0),
+     borderColor:ENV_COLORS[d.label]||ENV_COLORS[Object.keys(ENV_COLORS).find(k=>k===d.label||k.toUpperCase()===d.label)||'PEA'],
+     backgroundColor:(ENV_COLORS[d.label]||'#4d9fff')+'18',
+     fill:true,tension:.3,pointRadius:snaps.length>8?2:4,borderWidth:2,
+   }));
+
+  chartLine = new Chart(canvas,{
+    type:'line',data:{labels,datasets:dsets},
+    options:{
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{labels:{color:'#7a8fa8',font:{family:"'IBM Plex Mono'",size:10},boxWidth:10}},
+        tooltip:{backgroundColor:'#111722',borderColor:'#1e2a3d',borderWidth:1,
+          callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmt(ctx.raw)} €`}}
+      },
+      scales:{
+        x:{grid:{color:'#1e2a3d'},ticks:{color:'#3d5068',font:{family:"'IBM Plex Mono'",size:9}}},
+        y:{grid:{color:'#1e2a3d'},ticks:{color:'#3d5068',font:{family:"'IBM Plex Mono'",size:9},callback:v=>fmt(v)+'€'}},
+      }
+    }
+  });
+}
+
+function initChartDonut(envelopes, total) {
+  const canvas = document.getElementById('chart-donut');
+  if (!canvas) return;
+  if (chartDonut) chartDonut.destroy();
+  const data = envelopes.filter(e=>e.total>0);
+  chartDonut = new Chart(canvas,{
+    type:'doughnut',
+    data:{
+      labels:data.map(e=>e.nom),
+      datasets:[{data:data.map(e=>e.total),backgroundColor:data.map(e=>e.color),borderWidth:0,hoverOffset:4}]
+    },
+    options:{
+      cutout:'68%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#111722',borderColor:'#1e2a3d',borderWidth:1,
+          callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.raw)} € (${(ctx.raw/total*100).toFixed(1)}%)`}}
+      }
+    }
+  });
+  document.getElementById('donut-legend').innerHTML = data.map(e=>`
+    <div class="leg-item"><div class="leg-dot" style="background:${e.color}"></div>
+    <span>${e.nom} ${(e.total/total*100).toFixed(0)}%</span></div>`).join('');
+}
+
+// ── Render bars analyse ───────────────────────────────────────────
+function renderBars(data, base) {
+  const items = Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  if (!items.length) return '<div style="font-family:var(--mono);font-size:10px;color:var(--text3);padding:8px 0">Aucune donnée — faire une MAJ</div>';
+  return items.map(([label,val],i)=>{
+    const pct  = base>0 ? val/base*100 : 0;
+    const color= RISQUE_COLORS[label] || ANA_COLORS[i%ANA_COLORS.length];
+    return `<div class="bar-item">
+      <div class="bar-head">
+        <span class="bar-name" style="color:${color}">${label}</span>
+        <span class="bar-info">${fmt(val)} € · ${pct.toFixed(1)}%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(pct,100)}%;background:${color}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── Render principal ──────────────────────────────────────────────
+function render() {
+  const snaps  = STATE?.snapshots_patrimoine || [];
+  const last   = snaps[snaps.length-1] || {};
+  const prev   = snaps[snaps.length-2] || {};
+  const cash   = STATE?.cash || {};
+
+  const envelopes = buildEnvelopes();
+  const total     = last.total || 0;
+  const prevTot   = prev.total || total;
+  const delta     = total - prevTot;
+  const deltaPct  = prevTot>0 ? delta/prevTot*100 : 0;
+  const cashTotal = (cash.pea||0)+(cash.cto||0)+(cash.pme||0);
+  const investiCote = envelopes.filter(e=>['PEA','CTO','PEA-PME'].includes(e.key)).reduce((s,e)=>s+e.total,0);
+  const garanti   = envelopes.filter(e=>['AV','PEE','Livrets','SCPI'].includes(e.key)).reduce((s,e)=>s+e.total,0);
+  const majDate   = STATE?.meta?.derniere_maj_manuelle || '—';
+  const {risque,themes,cats,investiCote:ic} = buildAnalysis(envelopes);
+
+  document.getElementById('root').innerHTML = `
+    <!-- HEADER -->
+    <div class="hdr">
+      <div>
+        <div class="hdr-label">Patrimoine total</div>
+        <div class="hdr-total ${pc(delta)}">${fmt(total)} €</div>
+        <div class="hdr-delta">
+          <span class="${pc(delta)}">${delta>=0?'+':''}${fmt(delta)} €</span>
+          <span class="${pc(deltaPct)}" style="font-size:10px">${fmtPct(deltaPct)}</span>
+          <span style="color:var(--text3);font-size:10px">vs MAJ préc.</span>
+        </div>
+      </div>
+      <div class="hdr-meta">
+        <div>Dernière MAJ : <span style="color:var(--text)">${majDate}</span></div>
+        <div>${envelopes.length} enveloppes · ${snaps.length} points historique</div>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="kpi g"><div class="kpi-label">Investi coté</div>
+        <div class="kpi-val">${fmt(investiCote)} €</div><div class="kpi-sub">PEA · CTO · PME</div></div>
+      <div class="kpi o"><div class="kpi-label">Garanti & non coté</div>
+        <div class="kpi-val">${fmt(garanti)} €</div><div class="kpi-sub">AV · PEE · Livrets · SCPI</div></div>
+      <div class="kpi b"><div class="kpi-label">Cash disponible</div>
+        <div class="kpi-val">${fmt(cashTotal)} €</div><div class="kpi-sub">Espèces PEA+CTO+PME</div></div>
+      <div class="kpi"><div class="kpi-label">Total</div>
+        <div class="kpi-val">${fmt(total)} €</div>
+        <div class="kpi-sub ${pc(delta)}">${delta>=0?'+':''}${fmt(delta)} € vs MAJ préc.</div></div>
+    </div>
+
+    <!-- N1 TABLEAU -->
+    <div class="sec"><div class="sec-title">Niveau 1 — Enveloppes</div><div class="sec-line"></div></div>
+    ${renderTableau(envelopes, total)}
+
+    <!-- N2 COURBE -->
+    <div class="sec"><div class="sec-title">Niveau 2 — Évolution patrimoine</div><div class="sec-line"></div></div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-label">Évolution par enveloppe</div>
+        ${renderChartLine()}
+      </div>
+      <div class="chart-card">
+        <div class="chart-label">Répartition actuelle</div>
+        <canvas id="chart-donut" style="max-height:180px"></canvas>
+        <div class="legend" id="donut-legend"></div>
+      </div>
+    </div>
+
+    <!-- N3/4/5 ANALYSE -->
+    <div class="sec"><div class="sec-title">Niveaux 3/4/5 — Analyse</div><div class="sec-line"></div></div>
+    <div class="ana-row">
+      <div class="ana-card">
+        <div class="ana-label">Niveau 3 — Risque</div>
+        ${renderBars(risque, ic)}
+      </div>
+      <div class="ana-card">
+        <div class="ana-label">Niveau 4 — Thématiques</div>
+        ${renderBars(themes, ic)}
+      </div>
+      <div class="ana-card">
+        <div class="ana-label">Niveau 5 — Catégories</div>
+        ${renderBars(cats, ic)}
+      </div>
+    </div>
+  `;
+
+  initChartLine();
+  initChartDonut(envelopes, total);
+}
+
+load();
+</script>
+</body>
+</html>
