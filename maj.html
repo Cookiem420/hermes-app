@@ -680,14 +680,11 @@ async function save(){
     if(!ok1) throw new Error('Échec écriture tampon');
 
     msg('⏳ [2/4] Rotation MAJ → MAJ-1...');
-    if(majCourante && majCourante.meta?.date_maj) {
-      const ok2 = await ghPut(token, FILES.moins1, majCourante, `📦 MAJ-1 ← MAJ ${majCourante.meta.date_maj}`);
-      if(!ok2) throw new Error('Échec écriture MAJ-1');
-    } else {
-      // Première fois : MAJ-1 = tampon vide (pas de données précédentes)
-      const ok2 = await ghPut(token, FILES.moins1, tampon, `📦 MAJ-1 init ${date}`);
-      if(!ok2) throw new Error('Échec init MAJ-1');
-    }
+    // Toujours écrire MAJ-1 avec le contenu actuel de maj.json
+    // (même si vide lors de la 1ère MAJ — c'est intentionnel)
+    const ok2 = await ghPut(token, FILES.moins1, majCourante || tampon,
+      `📦 MAJ-1 ← MAJ ${majCourante?.meta?.date_maj || date}`);
+    if(!ok2) throw new Error('Échec écriture MAJ-1');
 
     msg('⏳ [3/4] Mise à jour MAJ...');
     const ok3 = await ghPut(token, FILES.maj, tampon, `📊 MAJ ${date} — ${fmt(t.total)} €`);
@@ -707,7 +704,7 @@ async function save(){
         <div class="success-sub">
           MAJ tampon → MAJ-1 → MAJ → Graph<br>
           ${graph.snapshots.length} point(s) d'historique<br>
-          ${graph.snapshots.length>=2?'Delta disponible au prochain chargement':'Une 2ème MAJ sera nécessaire pour voir les écarts'}
+          ${graph.snapshots.length>=2?'✅ Delta visible dans le tableau de bord':'ℹ️ Faites une 2ème MAJ pour voir les écarts de performance'}
         </div>
       </div>`;
 

@@ -448,9 +448,9 @@ function render() {
   const snaps   = GRAPH?.snapshots||[];
   // Pour le header delta : MAJ vs MAJ-1
   const prevT   = MOINS1?.totaux || {};
-  const prevTot = prevSnap?.totaux?.total || T.total;
-  const delta   = T.total - prevTot;
-  const deltaPct= prevTot>0 ? delta/prevTot*100 : 0;
+  const prevTot = prevT?.total || 0;
+  const delta   = prevTot > 0 ? T.total - prevTot : 0;
+  const deltaPct= prevTot > 0 ? delta/prevTot*100 : 0;
   const cashTot = (DONNEE.cash?.pea||0)+(DONNEE.cash?.cto||0)+(DONNEE.cash?.pme||0);
   // Investi coté = positions + cash (les poches cotées incluent le cash disponible)
   const invCote = (T.pea||0)+(T.cto||0)+(T.pme||0);  // T.pea inclut déjà le cash
