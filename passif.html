@@ -60,7 +60,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .dr-row.open{display:table-row}
 .dr-wrap{background:var(--bg3);border-top:1px solid var(--border)}
 .dr-inner{padding:0 0 4px 32px}
-.dr-line{display:flex;align-items:center;padding:7px 14px 7px 0;border-bottom:1px solid var(--border)}
+.dr-line{display:grid;grid-template-columns:30% 22% 22% 26%;align-items:center;padding:7px 14px 7px 32px;border-bottom:1px solid var(--border)}
 .dr-line:last-child{border-bottom:none}
 .dr-name{flex:1}
 .dr-nm{font-size:12px}
@@ -170,6 +170,12 @@ function buildEnvelopes() {
   // MAJ-1 : dernier snapshot dans historique AVANT aujourd'hui
   // MAJ-1 depuis le fichier dédié (source de vérité pour les écarts)
   const prevT = MOINS1?.totaux || {};
+  // Index des positions MAJ-1 par ISIN pour les deltas drill-down
+  const prevPosIndex = {};
+  [...(MOINS1?.pea_positions||[]),...(MOINS1?.cto_positions||[]),...(MOINS1?.pme_positions||[])].forEach(p=>{
+    if(p.isin) prevPosIndex[p.isin] = p;
+    else prevPosIndex[p.nom]        = p;  // fallback par nom
+  });
 
   const defs = [
     {key:'PEA',   nom:'PEA',        tot:T.pea,  prev:prevT.pea||0,  cashVal:cash.pea||0,  positions:DONNEE.pea_positions||[]},
@@ -194,8 +200,14 @@ function buildEnvelopes() {
         const cost   = (p.pru||0) * (p.quantite||0);
         const pnlEur = cost > 0 ? p.montant - cost : null;
         const pnlPct = cost > 0 ? (p.montant - cost) / cost * 100 : null;
+        // Δ MAJ : comparer avec MOINS1
+        const prevPos    = prevPosIndex[p.isin] || prevPosIndex[p.nom];
+        const prevMontant= prevPos?.montant || 0;
+        const deltaMaj   = prevMontant > 0 ? p.montant - prevMontant : null;
+        const deltaMajPct= prevMontant > 0 ? (p.montant - prevMontant) / prevMontant * 100 : null;
         lines.push({type:'pos', nom:p.nom, isin:p.isin,
-          val:p.montant, pnlEur, pnlPct, quantite:p.quantite, pru:p.pru});
+          val:p.montant, pnlEur, pnlPct, quantite:p.quantite, pru:p.pru,
+          deltaMaj, deltaMajPct});
       });
     } else {
       (e.detail||[]).forEach(d=>lines.push({type:'detail',nom:d.nom,val:d.valeur||0}));
@@ -318,11 +330,11 @@ function renderDrill(env) {
     return `<div class="dr-wrap"><div style="padding:12px 14px;font-family:var(--mono);font-size:10px;color:var(--text3)">Faire une MAJ pour voir le détail</div></div>`;
 
   let h=`<div class="dr-wrap">
-    <div style="display:flex;padding:5px 14px 5px 32px;background:var(--bg4);border-bottom:1px solid var(--border)">
-      <div style="flex:1;font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px">POSITION</div>
-      <div style="min-width:90px;text-align:right;font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px">VALEUR</div>
-      <div style="min-width:90px;text-align:right;font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px">P&L HIST.</div>
-      <div style="min-width:80px;text-align:right;font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px">Δ MAJ</div>
+    <div style="display:grid;grid-template-columns:30% 22% 22% 26%;padding:5px 14px 5px 32px;background:var(--bg4);border-bottom:1px solid var(--border)">
+      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px">POSITION</div>
+      <div style="text-align:right;font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px">VALEUR</div>
+      <div style="text-align:right;font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px">P&L HIST.</div>
+      <div style="text-align:right;font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px">Δ MAJ PRÉC.</div>
     </div>
     <div class="dr-inner">`;
   env.lines.forEach(l=>{
@@ -343,7 +355,12 @@ function renderDrill(env) {
                <div class="${pc(l.pnlEur)}" style="font-size:10px">${l.pnlEur>=0?'+':''}${fmt(l.pnlEur)} €</div>`
             : '<span class="neu">—</span>'}
         </div>
-        <div class="dr-dlt">—</div>
+        <div class="dr-dlt">
+          ${l.deltaMajPct!=null
+            ? `<div class="${pc(l.deltaMaj)}" style="font-weight:600">${l.deltaMaj>=0?'+':''}${fmt(l.deltaMaj)} €</div>
+               <div class="${pc(l.deltaMaj)}" style="font-size:10px">${l.deltaMaj>=0?'+':''}${l.deltaMajPct.toFixed(2)}%</div>`
+            : '<span class="neu">—</span>'}
+        </div>
       </div>`;
     } else {
       h+=`<div class="dr-line"><div class="dr-name"><div class="dr-nm">${l.nom}</div></div>
