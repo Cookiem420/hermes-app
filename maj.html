@@ -229,7 +229,17 @@ function afterRender(id) {
 // UTILS
 // ══════════════════════════════════════════════════════════════════
 function fmt(n,d=0){if(!n&&n!==0)return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
-function parseNum(v){if(v==null)return 0;return parseFloat(String(v).replace(/\s/g,'').replace(',','.'))||0;}
+function parseNum(v){
+  if(v==null) return 0;
+  // Nettoyer : guillemets, espaces (séparateurs milliers FR), virgule → point
+  const s = String(v).replace(/"/g,'').replace(/\s/g,'').replace(/,/g,'.');
+  // Si plusieurs points (ex 1.234.56 suite à remplacement), garder seulement le dernier
+  const parts = s.split('.');
+  const clean = parts.length > 2
+    ? parts.slice(0,-1).join('') + '.' + parts[parts.length-1]
+    : s;
+  return parseFloat(clean) || 0;
+}
 function today(){return new Date().toISOString().split('T')[0]}
 
 // ══════════════════════════════════════════════════════════════════
@@ -314,78 +324,99 @@ function processFile(file, env) {
 }
 
 function parseCSVText(text) {
-  // Détecter le séparateur
+  // Parser CSV correct gérant les champs entre guillemets (RFC 4180)
   const sep = text.split('\n')[0].includes(';') ? ';' : ',';
-  return text.split('\n').map(l => l.split(sep).map(c => c.trim().replace(/^["']|["']$/g,'')));
+  const lines = text.split('\n');
+  return lines.map(line => {
+    const fields = [];
+    let cur = '', inQ = false;
+    for(let i=0; i<line.length; i++) {
+      const c = line[i];
+      if(c==='"') { inQ=!inQ; }
+      else if(c===sep && !inQ) { fields.push(cur.trim()); cur=''; }
+      else { cur+=c; }
+    }
+    fields.push(cur.trim());
+    return fields;
+  });
 }
 
 function parsePositions(rows, env) {
-  // Chercher la ligne d'entête
-  const keywords = {
-    nom:     ['titre','libel','désignat','valeur mobil','name','instrument'],
-    isin:    ['isin','code isin','code'],
-    qty:     ['quantit','qté','nb titre','nombre','qty','shares'],
-    pru:     ['pru','prix rev','cours achat','prix moyen','purchase','avg'],
-    montant: ['valoris','montant','valeur','market value','total'],
-  };
-
+  const positions = [];
   let headerIdx = -1;
-  let cols = {nom:-1,isin:-1,qty:-1,pru:-1,montant:-1};
+  let cols = {nom:-1, isin:-1, qty:-1, pru:-1, cours:-1, montant:-1};
 
-  for(let i=0; i<Math.min(rows.length,20); i++) {
-    const row = rows[i].map(c=>String(c||'').toLowerCase().trim());
-    const score = row.filter(c=>
-      Object.values(keywords).flat().some(k=>c.includes(k))).length;
-    if(score>=2) {
+  for(let i=0; i<Math.min(rows.length,10); i++) {
+    const row = rows[i].map(c=>String(c||'').replace(/^[\uFEFF\s]+/,'').toLowerCase().replace(/[^a-z]/g,''));
+    if(row.includes('name')||row.includes('isin')||row.includes('buyingprice')) {
       headerIdx = i;
       row.forEach((cell,j)=>{
-        for(const [key,kws] of Object.entries(keywords)) {
-          if(cols[key]===-1 && kws.some(k=>cell.includes(k))) cols[key]=j;
-        }
+        if(cell==='name'||cell.includes('libel')||cell.includes('titre')) cols.nom=j;
+        else if(cell==='isin') cols.isin=j;
+        else if(cell==='quantity'||cell.includes('quantit')) cols.qty=j;
+        else if(cell==='buyingprice'||cell==='pru'||cell.includes('prixmoyen')||cell.includes('prixrev')) cols.pru=j;
+        else if(cell==='lastprice') cols.cours=j;
+        else if(cell==='amount'||cell==='montant'||cell.includes('valoris')) cols.montant=j;
       });
-      console.log(`[${env}] Header row ${i}:`, row);
-      console.log(`[${env}] Cols:`, cols);
+      console.log('['+env+'] Header r'+i+' cols:',JSON.stringify(cols));
       break;
     }
   }
 
-  const positions = [];
+  if(headerIdx===-1){
+    const kws=['name','isin','quantity','buyingprice','lastprice','amount'];
+    for(let i=0;i<Math.min(rows.length,15);i++){
+      const row=rows[i].map(c=>String(c||'').toLowerCase().replace(/[^a-z]/g,''));
+      if(row.filter(c=>kws.some(k=>c.includes(k))).length>=3){
+        headerIdx=i;
+        row.forEach((cell,j)=>{
+          if(cell.includes('name')||cell.includes('libel')) cols.nom=j;
+          if(cell==='isin') cols.isin=j;
+          if(cell.includes('quantit')) cols.qty=j;
+          if(cell.includes('buyingprice')||cell==='pru') cols.pru=j;
+          if(cell.includes('lastprice')) cols.cours=j;
+          if(cell==='amount'||cell.includes('valoris')) cols.montant=j;
+        });
+        break;
+      }
+    }
+  }
 
-  if(headerIdx>=0) {
-    for(let i=headerIdx+1; i<rows.length; i++) {
-      const row = rows[i];
-      if(!row || row.every(c=>!String(c||'').trim())) continue;
-
-      const nom     = cols.nom>=0     ? String(row[cols.nom]||'').trim() : '';
-      const isin    = cols.isin>=0    ? String(row[cols.isin]||'').trim().replace(/\s/g,'') : '';
-      const qty     = cols.qty>=0     ? parseNum(row[cols.qty]) : 0;
-      const pru     = cols.pru>=0     ? parseNum(row[cols.pru]) : 0;
-      const montant = cols.montant>=0 ? parseNum(row[cols.montant]) : qty*pru;
-
-      if(!nom || nom.toLowerCase().match(/total|sous.total|solde|^\s*$/)) continue;
-      if(!qty && !montant) continue;
-
-      positions.push({nom, isin, quantite:qty, pru, montant: montant||qty*pru});
+  if(headerIdx>=0){
+    for(let i=headerIdx+1;i<rows.length;i++){
+      const row=rows[i];
+      if(!row||row.length<2) continue;
+      if(row.every(c=>!String(c||'').trim())) continue;
+      const cl=c=>String(c||'').trim().replace(/^"|"$/g,'');
+      const nom   =cols.nom>=0    ?cl(row[cols.nom]):'';
+      const isin  =cols.isin>=0   ?cl(row[cols.isin]).replace(/\s/g,''):'';
+      const qty   =cols.qty>=0    ?parseNum(row[cols.qty]):0;
+      const pru   =cols.pru>=0    ?parseNum(row[cols.pru]):0;
+      const cours =cols.cours>=0  ?parseNum(row[cols.cours]):0;
+      let montant =cols.montant>=0?parseNum(row[cols.montant]):0;
+      if(!montant&&qty>0&&cours>0) montant=qty*cours;
+      if(!montant&&qty>0&&pru>0)   montant=qty*pru;
+      if(!nom||/^(total|sous.total|solde)$/i.test(nom.trim())) continue;
+      if(qty<=0&&montant<=0) continue;
+      positions.push({nom,isin,quantite:qty,pru,montant});
     }
   } else {
-    // Fallback ISIN
-    const isinRe = /^[A-Z]{2}[A-Z0-9]{10}$/;
-    rows.forEach(row => {
-      const strs = row.map(c=>String(c||'').trim());
-      const isinIdx = strs.findIndex(c=>isinRe.test(c));
-      if(isinIdx>=0) {
-        const isin = strs[isinIdx];
-        const nom  = strs.find((c,i)=>i<isinIdx&&c.length>2&&!/^\d/.test(c))||isin;
-        const nums = strs.map(parseNum).filter(n=>n>0);
+    console.warn('['+env+'] Header non détecté — fallback ISIN');
+    const isinRe=/^[A-Z]{2}[A-Z0-9]{10}$/;
+    rows.forEach(row=>{
+      const strs=row.map(c=>String(c||'').trim().replace(/^"|"$/g,''));
+      const ii=strs.findIndex(c=>isinRe.test(c));
+      if(ii>=0){
+        const isin=strs[ii];
+        const nom=strs.find((c,i)=>i<ii&&c.length>2&&!/^[\d,.]/g.test(c))||isin;
+        const nums=strs.map(parseNum).filter(n=>n>0);
         positions.push({nom,isin,quantite:nums[0]||0,pru:nums[1]||0,montant:nums[nums.length-1]||0});
       }
     });
-    console.log(`[${env}] Fallback ISIN found:`, positions.length);
   }
-
+  console.log('['+env+'] '+positions.length+' positions');
   return positions;
 }
-
 function showPreview(env, positions, fname) {
   const total = positions.reduce((s,p)=>s+p.montant,0);
   const envUp = {pea:'PEA',cto:'CTO',pme:'PEA-PME'}[env];
@@ -393,16 +424,17 @@ function showPreview(env, positions, fname) {
   const trows = positions.map(p=>`
     <tr>
       <td>${p.nom}</td>
-      <td>${p.isin||'—'}</td>
+      <td style="font-size:10px">${p.isin||'—'}</td>
       <td>${p.quantite}</td>
       <td>${p.pru>0?p.pru.toFixed(2)+' €':'—'}</td>
+      <td>${p.cours>0?p.cours.toFixed(2)+' €':'—'}</td>
       <td>${p.montant.toFixed(2)} €</td>
     </tr>`).join('');
 
   document.getElementById('prev-'+env).innerHTML = `
     <div class="csv-ok">✅ ${fname} — ${positions.length} ligne(s) importée(s)</div>
     <table class="csv-tbl">
-      <thead><tr><th>Titre</th><th>ISIN</th><th>Qté</th><th>PRU</th><th>Valeur</th></tr></thead>
+      <thead><tr><th>Titre</th><th>ISIN</th><th>Qté</th><th>PRU</th><th>Cours</th><th>Valeur</th></tr></thead>
       <tbody>
         ${trows}
         <tr class="trow-total">
@@ -419,10 +451,14 @@ function showPreview(env, positions, fname) {
 function rAV() {
   const rows = D.av.map((f,i)=>`
     <tr>
-      <td><input class="si" style="text-align:left;width:100%" value="${f.nom}"
+      <td><input class="si" style="text-align:left;width:95%" value="${f.nom}"
         oninput="D.av[${i}].nom=this.value"></td>
-      <td><input class="si" type="number" step="0.01" placeholder="0.00"
-        value="${f.valeur||''}" oninput="D.av[${i}].valeur=parseFloat(this.value)||0;updAV()"></td>
+      <td style="display:flex;align-items:center;gap:6px">
+        <input class="si" type="number" step="0.01" placeholder="0.00" style="width:110px;flex:1"
+          value="${f.valeur||''}" oninput="D.av[${i}].valeur=parseFloat(this.value)||0;updAV()">
+        <button onclick="D.av.splice(${i},1);renderStep()" title="Supprimer"
+          style="background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px;flex-shrink:0">✕</button>
+      </td>
     </tr>`).join('');
 
   return `
@@ -454,10 +490,14 @@ function updAV(){const t=D.av.reduce((s,f)=>s+(f.valeur||0),0);const el=document
 function rPEE() {
   const rows = D.pee.map((f,i)=>`
     <tr>
-      <td><input class="si" style="text-align:left;width:100%" value="${f.nom}"
+      <td><input class="si" style="text-align:left;width:95%" value="${f.nom}"
         oninput="D.pee[${i}].nom=this.value"></td>
-      <td><input class="si" type="number" step="0.01" placeholder="0.00"
-        value="${f.valeur||''}" oninput="D.pee[${i}].valeur=parseFloat(this.value)||0;updPEE()"></td>
+      <td style="display:flex;align-items:center;gap:6px">
+        <input class="si" type="number" step="0.01" placeholder="0.00" style="width:110px;flex:1"
+          value="${f.valeur||''}" oninput="D.pee[${i}].valeur=parseFloat(this.value)||0;updPEE()">
+        <button onclick="D.pee.splice(${i},1);renderStep()" title="Supprimer"
+          style="background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px;flex-shrink:0">✕</button>
+      </td>
     </tr>`).join('');
 
   return `
