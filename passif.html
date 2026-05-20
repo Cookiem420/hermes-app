@@ -111,6 +111,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 const GH_USER  = 'Cookiem420';
 const GH_REPO  = 'hermes-data';
 const RAW      = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/`;
+const FILES = {
+  maj:    'maj.json',
+  moins1: 'maj_moins1.json',
+  graph:  'maj_graph.json',
+};
 
 // Couleurs
 const EC = {PEA:'#4d9fff',CTO:'#a78bfa','PEA-PME':'#00d68f',AV:'#f0b429',PEE:'#fb923c',Livrets:'#38bdf8',SCPI:'#e879f9',Revolut:'#34d399'};
@@ -118,7 +123,10 @@ const ANA_C = ['#4d9fff','#a78bfa','#00d68f','#f0b429','#fb923c','#38bdf8','#e87
 const RISQ_C = {Faible:'#00d68f',Modéré:'#f0b429',Élevé:'#fb923c',Spéculatif:'#ff4d6a'};
 const RISQ_MAP = {ETF_large:'Faible',ETF_sectoriel:'Modéré',Qualite:'Modéré',Cyclique:'Modéré',Croissance:'Élevé',Speculatif:'Spéculatif'};
 
-let DONNEE = null, HISTORIQUE = null, TABLE_INFOS = null;
+let DONNEE = null;      // maj.json — données MAJ courante
+let MOINS1 = null;      // maj_moins1.json — données MAJ précédente
+let GRAPH  = null;      // maj_graph.json — historique snapshots
+let TABLE_INFOS = null;
 let chartLine = null, chartDonut = null;
 
 // ══════════════════════════════════════════════════════════════════
@@ -133,14 +141,16 @@ function pc(v){return v>0.01?'pos':v<-0.01?'neg':'neu'}
 // ══════════════════════════════════════════════════════════════════
 async function load() {
   try {
-    const [dr, hr, tr] = await Promise.all([
-      fetch(RAW+'donnee_maj.json?t='+Date.now()),
-      fetch(RAW+'historique_maj.json?t='+Date.now()),
+    const [mr, m1r, gr, tr] = await Promise.all([
+      fetch(RAW+FILES.maj    +'?t='+Date.now()),
+      fetch(RAW+FILES.moins1 +'?t='+Date.now()),
+      fetch(RAW+FILES.graph  +'?t='+Date.now()),
       fetch(RAW+'table_infos_valeurs.json?t='+Date.now()),
     ]);
-    if(dr.ok) DONNEE     = await dr.json();
-    if(hr.ok) HISTORIQUE = await hr.json();
-    if(tr.ok) TABLE_INFOS = await tr.json();
+    if(mr.ok)  DONNEE     = await mr.json();   // MAJ courante
+    if(m1r.ok) MOINS1     = await m1r.json();  // MAJ-1
+    if(gr.ok)  GRAPH      = await gr.json();   // Graph historique
+    if(tr.ok)  TABLE_INFOS = await tr.json();
     render();
   } catch(e) {
     document.getElementById('root').innerHTML =
@@ -158,11 +168,8 @@ function buildEnvelopes() {
   const cash = DONNEE.cash || {};
 
   // MAJ-1 : dernier snapshot dans historique AVANT aujourd'hui
-  const snaps    = (HISTORIQUE?.snapshots||[]);
-  // MAJ courante = dernier snap, MAJ-1 = avant-dernier
-  const curSnap  = snaps.length>=1 ? snaps[snaps.length-1] : null;
-  const prevSnap = snaps.length>=2 ? snaps[snaps.length-2] : null;
-  const prevT    = prevSnap?.totaux || {};
+  // MAJ-1 depuis le fichier dédié (source de vérité pour les écarts)
+  const prevT = MOINS1?.totaux || {};
 
   const defs = [
     {key:'PEA',   nom:'PEA',        tot:T.pea,  prev:prevT.pea||0,  cashVal:cash.pea||0,  positions:DONNEE.pea_positions||[]},
@@ -348,7 +355,7 @@ function drillToggle(i) {
 // CHARTS
 // ══════════════════════════════════════════════════════════════════
 function initChartLine() {
-  const snaps = HISTORIQUE?.snapshots||[];
+  const snaps = GRAPH?.snapshots||[];
   console.log('[Chart] snapshots:', snaps.length, snaps.map(s=>s.date));
   if(snaps.length<2) return;
   const canvas=document.getElementById('ch-line');
@@ -421,7 +428,7 @@ function renderBars(data, base, colorMap) {
 // ══════════════════════════════════════════════════════════════════
 function render() {
   // Vérifier si des données existent
-  const hasDonnee = DONNEE && DONNEE.meta?.date_maj;
+  const hasDonnee = DONNEE && DONNEE.meta?.date_maj && DONNEE.totaux?.total > 0;
   if(!hasDonnee) {
     document.getElementById('root').innerHTML=`
       <div class="empty-screen">
@@ -438,9 +445,9 @@ function render() {
 
   const envs    = buildEnvelopes();
   const T       = DONNEE.totaux;
-  const snaps   = HISTORIQUE?.snapshots||[];
-  const prevSnap = snaps.length>=2 ? snaps[snaps.length-2] : null;
-  const prevT    = prevSnap?.totaux || {};
+  const snaps   = GRAPH?.snapshots||[];
+  // Pour le header delta : MAJ vs MAJ-1
+  const prevT   = MOINS1?.totaux || {};
   const prevTot = prevSnap?.totaux?.total || T.total;
   const delta   = T.total - prevTot;
   const deltaPct= prevTot>0 ? delta/prevTot*100 : 0;

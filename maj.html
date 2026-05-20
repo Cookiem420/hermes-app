@@ -24,8 +24,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .page-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:28px;letter-spacing:1px}
 
 /* STEPS */
-.steps{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.step-btn{flex:1;padding:10px 8px;text-align:center;cursor:pointer;font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--text3);background:var(--bg2);border-right:1px solid var(--border);transition:background .12s,color .12s}
+.steps{display:flex;margin-bottom:28px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.step-btn{flex:1;padding:10px 8px;text-align:center;font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--text3);background:var(--bg2);border-right:1px solid var(--border)}
 .step-btn:last-child{border-right:none}
 .step-btn.active{background:var(--blue2);color:var(--blue)}
 .step-btn.done{background:var(--green2);color:var(--green)}
@@ -35,7 +35,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .card-title{font-family:var(--mono);font-size:9px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .badge{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px}
 .badge-blue{background:var(--blue2);color:var(--blue)}
-.badge-green{background:var(--green2);color:var(--green)}
 .badge-gold{background:var(--gold2);color:var(--gold)}
 
 /* DROPZONE */
@@ -46,15 +45,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .dz-label strong{color:var(--text2)}
 input[type=file]{display:none}
 
-/* CSV PREVIEW */
+/* CSV TABLE */
 .csv-ok{display:inline-flex;align-items:center;gap:6px;background:var(--green2);border:1px solid rgba(0,214,143,.3);border-radius:4px;padding:4px 10px;font-family:var(--mono);font-size:10px;color:var(--green);margin-bottom:8px}
 .csv-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:4px}
-.csv-tbl th{background:var(--bg3);font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;padding:7px 10px;border-bottom:1px solid var(--border)}
-.csv-tbl th:not(:first-child){text-align:right}
-.csv-tbl td{padding:7px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px}
-.csv-tbl td:not(:first-child){text-align:right}
+.csv-tbl th{background:var(--bg3);font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;padding:7px 10px;border-bottom:1px solid var(--border);text-align:right}
+.csv-tbl th:first-child{text-align:left}
+.csv-tbl td{padding:7px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;text-align:right}
+.csv-tbl td:first-child{text-align:left}
 .csv-tbl tr:last-child td{border-bottom:none}
-.csv-tbl .trow-total{background:var(--bg3);font-weight:700;color:var(--gold)}
+.trow-total{background:var(--bg3);font-weight:700;color:var(--gold)}
 
 /* INPUTS */
 .fi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -68,13 +67,13 @@ input[type=file]{display:none}
 /* SAISIE TABLE */
 .st{width:100%;border-collapse:collapse;margin-bottom:8px}
 .st th{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;padding:8px 10px;background:var(--bg3);border-bottom:1px solid var(--border);text-align:left}
-.st th:last-child{text-align:right;width:140px}
+.st th:last-child{text-align:right;width:180px}
 .st td{padding:5px 10px;border-bottom:1px solid var(--border);font-size:12px}
 .st td:last-child{text-align:right}
 .st tr:last-child td{border-bottom:none}
-.si{background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;padding:3px 4px;width:100%;outline:none;text-align:right;transition:border-color .15s}
+.si{background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;padding:3px 4px;width:100%;outline:none;text-align:right}
 .si:focus{border-color:var(--blue)}
-.st .tr-tot{background:var(--bg3);font-weight:700;font-family:var(--mono);color:var(--gold)}
+.tr-tot{background:var(--bg3);font-weight:700;font-family:var(--mono);color:var(--gold)}
 
 /* TOTAUX */
 .tot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
@@ -91,7 +90,7 @@ input[type=file]{display:none}
 .btn-next{background:var(--blue);color:#fff;flex:1}
 .btn-save{background:var(--green);color:var(--bg);flex:1;font-weight:700;font-size:14px}
 .btn-add{padding:6px 12px;font-size:11px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:4px;cursor:pointer;margin-top:6px}
-.btn-add:hover{background:var(--bg4)}
+.btn-del{background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px;flex-shrink:0}
 
 /* TOKEN */
 .token-info{background:var(--blue2);border:1px solid rgba(77,159,255,.2);border-radius:6px;padding:10px 14px;font-family:var(--mono);font-size:10px;color:var(--blue);margin-bottom:14px;line-height:1.8}
@@ -101,7 +100,7 @@ input[type=file]{display:none}
 .success-icon{font-size:52px;margin-bottom:16px}
 .success-ttl{font-size:16px;font-weight:600;margin-bottom:8px}
 .success-tot{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--gold);margin:12px 0}
-.success-sub{font-family:var(--mono);font-size:11px;color:var(--green)}
+.success-sub{font-family:var(--mono);font-size:11px;color:var(--green);line-height:1.8}
 
 .helper{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:12px;line-height:1.7}
 .divider{height:1px;background:var(--border);margin:16px 0}
@@ -117,63 +116,49 @@ input[type=file]{display:none}
 
 <script>
 // ══════════════════════════════════════════════════════════════════
-// CONFIG
+// CONFIG — 4 fichiers JSON
 // ══════════════════════════════════════════════════════════════════
-const GH_USER   = 'Cookiem420';
-const GH_REPO   = 'hermes-data';
-const GH_API    = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/`;
-const RAW_BASE  = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/`;
+const GH_USER  = 'Cookiem420';
+const GH_REPO  = 'hermes-data';
+const GH_API   = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/`;
+const RAW_BASE = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/`;
 
 const FILES = {
-  donnee:    'donnee_maj.json',
-  historique:'historique_maj.json',
-  infos:     'table_infos_valeurs.json',
+  tampon:   'maj_tampon.json',
+  maj:      'maj.json',
+  moins1:   'maj_moins1.json',
+  graph:    'maj_graph.json',
 };
 
-// ══════════════════════════════════════════════════════════════════
-// ÉTAT WIZARD
-// ══════════════════════════════════════════════════════════════════
 const STEPS = [
-  {id:'csv',   label:'CSV cotés'},
-  {id:'av',    label:'Ass. Vie'},
-  {id:'pee',   label:'PEE'},
-  {id:'autres',label:'Livrets & +'},
-  {id:'recap', label:'Récap'},
-  {id:'token', label:'Sauvegarde'},
+  {id:'csv',    label:'CSV + Cash'},
+  {id:'av',     label:'Ass. Vie'},
+  {id:'pee',    label:'PEE'},
+  {id:'autres', label:'Livrets & +'},
+  {id:'recap',  label:'Récap'},
+  {id:'token',  label:'Sauvegarde'},
 ];
 
 let step = 0;
 
-// Données collectées
 const D = {
-  pea: [], cto: [], pme: [],          // positions CSV
+  pea:[], cto:[], pme:[],
   cash_pea:0, cash_cto:0, cash_pme:0,
-  av:  [],                             // [{nom, valeur}]
-  pee: [],                             // [{nom, valeur}]
+  av:[], pee:[],
   livret_a:0, livret_usd:0, livret_eur:0,
   scpi:0, revolut:0, cc:0,
 };
 
-// Données existantes chargées depuis GitHub
-let EXISTING_DONNEE     = null;
-let EXISTING_HISTORIQUE = null;
+// Données existantes
+let MAJ_GRAPH = null;
 
-// Fonds AV fixes (personnalisables dans l'étape)
-const AV_FONDS_DEFAULT = [
-  'Fonds en euros',
-  'Echiquier Agenor Mid Cap Europ',
-  'Pictet Global Megatrend',
-  'DWS Concept Kaldemorgen',
-  'DWS Top Dividende',
-  'Eurose',
-  'ANDERA Dette Privée',
+const AV_FONDS = [
+  'Fonds en euros','Echiquier Agenor Mid Cap Europ','Pictet Global Megatrend',
+  'DWS Concept Kaldemorgen','DWS Top Dividende','Eurose','ANDERA Dette Privée',
 ];
-
-const PEE_FONDS_DEFAULT = [
-  'HSBC EE EURO PME F',
-  'HSBC EE ACTIONS EUROPE SOLUTIONS CLIMAT F',
-  'HSBC EE ISR ACTIONS EURO F',
-  'HSBC EE ISR DIVERSIFIE ET SOLIDAIRE G',
+const PEE_FONDS = [
+  'HSBC EE EURO PME F','HSBC EE ACTIONS EUROPE SOLUTIONS CLIMAT F',
+  'HSBC EE ISR ACTIONS EURO F','HSBC EE ISR DIVERSIFIE ET SOLIDAIRE G',
   'HSBC EE ISR ACTIONS MONDE F',
 ];
 
@@ -181,20 +166,12 @@ const PEE_FONDS_DEFAULT = [
 // INIT
 // ══════════════════════════════════════════════════════════════════
 async function init() {
-  // Pré-remplir AV et PEE avec les fonds par défaut
-  if (D.av.length === 0)  D.av  = AV_FONDS_DEFAULT.map(n => ({nom:n,valeur:0}));
-  if (D.pee.length === 0) D.pee = PEE_FONDS_DEFAULT.map(n => ({nom:n,valeur:0}));
-
-  // Charger les données existantes
+  if(D.av.length===0)  D.av  = AV_FONDS.map(n=>({nom:n,valeur:0}));
+  if(D.pee.length===0) D.pee = PEE_FONDS.map(n=>({nom:n,valeur:0}));
   try {
-    const [dr, hr] = await Promise.all([
-      fetch(RAW_BASE + FILES.donnee  + '?t=' + Date.now()),
-      fetch(RAW_BASE + FILES.historique + '?t=' + Date.now()),
-    ]);
-    if (dr.ok) EXISTING_DONNEE     = await dr.json();
-    if (hr.ok) EXISTING_HISTORIQUE = await hr.json();
-  } catch(e) { console.warn('Chargement données existantes:', e); }
-
+    const r = await fetch(RAW_BASE+FILES.graph+'?t='+Date.now());
+    if(r.ok) MAJ_GRAPH = await r.json();
+  } catch(e) { console.warn('graph non chargé:', e); }
   renderStep();
 }
 
@@ -202,7 +179,7 @@ async function init() {
 // NAVIGATION
 // ══════════════════════════════════════════════════════════════════
 function renderStepsBar() {
-  document.getElementById('steps-bar').innerHTML = STEPS.map((s,i) => `
+  document.getElementById('steps-bar').innerHTML = STEPS.map((s,i)=>`
     <div class="step-btn ${i===step?'active':i<step?'done':''}">
       ${i<step?'✓ ':''}${s.label}
     </div>`).join('');
@@ -210,19 +187,18 @@ function renderStepsBar() {
 
 function renderStep() {
   renderStepsBar();
-  const renders = {csv:rCSV, av:rAV, pee:rPEE, autres:rAutres, recap:rRecap, token:rToken};
+  const renders={csv:rCSV,av:rAV,pee:rPEE,autres:rAutres,recap:rRecap,token:rToken};
   document.getElementById('step-content').innerHTML = renders[STEPS[step].id]();
   afterRender(STEPS[step].id);
 }
 
-function goNext() { if(step<STEPS.length-1){step++;renderStep();} }
-function goBack() { if(step>0){step--;renderStep();} }
+function goNext(){if(step<STEPS.length-1){step++;renderStep();}}
+function goBack(){if(step>0){step--;renderStep();}}
 
-function afterRender(id) {
-  if(id==='csv')    { /* listeners CSV déjà sur elements */ }
-  if(id==='av')     { updAV(); }
-  if(id==='pee')    { updPEE(); }
-  if(id==='autres') { updAutres(); }
+function afterRender(id){
+  if(id==='av')     setTimeout(updAV,50);
+  if(id==='pee')    setTimeout(updPEE,50);
+  if(id==='autres') setTimeout(updAutres,50);
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -230,35 +206,29 @@ function afterRender(id) {
 // ══════════════════════════════════════════════════════════════════
 function fmt(n,d=0){if(!n&&n!==0)return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function parseNum(v){
-  if(v==null) return 0;
-  // Nettoyer : guillemets, espaces (séparateurs milliers FR), virgule → point
-  const s = String(v).replace(/"/g,'').replace(/\s/g,'').replace(/,/g,'.');
-  // Si plusieurs points (ex 1.234.56 suite à remplacement), garder seulement le dernier
-  const parts = s.split('.');
-  const clean = parts.length > 2
-    ? parts.slice(0,-1).join('') + '.' + parts[parts.length-1]
-    : s;
-  return parseFloat(clean) || 0;
+  if(v==null||v==='') return 0;
+  // Gérer formats : 1 234,56  /  1234.56  /  "1 234,56"
+  return parseFloat(String(v).replace(/\s/g,'').replace(/\u00a0/g,'').replace(',','.')) || 0;
 }
-function today(){return new Date().toISOString().split('T')[0]}
+function todayStr(){return new Date().toISOString().split('T')[0]}
 
 // ══════════════════════════════════════════════════════════════════
 // ÉTAPE 1 — CSV + Cash
 // ══════════════════════════════════════════════════════════════════
 function rCSV() {
-  const mkDZ = (env, label) => `
+  const mkDZ = (env,label) => `
     <div class="card">
       <div class="card-title">${label} <span class="badge badge-blue">${env.toUpperCase()}</span></div>
-      <div class="helper">Exporter depuis Boursorama → Mon compte → Télécharger relevé CSV ou Excel</div>
+      <div class="helper">Export Boursorama → Mon compte → Télécharger → CSV ou Excel</div>
       <div class="dz" id="dz-${env}"
         onclick="document.getElementById('fi-${env}').click()"
-        ondragover="event.preventDefault();document.getElementById('dz-${env}').classList.add('drag')"
-        ondragleave="document.getElementById('dz-${env}').classList.remove('drag')"
-        ondrop="event.preventDefault();document.getElementById('dz-${env}').classList.remove('drag');handleDrop(event,'${env}')">
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="event.preventDefault();this.classList.remove('drag');dropFile(event,'${env}')">
         <div class="dz-icon">📄</div>
-        <div class="dz-label"><strong>Glisser CSV / XLSX ${env.toUpperCase()}</strong> ou cliquer</div>
+        <div class="dz-label"><strong>Glisser CSV/XLSX ${env.toUpperCase()}</strong> ou cliquer</div>
       </div>
-      <input type="file" id="fi-${env}" accept=".csv,.xlsx,.xls" onchange="handleFile(this,'${env}')">
+      <input type="file" id="fi-${env}" accept=".csv,.xlsx,.xls" onchange="pickFile(this,'${env}')">
       <div id="prev-${env}"></div>
     </div>`;
 
@@ -266,10 +236,9 @@ function rCSV() {
     ${mkDZ('pea','📂 Import Boursorama')}
     ${mkDZ('cto','📂 Import Boursorama')}
     ${mkDZ('pme','📂 Import Boursorama')}
-
     <div class="card">
-      <div class="card-title">💵 Espèces disponibles <span class="badge badge-blue">inclus dans le total</span></div>
-      <div class="helper">Saisir le solde en espèces de chaque poche — affiché séparément dans le tableau</div>
+      <div class="card-title">💵 Espèces disponibles <span class="badge badge-blue">inclus dans les totaux</span></div>
+      <div class="helper">Solde espèces de chaque poche — visible séparément dans le tableau de bord</div>
       <div class="fi-grid-3">
         <div class="fg"><label class="fl">Espèces PEA (€)</label>
           <input class="fi" id="cash-pea" type="number" step="0.01" placeholder="0.00"
@@ -282,39 +251,31 @@ function rCSV() {
             value="${D.cash_pme||''}" oninput="D.cash_pme=parseFloat(this.value)||0"></div>
       </div>
     </div>
-
-    <div class="btn-row">
-      <button class="btn btn-next" onclick="goNext()">Suivant →</button>
-    </div>`;
+    <div class="btn-row"><button class="btn btn-next" onclick="goNext()">Suivant →</button></div>`;
 }
 
-// ── CSV parsing ───────────────────────────────────────────────────
-function handleDrop(e, env) {
-  const f = e.dataTransfer.files[0];
-  if(f) processFile(f, env);
-}
-function handleFile(input, env) {
-  if(input.files[0]) processFile(input.files[0], env);
-}
+// ── Parsing CSV/XLSX ───────────────────────────────────────────────
+function dropFile(e,env){const f=e.dataTransfer.files[0];if(f)processFile(f,env);}
+function pickFile(inp,env){if(inp.files[0])processFile(inp.files[0],env);}
 
-function processFile(file, env) {
-  const ext = file.name.split('.').pop().toLowerCase();
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
+function processFile(file,env){
+  const ext=file.name.split('.').pop().toLowerCase();
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
       let rows;
-      if(ext==='csv') {
-        rows = parseCSVText(e.target.result);
+      if(ext==='csv'){
+        rows=parseCSVText(e.target.result);
       } else {
-        const wb = XLSX.read(e.target.result, {type:'array'});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false});
+        const wb=XLSX.read(e.target.result,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:false});
       }
-      const positions = parsePositions(rows, env);
-      D[env] = positions;
-      showPreview(env, positions, file.name);
-    } catch(err) {
-      document.getElementById('prev-'+env).innerHTML =
+      const positions=parsePositions(rows,env);
+      D[env]=positions;
+      showPreview(env,positions,file.name);
+    } catch(err){
+      document.getElementById('prev-'+env).innerHTML=
         `<div style="color:var(--red);font-family:var(--mono);font-size:10px;padding:8px">Erreur : ${err.message}</div>`;
       console.error(err);
     }
@@ -323,33 +284,22 @@ function processFile(file, env) {
   else reader.readAsArrayBuffer(file);
 }
 
-function parseCSVText(text) {
-  // Parser CSV correct gérant les champs entre guillemets (RFC 4180)
-  const sep = text.split('\n')[0].includes(';') ? ';' : ',';
-  const lines = text.split('\n');
-  return lines.map(line => {
-    const fields = [];
-    let cur = '', inQ = false;
-    for(let i=0; i<line.length; i++) {
-      const c = line[i];
-      if(c==='"') { inQ=!inQ; }
-      else if(c===sep && !inQ) { fields.push(cur.trim()); cur=''; }
-      else { cur+=c; }
-    }
-    fields.push(cur.trim());
-    return fields;
-  });
+function parseCSVText(text){
+  const lines=text.split('\n');
+  const sep=lines[0].includes(';')?';':',';
+  return lines.map(l=>l.split(sep).map(c=>c.trim().replace(/^"|"$/g,'')));
 }
 
-function parsePositions(rows, env) {
-  const positions = [];
-  let headerIdx = -1;
-  let cols = {nom:-1, isin:-1, qty:-1, pru:-1, cours:-1, montant:-1};
+function parsePositions(rows,env){
+  const positions=[];
+  let headerIdx=-1;
+  let cols={nom:-1,isin:-1,qty:-1,pru:-1,cours:-1,montant:-1};
 
-  for(let i=0; i<Math.min(rows.length,10); i++) {
-    const row = rows[i].map(c=>String(c||'').replace(/^[\uFEFF\s]+/,'').toLowerCase().replace(/[^a-z]/g,''));
-    if(row.includes('name')||row.includes('isin')||row.includes('buyingprice')) {
-      headerIdx = i;
+  // Détecter header Boursorama : name;isin;quantity;buyingPrice;lastPrice;...;amount;...
+  for(let i=0;i<Math.min(rows.length,10);i++){
+    const row=rows[i].map(c=>String(c||'').replace(/^\uFEFF/,'').toLowerCase().replace(/[^a-z]/g,''));
+    if(row.includes('name')||row.includes('isin')||row.includes('buyingprice')){
+      headerIdx=i;
       row.forEach((cell,j)=>{
         if(cell==='name'||cell.includes('libel')||cell.includes('titre')) cols.nom=j;
         else if(cell==='isin') cols.isin=j;
@@ -358,11 +308,12 @@ function parsePositions(rows, env) {
         else if(cell==='lastprice') cols.cours=j;
         else if(cell==='amount'||cell==='montant'||cell.includes('valoris')) cols.montant=j;
       });
-      console.log('['+env+'] Header r'+i+' cols:',JSON.stringify(cols));
+      console.log('['+env+'] header r'+i+' cols:',JSON.stringify(cols));
       break;
     }
   }
 
+  // Fallback score
   if(headerIdx===-1){
     const kws=['name','isin','quantity','buyingprice','lastprice','amount'];
     for(let i=0;i<Math.min(rows.length,15);i++){
@@ -377,6 +328,7 @@ function parsePositions(rows, env) {
           if(cell.includes('lastprice')) cols.cours=j;
           if(cell==='amount'||cell.includes('valoris')) cols.montant=j;
         });
+        console.log('['+env+'] fallback header r'+i);
         break;
       }
     }
@@ -388,12 +340,12 @@ function parsePositions(rows, env) {
       if(!row||row.length<2) continue;
       if(row.every(c=>!String(c||'').trim())) continue;
       const cl=c=>String(c||'').trim().replace(/^"|"$/g,'');
-      const nom   =cols.nom>=0    ?cl(row[cols.nom]):'';
-      const isin  =cols.isin>=0   ?cl(row[cols.isin]).replace(/\s/g,''):'';
-      const qty   =cols.qty>=0    ?parseNum(row[cols.qty]):0;
-      const pru   =cols.pru>=0    ?parseNum(row[cols.pru]):0;
-      const cours =cols.cours>=0  ?parseNum(row[cols.cours]):0;
-      let montant =cols.montant>=0?parseNum(row[cols.montant]):0;
+      const nom    =cols.nom>=0    ?cl(row[cols.nom]):'';
+      const isin   =cols.isin>=0   ?cl(row[cols.isin]).replace(/\s/g,''):'';
+      const qty    =cols.qty>=0    ?parseNum(row[cols.qty]):0;
+      const pru    =cols.pru>=0    ?parseNum(row[cols.pru]):0;
+      const cours  =cols.cours>=0  ?parseNum(row[cols.cours]):0;
+      let montant  =cols.montant>=0?parseNum(row[cols.montant]):0;
       if(!montant&&qty>0&&cours>0) montant=qty*cours;
       if(!montant&&qty>0&&pru>0)   montant=qty*pru;
       if(!nom||/^(total|sous.total|solde)$/i.test(nom.trim())) continue;
@@ -401,46 +353,37 @@ function parsePositions(rows, env) {
       positions.push({nom,isin,quantite:qty,pru,montant});
     }
   } else {
-    console.warn('['+env+'] Header non détecté — fallback ISIN');
+    console.warn('['+env+'] header non détecté — fallback ISIN');
     const isinRe=/^[A-Z]{2}[A-Z0-9]{10}$/;
     rows.forEach(row=>{
       const strs=row.map(c=>String(c||'').trim().replace(/^"|"$/g,''));
       const ii=strs.findIndex(c=>isinRe.test(c));
       if(ii>=0){
         const isin=strs[ii];
-        const nom=strs.find((c,i)=>i<ii&&c.length>2&&!/^[\d,.]/g.test(c))||isin;
+        const nom=strs.find((c,i)=>i<ii&&c.length>2&&!/^[\d,.]/.test(c))||isin;
         const nums=strs.map(parseNum).filter(n=>n>0);
         positions.push({nom,isin,quantite:nums[0]||0,pru:nums[1]||0,montant:nums[nums.length-1]||0});
       }
     });
   }
-  console.log('['+env+'] '+positions.length+' positions');
+  console.log('['+env+']',positions.length,'positions');
   return positions;
 }
-function showPreview(env, positions, fname) {
-  const total = positions.reduce((s,p)=>s+p.montant,0);
-  const envUp = {pea:'PEA',cto:'CTO',pme:'PEA-PME'}[env];
 
-  const trows = positions.map(p=>`
+function showPreview(env,positions,fname){
+  const total=positions.reduce((s,p)=>s+p.montant,0);
+  const envUp={pea:'PEA',cto:'CTO',pme:'PEA-PME'}[env];
+  const trows=positions.map(p=>`
     <tr>
-      <td>${p.nom}</td>
-      <td style="font-size:10px">${p.isin||'—'}</td>
-      <td>${p.quantite}</td>
-      <td>${p.pru>0?p.pru.toFixed(2)+' €':'—'}</td>
-      <td>${p.cours>0?p.cours.toFixed(2)+' €':'—'}</td>
-      <td>${p.montant.toFixed(2)} €</td>
+      <td>${p.nom}</td><td>${p.isin||'—'}</td><td>${p.quantite}</td>
+      <td>${p.pru>0?p.pru.toFixed(2)+' €':'—'}</td><td>${p.montant.toFixed(2)} €</td>
     </tr>`).join('');
-
-  document.getElementById('prev-'+env).innerHTML = `
-    <div class="csv-ok">✅ ${fname} — ${positions.length} ligne(s) importée(s)</div>
+  document.getElementById('prev-'+env).innerHTML=`
+    <div class="csv-ok">✅ ${fname} — ${positions.length} ligne(s)</div>
     <table class="csv-tbl">
-      <thead><tr><th>Titre</th><th>ISIN</th><th>Qté</th><th>PRU</th><th>Cours</th><th>Valeur</th></tr></thead>
-      <tbody>
-        ${trows}
-        <tr class="trow-total">
-          <td colspan="4">Total ${envUp} (positions)</td>
-          <td>${total.toFixed(2)} €</td>
-        </tr>
+      <thead><tr><th style="text-align:left">Titre</th><th>ISIN</th><th>Qté</th><th>PRU</th><th>Valeur</th></tr></thead>
+      <tbody>${trows}
+        <tr class="trow-total"><td colspan="4">Total ${envUp}</td><td>${total.toFixed(2)} €</td></tr>
       </tbody>
     </table>`;
 }
@@ -448,31 +391,25 @@ function showPreview(env, positions, fname) {
 // ══════════════════════════════════════════════════════════════════
 // ÉTAPE 2 — AV
 // ══════════════════════════════════════════════════════════════════
-function rAV() {
-  const rows = D.av.map((f,i)=>`
+function rAV(){
+  const rows=D.av.map((f,i)=>`
     <tr>
-      <td><input class="si" style="text-align:left;width:95%" value="${f.nom}"
-        oninput="D.av[${i}].nom=this.value"></td>
-      <td style="display:flex;align-items:center;gap:6px">
-        <input class="si" type="number" step="0.01" placeholder="0.00" style="width:110px;flex:1"
+      <td><input class="si" style="text-align:left;width:95%" value="${f.nom}" oninput="D.av[${i}].nom=this.value"></td>
+      <td style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
+        <input class="si" type="number" step="0.01" placeholder="0.00" style="width:110px"
           value="${f.valeur||''}" oninput="D.av[${i}].valeur=parseFloat(this.value)||0;updAV()">
-        <button onclick="D.av.splice(${i},1);renderStep()" title="Supprimer"
-          style="background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px;flex-shrink:0">✕</button>
+        <button class="btn-del" onclick="D.av.splice(${i},1);renderStep()">✕</button>
       </td>
     </tr>`).join('');
-
   return `
     <div class="card">
       <div class="card-title">🏦 Assurance Vie <span class="badge badge-gold">Saisie manuelle</span></div>
-      <div class="helper">Valeur liquidative actuelle de chaque fonds — source : portail assureur</div>
+      <div class="helper">Valeur liquidative actuelle — source : portail assureur</div>
       <table class="st">
         <thead><tr><th>Fonds</th><th>Valeur (€)</th></tr></thead>
-        <tbody>
-          ${rows}
-          <tr class="tr-tot">
-            <td>Total Ass. Vie</td>
-            <td><input class="si" id="av-total" readonly style="color:var(--gold);font-weight:700"></td>
-          </tr>
+        <tbody>${rows}
+          <tr class="tr-tot"><td>Total AV</td>
+            <td><input class="si" id="av-total" readonly style="color:var(--gold);font-weight:700"></td></tr>
         </tbody>
       </table>
       <button class="btn-add" onclick="D.av.push({nom:'Nouveau fonds',valeur:0});renderStep()">+ Ajouter un fonds</button>
@@ -487,31 +424,25 @@ function updAV(){const t=D.av.reduce((s,f)=>s+(f.valeur||0),0);const el=document
 // ══════════════════════════════════════════════════════════════════
 // ÉTAPE 3 — PEE
 // ══════════════════════════════════════════════════════════════════
-function rPEE() {
-  const rows = D.pee.map((f,i)=>`
+function rPEE(){
+  const rows=D.pee.map((f,i)=>`
     <tr>
-      <td><input class="si" style="text-align:left;width:95%" value="${f.nom}"
-        oninput="D.pee[${i}].nom=this.value"></td>
-      <td style="display:flex;align-items:center;gap:6px">
-        <input class="si" type="number" step="0.01" placeholder="0.00" style="width:110px;flex:1"
+      <td><input class="si" style="text-align:left;width:95%" value="${f.nom}" oninput="D.pee[${i}].nom=this.value"></td>
+      <td style="display:flex;align-items:center;gap:6px;justify-content:flex-end">
+        <input class="si" type="number" step="0.01" placeholder="0.00" style="width:110px"
           value="${f.valeur||''}" oninput="D.pee[${i}].valeur=parseFloat(this.value)||0;updPEE()">
-        <button onclick="D.pee.splice(${i},1);renderStep()" title="Supprimer"
-          style="background:var(--red2);border:1px solid var(--red);color:var(--red);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:11px;flex-shrink:0">✕</button>
+        <button class="btn-del" onclick="D.pee.splice(${i},1);renderStep()">✕</button>
       </td>
     </tr>`).join('');
-
   return `
     <div class="card">
       <div class="card-title">💼 PEE <span class="badge badge-gold">Saisie manuelle</span></div>
-      <div class="helper">Valeur liquidative actuelle de chaque fonds — source : portail HSBC EE</div>
+      <div class="helper">Valeur liquidative actuelle — source : portail HSBC EE</div>
       <table class="st">
         <thead><tr><th>Fonds</th><th>Valeur (€)</th></tr></thead>
-        <tbody>
-          ${rows}
-          <tr class="tr-tot">
-            <td>Total PEE</td>
-            <td><input class="si" id="pee-total" readonly style="color:var(--gold);font-weight:700"></td>
-          </tr>
+        <tbody>${rows}
+          <tr class="tr-tot"><td>Total PEE</td>
+            <td><input class="si" id="pee-total" readonly style="color:var(--gold);font-weight:700"></td></tr>
         </tbody>
       </table>
       <button class="btn-add" onclick="D.pee.push({nom:'Nouveau fonds',valeur:0});renderStep()">+ Ajouter un fonds</button>
@@ -526,43 +457,43 @@ function updPEE(){const t=D.pee.reduce((s,f)=>s+(f.valeur||0),0);const el=docume
 // ══════════════════════════════════════════════════════════════════
 // ÉTAPE 4 — Livrets, SCPI, Revolut, CC
 // ══════════════════════════════════════════════════════════════════
-function rAutres() {
+function rAutres(){
   return `
     <div class="card">
       <div class="card-title">💰 Livrets & Compte courant <span class="badge badge-gold">Saisie manuelle</span></div>
       <div class="fi-grid">
         <div class="fg"><label class="fl">Livret A (€)</label>
-          <input class="fi" type="number" step="0.01" placeholder="0.00"
-            value="${D.livret_a||''}" oninput="D.livret_a=parseFloat(this.value)||0;updAutres()"></div>
+          <input class="fi" type="number" step="0.01" placeholder="0.00" value="${D.livret_a||''}"
+            oninput="D.livret_a=parseFloat(this.value)||0;updAutres()"></div>
         <div class="fg"><label class="fl">Livret $ (€ converti)</label>
-          <input class="fi" type="number" step="0.01" placeholder="0.00"
-            value="${D.livret_usd||''}" oninput="D.livret_usd=parseFloat(this.value)||0;updAutres()"></div>
+          <input class="fi" type="number" step="0.01" placeholder="0.00" value="${D.livret_usd||''}"
+            oninput="D.livret_usd=parseFloat(this.value)||0;updAutres()"></div>
         <div class="fg"><label class="fl">Livret euro (€)</label>
-          <input class="fi" type="number" step="0.01" placeholder="0.00"
-            value="${D.livret_eur||''}" oninput="D.livret_eur=parseFloat(this.value)||0;updAutres()"></div>
+          <input class="fi" type="number" step="0.01" placeholder="0.00" value="${D.livret_eur||''}"
+            oninput="D.livret_eur=parseFloat(this.value)||0;updAutres()"></div>
         <div class="fg"><label class="fl">Compte courant (€)</label>
-          <input class="fi" type="number" step="0.01" placeholder="0.00"
-            value="${D.cc||''}" oninput="D.cc=parseFloat(this.value)||0;updAutres()"></div>
+          <input class="fi" type="number" step="0.01" placeholder="0.00" value="${D.cc||''}"
+            oninput="D.cc=parseFloat(this.value)||0;updAutres()"></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">🏢 SCPI & Trading <span class="badge badge-gold">Saisie manuelle</span></div>
       <div class="fi-grid">
         <div class="fg"><label class="fl">SCPI Corum Origin (€)</label>
-          <input class="fi" type="number" step="0.01" placeholder="0.00"
-            value="${D.scpi||''}" oninput="D.scpi=parseFloat(this.value)||0;updAutres()"></div>
+          <input class="fi" type="number" step="0.01" placeholder="0.00" value="${D.scpi||''}"
+            oninput="D.scpi=parseFloat(this.value)||0;updAutres()"></div>
         <div class="fg"><label class="fl">Revolut ETF Trading (€)</label>
-          <input class="fi" type="number" step="0.01" placeholder="0.00"
-            value="${D.revolut||''}" oninput="D.revolut=parseFloat(this.value)||0;updAutres()"></div>
+          <input class="fi" type="number" step="0.01" placeholder="0.00" value="${D.revolut||''}"
+            oninput="D.revolut=parseFloat(this.value)||0;updAutres()"></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">📊 Sous-totaux</div>
       <div class="tot-grid">
-        <div class="tot-card"><div class="tot-lbl">Livrets</div><div class="tot-val" id="t-liv">0 €</div></div>
-        <div class="tot-card"><div class="tot-lbl">Compte courant</div><div class="tot-val" id="t-cc">0 €</div></div>
-        <div class="tot-card"><div class="tot-lbl">SCPI</div><div class="tot-val" id="t-scpi">0 €</div></div>
-        <div class="tot-card"><div class="tot-lbl">Revolut</div><div class="tot-val" id="t-rev">0 €</div></div>
+        <div class="tot-card"><div class="tot-lbl">Livrets</div><div class="tot-val" id="t-liv">—</div></div>
+        <div class="tot-card"><div class="tot-lbl">Compte courant</div><div class="tot-val" id="t-cc">—</div></div>
+        <div class="tot-card"><div class="tot-lbl">SCPI</div><div class="tot-val" id="t-scpi">—</div></div>
+        <div class="tot-card"><div class="tot-lbl">Revolut</div><div class="tot-val" id="t-rev">—</div></div>
       </div>
     </div>
     <div class="btn-row">
@@ -570,72 +501,72 @@ function rAutres() {
       <button class="btn btn-next" onclick="goNext()">Suivant →</button>
     </div>`;
 }
-
 function updAutres(){
-  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=(v||0).toFixed(2)+' €';};
-  set('t-liv',(D.livret_a||0)+(D.livret_usd||0)+(D.livret_eur||0));
-  set('t-cc',D.cc||0);
-  set('t-scpi',D.scpi||0);
-  set('t-rev',D.revolut||0);
+  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=fmt(v,2)+' €';};
+  s('t-liv',(D.livret_a||0)+(D.livret_usd||0)+(D.livret_eur||0));
+  s('t-cc',D.cc||0); s('t-scpi',D.scpi||0); s('t-rev',D.revolut||0);
 }
 
 // ══════════════════════════════════════════════════════════════════
-// ÉTAPE 5 — RÉCAP
+// CALCUL TOTAUX
 // ══════════════════════════════════════════════════════════════════
-function computeTotaux() {
-  const pea_pos  = D.pea.reduce((s,p)=>s+p.montant,0);
-  const cto_pos  = D.cto.reduce((s,p)=>s+p.montant,0);
-  const pme_pos  = D.pme.reduce((s,p)=>s+p.montant,0);
-  const pea      = pea_pos + (D.cash_pea||0);
-  const cto      = cto_pos + (D.cash_cto||0);
-  const pme      = pme_pos + (D.cash_pme||0);
-  const av       = D.av.reduce((s,f)=>s+(f.valeur||0),0);
-  const pee      = D.pee.reduce((s,f)=>s+(f.valeur||0),0);
-  const livrets  = (D.livret_a||0)+(D.livret_usd||0)+(D.livret_eur||0)+(D.cc||0);
-  const scpi     = D.scpi||0;
-  const revolut  = D.revolut||0;
-  const total    = pea+cto+pme+av+pee+livrets+scpi+revolut;
+function computeTotaux(){
+  const pea_pos=D.pea.reduce((s,p)=>s+p.montant,0);
+  const cto_pos=D.cto.reduce((s,p)=>s+p.montant,0);
+  const pme_pos=D.pme.reduce((s,p)=>s+p.montant,0);
+  const pea    =pea_pos+(D.cash_pea||0);
+  const cto    =cto_pos+(D.cash_cto||0);
+  const pme    =pme_pos+(D.cash_pme||0);
+  const av     =D.av.reduce((s,f)=>s+(f.valeur||0),0);
+  const pee    =D.pee.reduce((s,f)=>s+(f.valeur||0),0);
+  const livrets=(D.livret_a||0)+(D.livret_usd||0)+(D.livret_eur||0)+(D.cc||0);
+  const scpi   =D.scpi||0;
+  const revolut=D.revolut||0;
+  const total  =pea+cto+pme+av+pee+livrets+scpi+revolut;
   return {pea,cto,pme,av,pee,livrets,scpi,revolut,total,
           pea_pos,cto_pos,pme_pos,
           cash_pea:D.cash_pea,cash_cto:D.cash_cto,cash_pme:D.cash_pme};
 }
 
-function rRecap() {
-  const t = computeTotaux();
-  const lines = [
-    ['PEA', t.pea, D.pea.length+' positions + espèces'],
-    ['  dont positions',  t.pea_pos, D.pea.length+' lignes'],
-    ['  dont espèces',   t.cash_pea, ''],
-    ['CTO', t.cto, D.cto.length+' positions + espèces'],
-    ['  dont positions',  t.cto_pos, D.cto.length+' lignes'],
-    ['  dont espèces',   t.cash_cto, ''],
-    ['PEA-PME', t.pme, D.pme.length+' positions + espèces'],
-    ['  dont positions',  t.pme_pos, D.pme.length+' lignes'],
-    ['  dont espèces',   t.cash_pme, ''],
-    ['Ass. Vie',        t.av,   D.av.filter(f=>f.valeur>0).length+' fonds'],
-    ['PEE',            t.pee,  D.pee.filter(f=>f.valeur>0).length+' fonds'],
-    ['Livrets & CC',   t.livrets, ''],
-    ['SCPI',           t.scpi,  ''],
-    ['Revolut',        t.revolut,''],
-  ].filter(l=>l[1]>0);
+// ══════════════════════════════════════════════════════════════════
+// ÉTAPE 5 — RÉCAP
+// ══════════════════════════════════════════════════════════════════
+function rRecap(){
+  const t=computeTotaux();
+  const lines=[
+    {nom:'PEA',          val:t.pea,     det:D.pea.length+' pos.', indent:false},
+    {nom:'dont positions',val:t.pea_pos, det:'',                   indent:true},
+    {nom:'dont espèces', val:t.cash_pea, det:'',                   indent:true},
+    {nom:'CTO',          val:t.cto,     det:D.cto.length+' pos.', indent:false},
+    {nom:'dont positions',val:t.cto_pos, det:'',                   indent:true},
+    {nom:'dont espèces', val:t.cash_cto, det:'',                   indent:true},
+    {nom:'PEA-PME',      val:t.pme,     det:D.pme.length+' pos.', indent:false},
+    {nom:'dont positions',val:t.pme_pos, det:'',                   indent:true},
+    {nom:'dont espèces', val:t.cash_pme, det:'',                   indent:true},
+    {nom:'Ass. Vie',     val:t.av,      det:D.av.filter(f=>f.valeur>0).length+' fonds', indent:false},
+    {nom:'PEE',          val:t.pee,     det:D.pee.filter(f=>f.valeur>0).length+' fonds',indent:false},
+    {nom:'Livrets & CC', val:t.livrets, det:'',                   indent:false},
+    {nom:'SCPI',         val:t.scpi,    det:'',                   indent:false},
+    {nom:'Revolut',      val:t.revolut, det:'',                   indent:false},
+  ].filter(l=>l.val>0||!l.indent);
 
-  const rows = lines.map(([nom,val,det])=>`
+  const rows=lines.map(l=>`
     <tr>
-      <td style="color:${nom.startsWith('  ')?'var(--text3)':'var(--text)'}; padding-left:${nom.startsWith('  ')?'20px':'10px'}">${nom.trim()}</td>
-      <td style="text-align:right;font-family:var(--mono);font-weight:${nom.startsWith('  ')?'400':'600'};color:${nom.startsWith('  ')?'var(--text2)':'var(--text)'}">${val.toFixed(2)} €</td>
-      <td style="text-align:right;font-family:var(--mono);font-size:10px;color:var(--text3)">${det}</td>
+      <td style="padding-left:${l.indent?'24px':'10px'};color:${l.indent?'var(--text3)':'var(--text)'}">${l.nom}</td>
+      <td style="text-align:right;font-family:var(--mono);font-weight:${l.indent?'400':'600'};
+        color:${l.indent?'var(--text2)':'var(--text)'}">${l.val>0?l.val.toFixed(2)+' €':'—'}</td>
+      <td style="text-align:right;font-family:var(--mono);font-size:10px;color:var(--text3)">${l.det}</td>
     </tr>`).join('');
 
   return `
     <div class="card">
       <div class="card-title">📋 Récapitulatif</div>
-      <div class="helper">Vérifiez avant de sauvegarder. Cette MAJ va écraser les données courantes et conserver l'historique.</div>
+      <div class="helper">Vérifiez avant de sauvegarder. Cette MAJ va mettre à jour les 4 fichiers JSON.</div>
       <table class="st">
         <thead><tr><th>Enveloppe</th><th style="text-align:right">Montant</th><th style="text-align:right">Détail</th></tr></thead>
-        <tbody>
-          ${rows}
+        <tbody>${rows}
           <tr class="tr-tot">
-            <td>PATRIMOINE TOTAL</td>
+            <td style="padding-left:10px">PATRIMOINE TOTAL</td>
             <td style="text-align:right;font-size:17px;color:var(--gold)">${t.total.toFixed(2)} €</td>
             <td></td>
           </tr>
@@ -643,14 +574,10 @@ function rRecap() {
       </table>
     </div>
     <div class="tot-grid">
-      <div class="tot-card"><div class="tot-lbl">Investi coté</div>
-        <div class="tot-val">${fmt(t.pea+t.cto+t.pme)} €</div></div>
-      <div class="tot-card"><div class="tot-lbl">Non coté</div>
-        <div class="tot-val">${fmt(t.av+t.pee)} €</div></div>
-      <div class="tot-card"><div class="tot-lbl">Garanti & divers</div>
-        <div class="tot-val">${fmt(t.livrets+t.scpi+t.revolut)} €</div></div>
-      <div class="tot-card"><div class="tot-lbl big">TOTAL</div>
-        <div class="tot-val big">${fmt(t.total)} €</div></div>
+      <div class="tot-card"><div class="tot-lbl">Investi coté</div><div class="tot-val">${fmt(t.pea+t.cto+t.pme)} €</div></div>
+      <div class="tot-card"><div class="tot-lbl">Non coté</div><div class="tot-val">${fmt(t.av+t.pee)} €</div></div>
+      <div class="tot-card"><div class="tot-lbl">Garanti & divers</div><div class="tot-val">${fmt(t.livrets+t.scpi+t.revolut)} €</div></div>
+      <div class="tot-card"><div class="tot-lbl">TOTAL</div><div class="tot-val big">${fmt(t.total)} €</div></div>
     </div>
     <div class="btn-row">
       <button class="btn btn-back" onclick="goBack()">← Retour</button>
@@ -661,8 +588,8 @@ function rRecap() {
 // ══════════════════════════════════════════════════════════════════
 // ÉTAPE 6 — TOKEN & SAVE
 // ══════════════════════════════════════════════════════════════════
-function rToken() {
-  const tok = sessionStorage.getItem('hermes_gh_token')||'';
+function rToken(){
+  const tok=sessionStorage.getItem('hermes_gh_token')||'';
   return `
     <div class="card">
       <div class="card-title">🔑 Token GitHub <span class="badge badge-blue">session uniquement</span></div>
@@ -684,109 +611,129 @@ function rToken() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// SAUVEGARDE — LOGIQUE MÉTIER
+// SAUVEGARDE — Logique 4 fichiers
 // ══════════════════════════════════════════════════════════════════
-async function save() {
-  const token = sessionStorage.getItem('hermes_gh_token')||'';
-  if(!token) { alert('Token GitHub requis'); return; }
+async function save(){
+  const token=sessionStorage.getItem('hermes_gh_token')||'';
+  if(!token){alert('Token GitHub requis');return;}
 
-  showMsg('⏳ Sauvegarde en cours...','var(--text3)');
+  const msg=(text,color='var(--text3)')=>{
+    document.getElementById('save-msg').innerHTML=
+      `<div style="font-family:var(--mono);font-size:11px;color:${color};padding:10px 0">${text}</div>`;
+  };
+
+  msg('⏳ Préparation des données...');
 
   try {
-    const t     = computeTotaux();
-    const dateJ = today();
+    const t    = computeTotaux();
+    const date = todayStr();
 
-    // ── 1. Construire donnee_maj (nouvelles données courantes) ────
-    const newDonnee = {
-      meta: { date_maj: dateJ, version: '2.0' },
-      cash: { pea: D.cash_pea, cto: D.cash_cto, pme: D.cash_pme },
+    // ── Construire le tampon (nouvelles données) ───────────────────
+    const tampon = {
+      meta: {date_maj:date, version:'2.0'},
+      cash: {pea:D.cash_pea||0, cto:D.cash_cto||0, pme:D.cash_pme||0},
       pea_positions: D.pea,
       cto_positions: D.cto,
       pme_positions: D.pme,
       av:  D.av.filter(f=>f.valeur>0),
       pee: D.pee.filter(f=>f.valeur>0),
       livrets: [
-        {nom:'Livret A',   valeur:D.livret_a||0},
-        {nom:'Livret $',   valeur:D.livret_usd||0},
-        {nom:'Livret euro',valeur:D.livret_eur||0},
+        {nom:'Livret A',    valeur:D.livret_a||0},
+        {nom:'Livret $',    valeur:D.livret_usd||0},
+        {nom:'Livret euro', valeur:D.livret_eur||0},
         {nom:'Compte courant',valeur:D.cc||0},
       ].filter(l=>l.valeur>0),
       scpi:    D.scpi||0,
       revolut: D.revolut||0,
-      totaux: {
-        pea:t.pea, cto:t.cto, pme:t.pme,
-        av:t.av,   pee:t.pee, livrets:t.livrets,
-        scpi:t.scpi, revolut:t.revolut, total:t.total,
-      },
+      totaux: {pea:t.pea,cto:t.cto,pme:t.pme,av:t.av,pee:t.pee,
+               livrets:t.livrets,scpi:t.scpi,revolut:t.revolut,total:t.total},
     };
 
-    // ── 2. Ajouter snapshot dans historique ───────────────────────
-    const hist  = EXISTING_HISTORIQUE || {snapshots:[]};
-    const snap  = {
-      date:    dateJ,
-      totaux: newDonnee.totaux,
-    };
-    // Remplacer si même date, sinon ajouter
-    const idx = hist.snapshots.findIndex(s=>s.date===dateJ);
-    if(idx>=0) hist.snapshots[idx] = snap;
-    else hist.snapshots.push(snap);
+    // ── Lire MAJ courante (pour l'écraser dans MAJ-1) ─────────────
+    msg('⏳ Lecture MAJ courante...');
+    let majCourante = null;
+    try {
+      const r = await fetch(RAW_BASE+FILES.maj+'?t='+Date.now());
+      if(r.ok) majCourante = await r.json();
+    } catch(e) {}
 
-    // ── 3. Sauvegarder les 2 fichiers sur GitHub ──────────────────
-    showMsg('⏳ Écriture donnee_maj.json...','var(--text3)');
-    const ok1 = await ghPut(token, FILES.donnee, newDonnee,
-      `📊 MAJ ${dateJ} — Total ${fmt(t.total)} €`);
+    // ── Lire graph existant ────────────────────────────────────────
+    msg('⏳ Lecture historique...');
+    const graph = MAJ_GRAPH || {snapshots:[]};
 
-    showMsg('⏳ Écriture historique_maj.json...','var(--text3)');
-    const ok2 = await ghPut(token, FILES.historique, hist,
-      `📈 Historique MAJ ${dateJ}`);
+    // ── Snapshot pour le graph ─────────────────────────────────────
+    const snap = {date, totaux: tampon.totaux};
+    const snapIdx = graph.snapshots.findIndex(s=>s.date===date);
+    if(snapIdx>=0) graph.snapshots[snapIdx]=snap;
+    else graph.snapshots.push(snap);
 
-    if(ok1 && ok2) {
-      EXISTING_DONNEE     = newDonnee;
-      EXISTING_HISTORIQUE = hist;
-      // Afficher succès
-      document.getElementById('step-content').innerHTML = `
-        <div class="card success">
-          <div class="success-icon">✅</div>
-          <div class="success-ttl">Mise à jour enregistrée</div>
-          <div class="success-tot">${t.total.toFixed(2)} €</div>
-          <div class="success-sub">
-            Snapshot du ${dateJ} sauvegardé<br>
-            ${hist.snapshots.length} point(s) d'historique
-          </div>
-        </div>`;
+    // ══════════════════════════════════════════════════════════════
+    // SÉQUENCE DE SAUVEGARDE (ordre important)
+    // 1. tampon → contient les nouvelles données
+    // 2. MAJ-1  ← écrasée par MAJ courante
+    // 3. MAJ    ← écrasée par tampon
+    // 4. graph  ← snapshot ajouté
+    // ══════════════════════════════════════════════════════════════
+
+    msg('⏳ [1/4] Sauvegarde tampon...');
+    const ok1 = await ghPut(token, FILES.tampon, tampon, `📦 Tampon MAJ ${date}`);
+    if(!ok1) throw new Error('Échec écriture tampon');
+
+    msg('⏳ [2/4] Rotation MAJ → MAJ-1...');
+    if(majCourante && majCourante.meta?.date_maj) {
+      const ok2 = await ghPut(token, FILES.moins1, majCourante, `📦 MAJ-1 ← MAJ ${majCourante.meta.date_maj}`);
+      if(!ok2) throw new Error('Échec écriture MAJ-1');
     } else {
-      showMsg('❌ Erreur sauvegarde — vérifier le token et les permissions GitHub','var(--red)');
+      // Première fois : MAJ-1 = tampon vide (pas de données précédentes)
+      const ok2 = await ghPut(token, FILES.moins1, tampon, `📦 MAJ-1 init ${date}`);
+      if(!ok2) throw new Error('Échec init MAJ-1');
     }
 
-  } catch(e) {
-    showMsg('❌ '+e.message,'var(--red)');
+    msg('⏳ [3/4] Mise à jour MAJ...');
+    const ok3 = await ghPut(token, FILES.maj, tampon, `📊 MAJ ${date} — ${fmt(t.total)} €`);
+    if(!ok3) throw new Error('Échec écriture MAJ');
+
+    msg('⏳ [4/4] Mise à jour graph...');
+    const ok4 = await ghPut(token, FILES.graph, graph, `📈 Graph MAJ ${date}`);
+    if(!ok4) throw new Error('Échec écriture graph');
+
+    // Succès
+    MAJ_GRAPH = graph;
+    document.getElementById('step-content').innerHTML=`
+      <div class="card success">
+        <div class="success-icon">✅</div>
+        <div class="success-ttl">Mise à jour enregistrée</div>
+        <div class="success-tot">${fmt(t.total,2)} €</div>
+        <div class="success-sub">
+          MAJ tampon → MAJ-1 → MAJ → Graph<br>
+          ${graph.snapshots.length} point(s) d'historique<br>
+          ${graph.snapshots.length>=2?'Delta disponible au prochain chargement':'Une 2ème MAJ sera nécessaire pour voir les écarts'}
+        </div>
+      </div>`;
+
+  } catch(e){
+    msg('❌ '+e.message,'var(--red)');
+    console.error(e);
   }
 }
 
-function showMsg(msg, color) {
-  document.getElementById('save-msg').innerHTML =
-    `<div style="font-family:var(--mono);font-size:11px;color:${color};padding:10px 0">${msg}</div>`;
-}
-
-// ── GitHub API ────────────────────────────────────────────────────
-async function ghPut(token, filename, data, message) {
-  const url = GH_API + filename;
-  let sha = null;
-  try {
-    const gr = await fetch(url, {headers:{Authorization:`token ${token}`}});
-    if(gr.ok) { const j=await gr.json(); sha=j.sha; }
-  } catch(e) {}
-
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
-  const body    = {message, content};
-  if(sha) body.sha = sha;
-
-  const r = await fetch(url, {
+// ── GitHub API PUT ────────────────────────────────────────────────
+async function ghPut(token,filename,data,message){
+  const url=GH_API+filename;
+  let sha=null;
+  try{
+    const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});
+    if(gr.ok){const j=await gr.json();sha=j.sha;}
+  } catch(e){}
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  const body={message,content};
+  if(sha) body.sha=sha;
+  const r=await fetch(url,{
     method:'PUT',
     headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
-    body: JSON.stringify(body),
+    body:JSON.stringify(body),
   });
-  if(!r.ok) console.error('GitHub PUT failed:', filename, r.status, await r.text());
+  if(!r.ok) console.error('PUT failed:',filename,r.status,await r.text());
   return r.ok;
 }
 
