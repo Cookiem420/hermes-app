@@ -158,9 +158,11 @@ function buildEnvelopes() {
   const cash = DONNEE.cash || {};
 
   // MAJ-1 : dernier snapshot dans historique AVANT aujourd'hui
-  const snaps   = (HISTORIQUE?.snapshots||[]);
-  const prevSnap= snaps.length>=2 ? snaps[snaps.length-2] : null;
-  const prevT   = prevSnap?.totaux || {};
+  const snaps    = (HISTORIQUE?.snapshots||[]);
+  // MAJ courante = dernier snap, MAJ-1 = avant-dernier
+  const curSnap  = snaps.length>=1 ? snaps[snaps.length-1] : null;
+  const prevSnap = snaps.length>=2 ? snaps[snaps.length-2] : null;
+  const prevT    = prevSnap?.totaux || {};
 
   const defs = [
     {key:'PEA',   nom:'PEA',        tot:T.pea,  prev:prevT.pea||0,  cashVal:cash.pea||0,  positions:DONNEE.pea_positions||[]},
@@ -182,9 +184,9 @@ function buildEnvelopes() {
       if(e.cashVal>0) lines.push({type:'cash', nom:'Espèces', val:e.cashVal});
       // Positions depuis CSV
       (e.positions||[]).forEach(p=>{
-        const cost   = p.pru * p.quantite;
-        const pnlEur = p.montant - cost;
-        const pnlPct = cost>0 ? pnlEur/cost*100 : null;
+        const cost   = (p.pru||0) * (p.quantite||0);
+        const pnlEur = cost > 0 ? p.montant - cost : null;
+        const pnlPct = cost > 0 ? (p.montant - cost) / cost * 100 : null;
         lines.push({type:'pos', nom:p.nom, isin:p.isin,
           val:p.montant, pnlEur, pnlPct, quantite:p.quantite, pru:p.pru});
       });
@@ -200,22 +202,15 @@ function buildEnvelopes() {
 // ANALYSE Risque/Thème/Catégorie
 // depuis donnee_maj.positions + table_infos_valeurs
 // ══════════════════════════════════════════════════════════════════
-function buildAnalysis(envelopes) {
-  const infos   = TABLE_INFOS?.valeurs || {};
-  const risque  = {}, themes = {}, cats = {};
-  const base    = (DONNEE?.totaux?.pea||0)+(DONNEE?.totaux?.cto||0)+(DONNEE?.totaux?.pme||0)||1;
+function buildAnalysis() {
+  const infos = TABLE_INFOS?.valeurs || {};
+  const hasInfos = Object.keys(infos).length > 0;
+  const base  = (DONNEE?.totaux?.pea||0)+(DONNEE?.totaux?.cto||0)+(DONNEE?.totaux?.pme||0)||1;
 
-  const THEME_RULES=[
-    [/eau|water|AWAT/i,'Eau & Env.'],
-    [/banque|bank|EXV/i,'Finance'],
-    [/défense|defense|EXAIL|HENSOLDT/i,'Défense'],
-    [/monde|world|CW8/i,'Global'],
-    [/japon|japan|IJPE/i,'Asie'],
-    [/asie|asia|AEEM/i,'Asie'],
-    [/ressource|miner|AMRS/i,'Matières 1ères'],
-    [/biotech|pharma/i,'Santé'],
-    [/tech|logiciel|software/i,'Tech'],
-  ];
+  // Si table_infos_valeurs est vide → sections vides (à alimenter dans Produit 2)
+  if(!hasInfos) return {risque:{}, themes:{}, cats:{}, base, empty:true};
+
+  const risque = {}, themes = {}, cats = {};
 
   const allPos = [
     ...(DONNEE?.pea_positions||[]),
@@ -224,42 +219,36 @@ function buildAnalysis(envelopes) {
   ];
 
   allPos.forEach(p => {
-    const val = p.montant||0;
+    const val  = p.montant||0;
     if(!val) return;
-
-    // Chercher dans table_infos par ISIN ou nom
-    const info = p.isin ? infos[p.isin] : null;
-    const cat  = info?.categorie || 'Non classé';
-    const ris  = info?.risque || RISQ_MAP[cat] || 'Non classé';
-    let theme  = info?.thematique || null;
-    if(!theme) {
-      for(const [re,label] of THEME_RULES) {
-        if(re.test((p.nom||'')+(p.isin||''))) {theme=label;break;}
-      }
-      theme = theme||'Autre';
-    }
-
-    cats[cat]   = (cats[cat]||0)+val;
-    risque[ris] = (risque[ris]||0)+val;
-    themes[theme]=(themes[theme]||0)+val;
+    const info = p.isin ? infos[p.isin] : (infos[p.nom] || null);
+    if(!info) return; // Pas dans la table → ignoré (pas de "Non classé")
+    const cat   = info.categorie   || null;
+    const ris   = info.risque      || null;
+    const theme = info.thematique  || null;
+    if(cat)   cats[cat]    = (cats[cat]||0)+val;
+    if(ris)   risque[ris]  = (risque[ris]||0)+val;
+    if(theme) themes[theme]= (themes[theme]||0)+val;
   });
 
-  return {risque,themes,cats,base};
+  return {risque, themes, cats, base, empty:false};
 }
 
 // ══════════════════════════════════════════════════════════════════
 // RENDER TABLEAU
 // ══════════════════════════════════════════════════════════════════
 function renderTableau(envs, total) {
-  const snaps   = HISTORIQUE?.snapshots||[];
-  const prevTot = snaps.length>=2 ? snaps[snaps.length-2].totaux.total : total;
-  const totDlt  = total - prevTot;
-  const totDltP = prevTot>0 ? totDlt/prevTot*100 : 0;
+  const prevTotVal = prevT?.total || 0;
+  const totDlt  = prevTotVal > 0 ? total - prevTotVal : 0;
+  const totDltP = prevTotVal>0 ? totDlt/prevTotVal*100 : 0;
 
   let rows='';
   envs.forEach((env,i)=>{
-    const delta   = env.tot - env.prev;
-    const deltaPct= env.prev>0 ? delta/env.prev*100 : 0;
+    // Delta = MAJ courante - MAJ précédente (depuis historique)
+    const prevEnv = prevT[{PEA:'pea',CTO:'cto','PEA-PME':'pme',AV:'av',PEE:'pee',
+      'Livrets & CC':'livrets',SCPI:'scpi',Revolut:'revolut'}[env.key]] || 0;
+    const delta   = prevEnv > 0 ? env.tot - prevEnv : 0;
+    const deltaPct= prevEnv>0 ? delta/prevEnv*100 : 0;
     const pct     = total>0 ? env.tot/total*100 : 0;
 
     // P&L global (cotées uniquement)
@@ -359,6 +348,7 @@ function drillToggle(i) {
 // ══════════════════════════════════════════════════════════════════
 function initChartLine() {
   const snaps = HISTORIQUE?.snapshots||[];
+  console.log('[Chart] snapshots:', snaps.length, snaps.map(s=>s.date));
   if(snaps.length<2) return;
   const canvas=document.getElementById('ch-line');
   if(!canvas)return;
@@ -413,7 +403,7 @@ function initChartDonut(envs,total){
 
 function renderBars(data, base, colorMap) {
   const items=Object.entries(data).sort((a,b)=>b[1]-a[1]);
-  if(!items.length)return`<div style="font-family:var(--mono);font-size:10px;color:var(--text3);padding:6px 0">Aucune donnée — faire une MAJ</div>`;
+  if(!items.length)return`<div style="font-family:var(--mono);font-size:10px;color:var(--text3);padding:6px 0">À alimenter dans table_infos_valeurs.json</div>`;
   return items.map(([lbl,val],i)=>{
     const pct=base>0?val/base*100:0;
     const col=colorMap?.[lbl]||ANA_C[i%ANA_C.length];
@@ -453,12 +443,13 @@ function render() {
   const delta   = T.total - prevTot;
   const deltaPct= prevTot>0 ? delta/prevTot*100 : 0;
   const cashTot = (DONNEE.cash?.pea||0)+(DONNEE.cash?.cto||0)+(DONNEE.cash?.pme||0);
-  const invCote = (T.pea||0)+(T.cto||0)+(T.pme||0);
-  const garanti = (T.av||0)+(T.pee||0)+(T.livrets||0)+(T.scpi||0);
+  // Investi coté = positions + cash (les poches cotées incluent le cash disponible)
+  const invCote = (T.pea||0)+(T.cto||0)+(T.pme||0);  // T.pea inclut déjà le cash
+  const garanti = (T.av||0)+(T.pee||0)+(T.livrets||0)+(T.scpi||0)+(T.revolut||0);
   const majDate = DONNEE.meta.date_maj;
   const nSnaps  = snaps.length;
 
-  const {risque,themes,cats,base} = buildAnalysis(envs);
+  const {risque,themes,cats,base,empty:anaEmpty} = buildAnalysis();
 
   document.getElementById('root').innerHTML=`
     <div class="hdr">

@@ -603,12 +603,15 @@ function computeTotaux() {
 function rRecap() {
   const t = computeTotaux();
   const lines = [
-    ['PEA (positions)', t.pea_pos, D.pea.length+' lignes'],
-    ['  dont espèces',  t.cash_pea, ''],
-    ['CTO (positions)', t.cto_pos, D.cto.length+' lignes'],
-    ['  dont espèces',  t.cash_cto, ''],
-    ['PEA-PME (positions)',t.pme_pos, D.pme.length+' lignes'],
-    ['  dont espèces',  t.cash_pme, ''],
+    ['PEA', t.pea, D.pea.length+' positions + espèces'],
+    ['  dont positions',  t.pea_pos, D.pea.length+' lignes'],
+    ['  dont espèces',   t.cash_pea, ''],
+    ['CTO', t.cto, D.cto.length+' positions + espèces'],
+    ['  dont positions',  t.cto_pos, D.cto.length+' lignes'],
+    ['  dont espèces',   t.cash_cto, ''],
+    ['PEA-PME', t.pme, D.pme.length+' positions + espèces'],
+    ['  dont positions',  t.pme_pos, D.pme.length+' lignes'],
+    ['  dont espèces',   t.cash_pme, ''],
     ['Ass. Vie',        t.av,   D.av.filter(f=>f.valeur>0).length+' fonds'],
     ['PEE',            t.pee,  D.pee.filter(f=>f.valeur>0).length+' fonds'],
     ['Livrets & CC',   t.livrets, ''],
@@ -618,8 +621,8 @@ function rRecap() {
 
   const rows = lines.map(([nom,val,det])=>`
     <tr>
-      <td style="color:${nom.startsWith('  ')?'var(--text3)':'var(--text)'}">${nom}</td>
-      <td style="text-align:right;font-family:var(--mono);font-weight:${nom.startsWith('  ')?'400':'600'}">${val.toFixed(2)} €</td>
+      <td style="color:${nom.startsWith('  ')?'var(--text3)':'var(--text)'}; padding-left:${nom.startsWith('  ')?'20px':'10px'}">${nom.trim()}</td>
+      <td style="text-align:right;font-family:var(--mono);font-weight:${nom.startsWith('  ')?'400':'600'};color:${nom.startsWith('  ')?'var(--text2)':'var(--text)'}">${val.toFixed(2)} €</td>
       <td style="text-align:right;font-family:var(--mono);font-size:10px;color:var(--text3)">${det}</td>
     </tr>`).join('');
 
