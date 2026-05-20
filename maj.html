@@ -661,11 +661,13 @@ async function save(){
     msg('⏳ Lecture historique...');
     const graph = MAJ_GRAPH || {snapshots:[]};
 
-    // ── Snapshot pour le graph ─────────────────────────────────────
+    // ── Snapshot pour le graph — toujours ajouter même date différente
     const snap = {date, totaux: tampon.totaux};
     const snapIdx = graph.snapshots.findIndex(s=>s.date===date);
     if(snapIdx>=0) graph.snapshots[snapIdx]=snap;
     else graph.snapshots.push(snap);
+    // Vrai indicateur de delta dispo : MAJ courante avait une date (= rotation réelle)
+    const hasPrevMAJ = !!(majCourante && majCourante.meta?.date_maj);
 
     // ══════════════════════════════════════════════════════════════
     // SÉQUENCE DE SAUVEGARDE (ordre important)
@@ -704,7 +706,7 @@ async function save(){
         <div class="success-sub">
           MAJ tampon → MAJ-1 → MAJ → Graph<br>
           ${graph.snapshots.length} point(s) d'historique<br>
-          ${graph.snapshots.length>=2?'✅ Delta visible dans le tableau de bord':'ℹ️ Faites une 2ème MAJ pour voir les écarts de performance'}
+          ${hasPrevMAJ?'✅ Delta disponible — rechargez le tableau de bord':'ℹ️ Faites une 2ème MAJ pour voir les écarts de performance'}
         </div>
       </div>`;
 
