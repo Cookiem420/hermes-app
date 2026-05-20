@@ -237,10 +237,11 @@ function buildAnalysis() {
 // ══════════════════════════════════════════════════════════════════
 // RENDER TABLEAU
 // ══════════════════════════════════════════════════════════════════
-function renderTableau(envs, total) {
-  const prevTotVal = prevT?.total || 0;
+function renderTableau(envs, total, prevT) {
+  prevT = prevT || {};
+  const prevTotVal = (prevT && prevT.total) ? prevT.total : 0;
   const totDlt  = prevTotVal > 0 ? total - prevTotVal : 0;
-  const totDltP = prevTotVal>0 ? totDlt/prevTotVal*100 : 0;
+  const totDltP = prevTotVal > 0 ? totDlt/prevTotVal*100 : 0;
 
   let rows='';
   envs.forEach((env,i)=>{
@@ -438,7 +439,8 @@ function render() {
   const envs    = buildEnvelopes();
   const T       = DONNEE.totaux;
   const snaps   = HISTORIQUE?.snapshots||[];
-  const prevSnap= snaps.length>=2 ? snaps[snaps.length-2] : null;
+  const prevSnap = snaps.length>=2 ? snaps[snaps.length-2] : null;
+  const prevT    = prevSnap?.totaux || {};
   const prevTot = prevSnap?.totaux?.total || T.total;
   const delta   = T.total - prevTot;
   const deltaPct= prevTot>0 ? delta/prevTot*100 : 0;
@@ -481,7 +483,7 @@ function render() {
     </div>
 
     <div class="sec"><div class="sec-t">Niveau 1 — Enveloppes</div><div class="sec-l"></div></div>
-    ${renderTableau(envs, T.total)}
+    ${renderTableau(envs, T.total, prevT)}
 
     <div class="sec"><div class="sec-t">Niveau 2 — Évolution</div><div class="sec-l"></div></div>
     <div class="ch-grid">
