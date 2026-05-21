@@ -445,11 +445,9 @@ function renderAutonome(){
       </div>
       <div id="auto-result" style="display:none"></div>
       <div class="auto-fields" id="auto-fields">
-        <div class="fg-row" style="margin-top:12px">
+        <div style="margin-top:12px;margin-bottom:12px">
           <div class="fg"><label class="fl">Quantité (titres)</label>
-            <input class="fi" id="auto-qty" type="number" step="1" placeholder="0"></div>
-          <div class="fg"><label class="fl">Prix d'exécution (€)</label>
-            <input class="fi" id="auto-prix" type="number" step="0.01" placeholder="0.00"></div>
+            <input class="fi" id="auto-qty" type="number" step="1" placeholder="0" style="max-width:260px"></div>
         </div>
         <div id="auto-zones-section" style="display:none">
           <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin:14px 0 10px">Nouvelle valeur — zones et métadonnées</div>
@@ -537,7 +535,6 @@ function autoSearch(query){
 async function validerAutonome(){
   const type=document.getElementById('auto-type')?.value||'ACHAT';
   const qty=parseFloat(document.getElementById('auto-qty')?.value)||0;
-  const prix=parseFloat(document.getElementById('auto-prix')?.value)||0;
   if(!autoCurrentIsin){toast('Saisissez un ISIN ou un nom','var(--red)');return;}
   const isin=autoCurrentIsin;
   const vals=TABLE.valeurs;
@@ -547,7 +544,7 @@ async function validerAutonome(){
     vals[isin]={
       isin, nom:'', quantite:qty,
       enveloppe:document.getElementById('az-env')?.value||'PEA',
-      cours:prix||0,
+      cours:0,
       zones:{
         basse_min:parseFloat(document.getElementById('az1')?.value)||0,
         basse_max:parseFloat(document.getElementById('az2')?.value)||0,
