@@ -19,20 +19,27 @@
 html,body{height:100%;overflow:hidden}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;-webkit-font-smoothing:antialiased}
 
+/* LOGIN */
 #login-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center}
-.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:40px;width:320px;text-align:center}
-.login-logo{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:4px;margin-bottom:6px}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:40px;width:360px}
+.login-logo{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:4px;text-align:center;margin-bottom:6px}
 .login-logo span{color:var(--gold)}
-.login-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:32px}
-.login-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;color:var(--text);font-family:var(--mono);font-size:16px;text-align:center;letter-spacing:8px;outline:none;transition:border-color .2s;margin-bottom:12px}
+.login-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-align:center;margin-bottom:32px}
+.login-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;margin-top:16px;display:block}
+.login-label:first-of-type{margin-top:0}
+.login-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:11px 14px;color:var(--text);font-family:var(--mono);font-size:14px;outline:none;transition:border-color .2s;margin-bottom:4px}
 .login-input:focus{border-color:var(--gold)}
-.login-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:12px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s}
+#login-pwd{letter-spacing:6px;text-align:center;font-size:16px}
+.login-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:12px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s;margin-top:20px}
 .login-btn:hover{opacity:.85}
-.login-err{display:none;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--red)}
+.login-err{display:none;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--red);text-align:center}
+.login-hint{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:5px}
 
+/* APP */
 #app{height:100vh;display:none;flex-direction:row}
 #app.visible{display:flex}
 
+/* SIDEBAR */
 .sidebar{width:var(--nav-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh}
 .sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border)}
 .sidebar-logo-text{font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:3px}
@@ -49,6 +56,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .foot-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
 .foot-txt{font-family:var(--mono);font-size:9px;color:var(--text3)}
 
+/* CONTENT */
 .content-area{flex:1;height:100vh;overflow:hidden;display:flex;flex-direction:column}
 .content-header{height:var(--hdr-h);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;flex-shrink:0}
 .content-header-title{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:2px;text-transform:uppercase}
@@ -64,17 +72,27 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">HERM<span>È</span>S</div>
     <div class="login-sub">Pilotage patrimonial</div>
+
+    <label class="login-label">Mot de passe</label>
     <input class="login-input" id="login-pwd" type="password" placeholder="••••"
+      onkeydown="if(event.key==='Enter')document.getElementById('login-token').focus()">
+
+    <label class="login-label">Token GitHub</label>
+    <input class="login-input" id="login-token" type="password" placeholder="ghp_..."
       onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-hint">Nécessaire pour les sauvegardes — stocké en session uniquement</div>
+
     <button class="login-btn" onclick="doLogin()">Accéder</button>
     <div class="login-err" id="login-err"></div>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app">
   <div class="sidebar">
     <div class="sidebar-logo">
@@ -128,11 +146,7 @@ const GH_USER = 'Cookiem420';
 const GH_REPO_DATA = 'hermes-data';
 const RAW_DATA = 'https://raw.githubusercontent.com/' + GH_USER + '/' + GH_REPO_DATA + '/main/';
 
-// Token chargé depuis hermes-data/config.json — jamais hardcodé dans le HTML
 let GH_TOKEN = '';
-
-const PAGE_TITLES = {passif:'Patrimoine',actions:'Actions',watchlist:'Watchlist',historique:'Historique',maj:'Mise à jour'};
-const PAGE_SRCS = {passif:'passif.html',actions:'actions.html',watchlist:'watchlist.html',maj:'maj.html'};
 
 // Date sidebar
 const days=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'];
@@ -141,90 +155,86 @@ const now=new Date();
 document.getElementById('foot-date').textContent=days[now.getDay()]+' '+now.getDate()+' '+months[now.getMonth()];
 
 // Navigation
+const PAGE_TITLES={passif:'Patrimoine',actions:'Actions',watchlist:'Watchlist',historique:'Historique',maj:'Mise à jour'};
+const PAGE_SRCS={passif:'passif.html',actions:'actions.html',watchlist:'watchlist.html',maj:'maj.html'};
+
 function nav(el) {
-  const page = el.dataset.page;
+  const page=el.dataset.page;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('page-title').textContent = PAGE_TITLES[page]||page;
-  document.querySelectorAll('.content-body iframe, .content-body .coming-soon')
-    .forEach(f=>f.classList.remove('active'));
-  const frame = document.getElementById('frame-'+page);
+  document.getElementById('page-title').textContent=PAGE_TITLES[page]||page;
+  document.querySelectorAll('.content-body iframe,.content-body .coming-soon').forEach(f=>f.classList.remove('active'));
+  const frame=document.getElementById('frame-'+page);
   if(!frame) return;
-  if(frame.tagName==='IFRAME' && frame.src.endsWith('about:blank') && PAGE_SRCS[page]) {
-    frame.src = PAGE_SRCS[page];
-    frame.onload = () => {
-      if(GH_TOKEN) {
-        try { frame.contentWindow.postMessage({type:'HERMES_TOKEN',token:GH_TOKEN},'*'); } catch(e){}
-      }
+  if(frame.tagName==='IFRAME' && frame.src.endsWith('about:blank') && PAGE_SRCS[page]){
+    frame.src=PAGE_SRCS[page];
+    frame.onload=()=>{
+      if(GH_TOKEN) try{frame.contentWindow.postMessage({type:'HERMES_TOKEN',token:GH_TOKEN},'*');}catch(e){}
     };
   }
   frame.classList.add('active');
 }
 
-// Répondre aux demandes de token des iframes enfants
-window.addEventListener('message', e => {
-  if(e.data?.type==='HERMES_TOKEN_REQUEST' && GH_TOKEN) {
+// Répondre aux demandes de token des iframes
+window.addEventListener('message',e=>{
+  if(e.data?.type==='HERMES_TOKEN_REQUEST' && GH_TOKEN){
     e.source?.postMessage({type:'HERMES_TOKEN',token:GH_TOKEN},'*');
   }
 });
 
-// LOGIN
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+// SHA-256
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-let loginAttempts = 0;
-const MAX_ATTEMPTS = 3;
+let loginAttempts=0;
+const MAX_ATTEMPTS=3;
 
-async function doLogin() {
-  const blockedUntil = localStorage.getItem('hermes_blocked_until');
-  if(blockedUntil && Date.now() < parseInt(blockedUntil)) {
-    showErr('Accès bloqué 24h suite à trop de tentatives');return;
-  }
-  const pwd = document.getElementById('login-pwd').value;
-  if(!pwd) return;
-  const hash = await sha256(pwd);
+async function doLogin(){
+  const blockedUntil=localStorage.getItem('hermes_blocked_until');
+  if(blockedUntil&&Date.now()<parseInt(blockedUntil)){showErr('Accès bloqué 24h');return;}
 
-  // Charger config depuis hermes-data pour vérifier le hash et récupérer le token
+  const pwd=document.getElementById('login-pwd').value;
+  const token=document.getElementById('login-token').value.trim();
+  if(!pwd){showErr('Mot de passe requis');return;}
+  if(!token){showErr('Token GitHub requis');return;}
+
+  const hash=await sha256(pwd);
+
+  // Charger config depuis hermes-data pour vérifier le hash
   let config;
-  try {
-    const r = await fetch(RAW_DATA + 'config.json?t=' + Date.now());
-    config = await r.json();
-  } catch(e) {
-    showErr('Erreur connexion au serveur');return;
-  }
+  try{
+    const r=await fetch(RAW_DATA+'config.json?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    config=await r.json();
+  }catch(e){showErr('Erreur connexion ('+e.message+')');return;}
 
-  if(hash === config.password_hash) {
-    loginAttempts = 0;
+  if(hash===config.password_hash){
+    loginAttempts=0;
     localStorage.removeItem('hermes_blocked_until');
-    sessionStorage.setItem('hermes_auth', hash);
-    // Stocker le token pour toutes les iframes
-    GH_TOKEN = config.tk ? atob(config.tk) : config.gh_token||'';
-    sessionStorage.setItem('hermes_gh_token', GH_TOKEN);
-    localStorage.setItem('hermes_gh_token', GH_TOKEN);
-    document.getElementById('login-screen').style.display = 'none';
+    // Stocker auth + token en session (jamais dans un fichier)
+    sessionStorage.setItem('hermes_auth',hash);
+    sessionStorage.setItem('hermes_gh_token',token);
+    GH_TOKEN=token;
+    document.getElementById('login-screen').style.display='none';
     document.getElementById('app').classList.add('visible');
     // Injecter dans passif déjà chargé
-    try {
-      document.getElementById('frame-passif').contentWindow
-        .postMessage({type:'HERMES_TOKEN',token:GH_TOKEN},'*');
-    } catch(e){}
+    try{document.getElementById('frame-passif').contentWindow.postMessage({type:'HERMES_TOKEN',token:GH_TOKEN},'*');}catch(e){}
   } else {
     loginAttempts++;
-    if(loginAttempts >= MAX_ATTEMPTS) {
-      localStorage.setItem('hermes_blocked_until', (Date.now()+24*3600*1000).toString());
+    if(loginAttempts>=MAX_ATTEMPTS){
+      localStorage.setItem('hermes_blocked_until',(Date.now()+24*3600*1000).toString());
       fetch('https://api.telegram.org/bot8675954697:AAHRlyrxA2WwWrLGTEE0Ljq2nkfxLDUj_nw/sendMessage',{
         method:'POST',headers:{'Content-Type':'application/json'},
         body:JSON.stringify({chat_id:'8818994234',text:'Hermes : 3 tentatives echouees - acces bloque 24h'})
       }).catch(()=>{});
       showErr('Accès bloqué 24h — alerte envoyée');
     } else {
-      const r = MAX_ATTEMPTS - loginAttempts;
+      const r=MAX_ATTEMPTS-loginAttempts;
       showErr('Mot de passe incorrect — '+r+' tentative'+(r>1?'s':'')+' restante'+(r>1?'s':''));
     }
     document.getElementById('login-pwd').value='';
-    document.getElementById('login-pwd').focus();
     document.getElementById('login-pwd').style.borderColor='var(--red)';
     setTimeout(()=>document.getElementById('login-pwd').style.borderColor='',1000);
   }
@@ -234,12 +244,12 @@ function showErr(msg){
   const e=document.getElementById('login-err');e.textContent=msg;e.style.display='block';
 }
 
-// Si déjà auth en session
+// Reprise de session si déjà auth
 (async()=>{
-  const auth = sessionStorage.getItem('hermes_auth');
-  const tok = sessionStorage.getItem('hermes_gh_token')||localStorage.getItem('hermes_gh_token');
-  if(auth && tok) {
-    GH_TOKEN = tok;
+  const auth=sessionStorage.getItem('hermes_auth');
+  const tok=sessionStorage.getItem('hermes_gh_token');
+  if(auth&&tok){
+    GH_TOKEN=tok;
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').classList.add('visible');
     try{document.getElementById('frame-passif').contentWindow.postMessage({type:'HERMES_TOKEN',token:GH_TOKEN},'*');}catch(e){}
