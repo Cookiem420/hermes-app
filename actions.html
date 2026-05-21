@@ -14,8 +14,7 @@
   --blue:#4d9fff;--blue2:rgba(77,159,255,.12);
   --gold:#f0b429;--gold2:rgba(240,180,41,.12);
   --orange:#fb923c;--orange2:rgba(251,146,60,.12);
-  --mono:'IBM Plex Mono',monospace;
-  --sans:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-y:auto}
@@ -32,14 +31,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .cart{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .cart-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border)}
 .cart-badge{font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 10px;border-radius:4px;letter-spacing:1px;text-transform:uppercase;flex-shrink:0}
-.b-achat  {background:var(--green2);color:var(--green);border:1px solid rgba(0,214,143,.25)}
+.b-achat{background:var(--green2);color:var(--green);border:1px solid rgba(0,214,143,.25)}
 .b-renfort{background:var(--blue2);color:var(--blue);border:1px solid rgba(77,159,255,.25)}
 .b-conserver{background:var(--border);color:var(--text2);border:1px solid var(--border2)}
 .b-alleger{background:var(--orange2);color:var(--orange);border:1px solid rgba(251,146,60,.25)}
-.b-vente  {background:var(--red2);color:var(--red);border:1px solid rgba(255,77,106,.25)}
+.b-vente{background:var(--red2);color:var(--red);border:1px solid rgba(255,77,106,.25)}
 .cart-nom{font-weight:600;font-size:14px;flex:1}
 .cart-env{font-family:var(--mono);font-size:9px;color:var(--text3);padding:2px 8px;background:var(--bg3);border-radius:4px}
-
 .cart-body{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:1px;background:var(--border)}
 .cart-cell{background:var(--bg2);padding:12px 18px}
 .cart-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
@@ -53,15 +51,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .e-weakening{background:var(--orange2);color:var(--orange)}
 .e-exit{background:var(--red2);color:var(--red)}
 .e-protection{background:var(--gold2);color:var(--gold)}
-
 .cart-actions{background:var(--bg3);padding:12px 18px;display:flex;flex-direction:column;gap:8px;justify-content:center}
 .btn-confirm{background:var(--green);color:var(--bg);border:none;border-radius:6px;padding:8px 16px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s;white-space:nowrap}
 .btn-confirm:hover{opacity:.85}
 .btn-refuse{background:transparent;color:var(--red);border:1px solid rgba(255,77,106,.3);border-radius:6px;padding:7px 16px;font-family:var(--sans);font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap}
 .btn-refuse:hover{background:var(--red2)}
-
 .cart-form{display:none;border-top:1px solid var(--border);padding:18px;background:var(--bg3)}
 .cart-form.open{display:block}
+
 .form-title{font-family:var(--mono);font-size:10px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px}
 .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .fg{display:flex;flex-direction:column;gap:5px}
@@ -89,44 +86,50 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 
 .autonome{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px}
 .auto-result{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;margin-top:12px}
-.auto-result-nom{font-weight:600;margin-bottom:6px}
-.auto-result-meta{font-family:var(--mono);font-size:10px;color:var(--text2)}
-.auto-result-state{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 .auto-fields{display:none}
 .auto-fields.visible{display:block}
 
 .empty{text-align:center;padding:32px 20px;color:var(--text3);font-family:var(--mono);font-size:11px}
 .empty-icon{font-size:28px;margin-bottom:8px}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 18px;font-family:var(--mono);font-size:11px;color:var(--green);opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 18px;font-family:var(--mono);font-size:11px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
 .toast.show{opacity:1}
 .pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text2)}
 </style>
 </head>
 <body>
-<div class="page" id="root">
-  <div class="empty"><div class="empty-icon">⏳</div>Chargement...</div>
-</div>
+<div class="page" id="root"><div class="empty"><div class="empty-icon">⏳</div>Chargement...</div></div>
 <div class="toast" id="toast"></div>
-
 <script>
-const GH_USER = 'Cookiem420';
-const GH_REPO_DATA = 'hermes-data';
-const RAW = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO_DATA}/main/`;
-const GH_API = `https://api.github.com/repos/${GH_USER}/${GH_REPO_DATA}/contents/`;
+const GH_USER='Cookiem420', GH_REPO_DATA='hermes-data';
+const RAW=`https://raw.githubusercontent.com/${GH_USER}/${GH_REPO_DATA}/main/`;
+const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO_DATA}/contents/`;
 
-const MOTIFS_REFUS = ['TIMING','CASH','CONVICTION','SIGNAL_FAIBLE'];
-const ETATS_LIST = ['FULL','BUILDING','ALERT_SENT','WATCHLIST','EXITED',
-  'WEAKENING_STRUCT','WEAKENING_TECH','EXIT_READY','PROFIT_PROTECTION'];
-const CATS = ['ETF_large','ETF_sectoriel','Qualite','Cyclique','Croissance','Speculatif'];
-const RISQUES = ['Faible','Modéré','Élevé','Spéculatif'];
-const THEMES = ['Tech','Finance','Eau & Env.','Défense','Global','Asie','Matières 1ères','Santé','Infrastructure','Diversifié'];
+const MOTIFS_REFUS=['TIMING','CASH','CONVICTION','SIGNAL_FAIBLE'];
+const ETATS_LIST=['FULL','BUILDING','ALERT_SENT','WATCHLIST','EXITED','WEAKENING_STRUCT','WEAKENING_TECH','EXIT_READY','PROFIT_PROTECTION'];
+const CATS=['ETF_large','ETF_sectoriel','Qualite','Cyclique','Croissance','Speculatif'];
+const RISQUES=['Faible','Modéré','Élevé','Spéculatif'];
+const THEMES=['Tech','Finance','Eau & Env.','Défense','Global','Asie','Matières 1ères','Santé','Infrastructure','Diversifié','Autre'];
 
-let TABLE = null;
+let TABLE=null;
+
+// ── TOKEN : parent injecte via postMessage OU sessionStorage/localStorage
+function getToken(){
+  return sessionStorage.getItem('hermes_gh_token')||localStorage.getItem('hermes_gh_token')||'';
+}
+// Demander le token au parent si absent
+if(!getToken()) {
+  window.parent.postMessage({type:'HERMES_TOKEN_REQUEST'},'*');
+}
+window.addEventListener('message', e=>{
+  if(e.data?.type==='HERMES_TOKEN' && e.data.token){
+    sessionStorage.setItem('hermes_gh_token', e.data.token);
+    localStorage.setItem('hermes_gh_token', e.data.token);
+  }
+});
 
 function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function fmtPct(n){if(!n&&n!==0)return'—';return(n>0?'+':'')+n.toFixed(1)+'%'}
-function pc(v){return v>0?'pos':v<-0?'neg':'neu'}
-function getToken(){return sessionStorage.getItem('hermes_gh_token')||'';}
+function pc(v){return v>0?'pos':v<0?'neg':'neu'}
 function toast(msg,color='var(--green)'){
   const el=document.getElementById('toast');
   el.textContent=msg;el.style.color=color;el.classList.add('show');
@@ -139,101 +142,114 @@ function etatCss(e){
   return m[e]||'e-watchlist';
 }
 function badgeCss(av){
-  const m={ACHAT:'b-achat',RENFORT:'b-renfort',CONSERVER:'b-conserver',ALLEGER:'b-alleger',VENTE:'b-vente'};
-  return m[av]||'b-conserver';
+  return {ACHAT:'b-achat',RENFORT:'b-renfort',CONSERVER:'b-conserver',ALLEGER:'b-alleger',VENTE:'b-vente'}[av]||'b-conserver';
+}
+
+// ── THEME SELECT avec champ libre "Autre" ─────────────────────────────────────
+function themeSelectHtml(idSelect, idAutre, valActuel=''){
+  const isAutre = valActuel && !THEMES.slice(0,-1).includes(valActuel);
+  const valSelect = isAutre ? 'Autre' : (valActuel||'');
+  return `
+    <select class="fi fi-select" id="${idSelect}" onchange="toggleAutre('${idSelect}','${idAutre}')">
+      <option value="">— Sélectionner</option>
+      ${THEMES.map(t=>`<option value="${t}" ${t===valSelect?'selected':''}>${t}</option>`).join('')}
+    </select>
+    <input class="fi" id="${idAutre}" type="text" placeholder="Préciser la thématique…"
+      style="margin-top:6px;display:${isAutre?'block':'none'}" value="${isAutre?valActuel:''}">`;
+}
+function toggleAutre(idSel, idInput){
+  const sel=document.getElementById(idSel);
+  const inp=document.getElementById(idInput);
+  if(inp) inp.style.display = sel.value==='Autre'?'block':'none';
+}
+function getTheme(idSel, idInput){
+  const sel=document.getElementById(idSel);
+  if(!sel) return null;
+  if(sel.value==='Autre'){
+    const inp=document.getElementById(idInput);
+    return inp?.value?.trim()||'Autre';
+  }
+  return sel.value||null;
 }
 
 // ── LOAD ──────────────────────────────────────────────────────────────────────
-async function load() {
-  try {
-    const r = await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
-    if(!r.ok) throw new Error('HTTP '+r.status+' — vérifier que hermes-data est public');
-    TABLE = await r.json();
-  } catch(e) {
-    console.error('Erreur load:', e);
-    document.getElementById('root').innerHTML =
-      `<div class="empty"><div class="empty-icon">⚠️</div>Erreur chargement JSON :<br>${e.message}</div>`;
+async function load(){
+  try{
+    const r=await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    TABLE=await r.json();
+  }catch(e){
+    console.error('load:',e);
+    document.getElementById('root').innerHTML=
+      `<div class="empty"><div class="empty-icon">⚠️</div>Erreur chargement : ${e.message}</div>`;
     return;
   }
-  // render() toujours appelé hors du try/catch load
   render();
 }
 
-// ── SAVE GITHUB ────────────────────────────────────────────────────────────────
-async function ghPut(data, message) {
-  const token = getToken();
-  if(!token){toast('Token GitHub requis — saisissez-le dans Produit MAJ','var(--red)');return false;}
-  const url = GH_API+'table_infos_valeurs.json';
-  let sha = null;
-  try {
-    const gr = await fetch(url,{headers:{Authorization:`token ${token}`}});
+// ── SAVE GITHUB ───────────────────────────────────────────────────────────────
+async function ghPut(data,message){
+  const token=getToken();
+  if(!token){toast('❌ Token absent — recharger la page','var(--red)');return false;}
+  const url=GH_API+'table_infos_valeurs.json';
+  let sha=null;
+  try{
+    const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});
     if(gr.ok){const j=await gr.json();sha=j.sha;}
-  } catch(e){}
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
-  const body = {message,content};
-  if(sha) body.sha = sha;
-  const r = await fetch(url,{method:'PUT',
+  }catch(e){}
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+  const body={message,content};
+  if(sha) body.sha=sha;
+  const r=await fetch(url,{method:'PUT',
     headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
     body:JSON.stringify(body)});
+  if(!r.ok) console.error('ghPut error',r.status, await r.text().catch(()=>''));
   return r.ok;
 }
 
-// ── RENDER PRINCIPAL ──────────────────────────────────────────────────────────
-function render() {
-  try {
-    const vals = (TABLE && TABLE.valeurs) ? TABLE.valeurs : {};
-    const entries = Object.entries(vals);
-
-    const withAction = entries.filter(([,v]) => v.achat_vente && v.achat_vente !== null && v.achat_vente !== '');
-    const missingZones = entries.filter(([,v]) =>
-      v.quantite > 0 && (!(v.zones && v.zones.basse_min) || !v.risque || !v.categorie)
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  try{
+    const vals=(TABLE&&TABLE.valeurs)?TABLE.valeurs:{};
+    const entries=Object.entries(vals);
+    const withAction=entries.filter(([,v])=>v.achat_vente&&v.achat_vente!==null&&v.achat_vente!=='');
+    const missingZones=entries.filter(([,v])=>
+      v.quantite>0&&(!(v.zones&&v.zones.basse_min)||!v.risque||!v.categorie)
     );
 
-    let s1html = withAction.length === 0
-      ? `<div class="empty"><div class="empty-icon">✅</div>Aucune action en attente</div>`
-      : `<div class="cartouches">${withAction.map(([isin,v]) => {
-          try { return renderCart(isin,v); }
-          catch(e){ console.error('renderCart',isin,e); return ''; }
-        }).join('')}</div>`;
+    const s1html=withAction.length===0
+      ?`<div class="empty"><div class="empty-icon">✅</div>Aucune action en attente</div>`
+      :`<div class="cartouches">${withAction.map(([isin,v])=>{try{return renderCart(isin,v);}catch(e){console.error('cart',isin,e);return '';}}).join('')}</div>`;
 
-    let s2html = missingZones.length === 0
-      ? `<div class="empty"><div class="empty-icon">✅</div>Toutes les zones sont renseignées</div>`
-      : `<div class="zones-list">${missingZones.map(([isin,v]) => {
-          try { return renderZoneCard(isin,v); }
-          catch(e){ console.error('renderZoneCard',isin,e); return ''; }
-        }).join('')}</div>`;
+    const s2html=missingZones.length===0
+      ?`<div class="empty"><div class="empty-icon">✅</div>Toutes les infos sont renseignées</div>`
+      :`<div class="zones-list">${missingZones.map(([isin,v])=>{try{return renderZoneCard(isin,v);}catch(e){console.error('zone',isin,e);return '';}}).join('')}</div>`;
 
-    let s3html = '';
-    try { s3html = renderAutonome(); }
-    catch(e){ console.error('renderAutonome',e); s3html = `<div class="empty">Erreur section autonome : ${e.message}</div>`; }
+    let s3html='';
+    try{s3html=renderAutonome();}catch(e){s3html=`<div class="empty">Erreur: ${e.message}</div>`;}
 
-    document.getElementById('root').innerHTML = `
+    document.getElementById('root').innerHTML=`
       <div class="sec"><div class="sec-t">Actions en attente</div><div class="sec-l"></div>${withAction.length>0?`<div class="sec-ct">${withAction.length}</div>`:''}</div>
       <div id="s1">${s1html}</div>
       <div class="sec"><div class="sec-t">Infos manquantes</div><div class="sec-l"></div>${missingZones.length>0?`<div class="sec-ct">${missingZones.length}</div>`:''}</div>
       <div id="s2">${s2html}</div>
       <div class="sec"><div class="sec-t">Espace autonome</div><div class="sec-l"></div></div>
       <div id="s3">${s3html}</div>`;
-  } catch(e) {
-    console.error('Erreur render:', e);
-    document.getElementById('root').innerHTML =
-      `<div class="empty"><div class="empty-icon">⚠️</div>Erreur affichage : ${e.message}</div>`;
+  }catch(e){
+    console.error('render:',e);
+    document.getElementById('root').innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div>Erreur affichage : ${e.message}</div>`;
   }
 }
 
-// ── SECTION 1 : CARTOUCHE ─────────────────────────────────────────────────────
-function renderCart(isin, v) {
-  const av = v.achat_vente || '';
-  const isBuy = ['ACHAT','RENFORT'].includes(av);
-  const cours = v.cours || 0;
-  const qty = v.quantite || 0;
-  const pru = v.pru || 0;
-  const pnlEur = pru && qty ? (cours - pru) * qty : null;
-  const pnlPct = pru ? (cours - pru) / pru * 100 : null;
-  const qSugg = v.q_achat_vente || 0;
-  const pSugg = v.prix_achat_vente || cours || 0;
-  const montSugg = qSugg * pSugg;
-
+// ── SECTION 1 : CARTOUCHES ────────────────────────────────────────────────────
+function renderCart(isin,v){
+  const av=v.achat_vente||'';
+  const isBuy=['ACHAT','RENFORT'].includes(av);
+  const cours=v.cours||0;const qty=v.quantite||0;const pru=v.pru||0;
+  const pnlEur=pru&&qty?(cours-pru)*qty:null;
+  const pnlPct=pru?(cours-pru)/pru*100:null;
+  const qSugg=v.q_achat_vente||0;const pSugg=v.prix_achat_vente||cours||0;
+  const montSugg=qSugg*pSugg;
   return `
     <div class="cart" id="cart-${isin}">
       <div class="cart-head">
@@ -250,7 +266,7 @@ function renderCart(isin, v) {
         <div class="cart-cell">
           <div class="cart-lbl">Prix suggéré</div>
           <div class="cart-val">${pSugg>0?fmt(pSugg,2)+' €':'—'}</div>
-          ${isBuy&&v.zones&&v.zones.basse_min?`<div class="cart-sub">Zone : ${v.zones.basse_min}–${v.zones.basse_max} €</div>`:''}
+          ${isBuy&&v.zones?.basse_min?`<div class="cart-sub">Zone : ${v.zones.basse_min}–${v.zones.basse_max} €</div>`:''}
         </div>
         <div class="cart-cell">
           <div class="cart-lbl">État &amp; P&L</div>
@@ -266,27 +282,21 @@ function renderCart(isin, v) {
     </div>`;
 }
 
-function openCartForm(isin, type) {
-  const v = TABLE.valeurs[isin];
-  const form = document.getElementById('cform-'+isin);
-  const content = document.getElementById('cform-content-'+isin);
-  const av = v.achat_vente||'';
-  const isBuy = ['ACHAT','RENFORT'].includes(av);
-  const qSugg = v.q_achat_vente||0;
-  const pSugg = v.prix_achat_vente||v.cours||0;
-
-  if(form.classList.contains('open') && form._lastType===type){form.classList.remove('open');return;}
-  form._lastType = type;
-  form.classList.add('open');
-
+function openCartForm(isin,type){
+  const v=TABLE.valeurs[isin];
+  const form=document.getElementById('cform-'+isin);
+  const content=document.getElementById('cform-content-'+isin);
+  const av=v.achat_vente||'';const isBuy=['ACHAT','RENFORT'].includes(av);
+  if(form.classList.contains('open')&&form._lastType===type){form.classList.remove('open');return;}
+  form._lastType=type;form.classList.add('open');
   if(type==='confirmer'){
-    content.innerHTML = `
+    content.innerHTML=`
       <div class="form-title">${isBuy?'Confirmer achat':'Confirmer vente'} — ${v.nom||isin}</div>
       <div class="fg-row">
         <div class="fg"><label class="fl">Quantité réelle</label>
-          <input class="fi" id="cq-${isin}" type="number" step="1" value="${qSugg||''}"></div>
+          <input class="fi" id="cq-${isin}" type="number" step="1" value="${v.q_achat_vente||''}"></div>
         <div class="fg"><label class="fl">Prix réel / titre (€)</label>
-          <input class="fi" id="cp-${isin}" type="number" step="0.01" value="${pSugg>0?pSugg.toFixed(2):''}"></div>
+          <input class="fi" id="cp-${isin}" type="number" step="0.01" value="${v.prix_achat_vente>0?v.prix_achat_vente.toFixed(2):''}"></div>
       </div>
       <div class="fg-row">
         <div class="fg"><label class="fl">Nouvel état</label>
@@ -301,7 +311,7 @@ function openCartForm(isin, type) {
         <button class="btn-annuler" onclick="closeCartForm('${isin}')">Annuler</button>
       </div>`;
   } else {
-    content.innerHTML = `
+    content.innerHTML=`
       <div class="form-title">Refuser le signal — ${v.nom||isin}</div>
       <div class="fg-row">
         <div class="fg"><label class="fl">Motif du refus</label>
@@ -317,52 +327,45 @@ function openCartForm(isin, type) {
       </div>`;
   }
 }
-
 function closeCartForm(isin){document.getElementById('cform-'+isin)?.classList.remove('open');}
 
-async function validerAction(isin, type) {
-  const v = TABLE.valeurs[isin];
-  const qty  = parseFloat(document.getElementById('cq-'+isin)?.value)||0;
-  const prix = parseFloat(document.getElementById('cp-'+isin)?.value)||0;
-  const motif= document.getElementById('cm-'+isin)?.value||'';
-  const etat = document.getElementById('ce-'+isin)?.value||v.etat_actuel;
-
+async function validerAction(isin,type){
+  const v=TABLE.valeurs[isin];
+  const qty=parseFloat(document.getElementById('cq-'+isin)?.value)||0;
+  const prix=parseFloat(document.getElementById('cp-'+isin)?.value)||0;
+  const motif=document.getElementById('cm-'+isin)?.value||'';
+  const etat=document.getElementById('ce-'+isin)?.value||v.etat_actuel;
   if(type==='confirmer'){
-    v.ancien_etat = v.etat_actuel;
-    v.etat_actuel = etat;
-    if(qty>0) v.quantite = qty;
-    if(prix>0) v.pru = prix;
-    v.achat_vente = null; v.q_achat_vente=0; v.prix_achat_vente=0;
+    v.ancien_etat=v.etat_actuel;v.etat_actuel=etat;
+    if(qty>0) v.quantite=qty;
+    v.achat_vente=null;v.q_achat_vente=0;v.prix_achat_vente=0;
   } else {
-    const signalAvant = v.achat_vente;
-    v.achat_vente = null; v.q_achat_vente=0; v.prix_achat_vente=0;
+    const sig=v.achat_vente;
+    v.achat_vente=null;v.q_achat_vente=0;v.prix_achat_vente=0;
     if(!v.historique_refus) v.historique_refus=[];
-    v.historique_refus.push({
-      date: new Date().toISOString().split('T')[0],
-      signal: signalAvant, motif,
-      notes: document.getElementById('cn-'+isin)?.value||'',
-    });
+    v.historique_refus.push({date:new Date().toISOString().split('T')[0],signal:sig,motif,
+      notes:document.getElementById('cn-'+isin)?.value||''});
   }
   toast('⏳ Sauvegarde…','var(--text3)');
-  const ok = await ghPut(TABLE, `${type==='confirmer'?'✅':'✗'} ${type} ${v.nom||isin}`);
-  if(ok){toast(`${type==='confirmer'?'✅':'✗'} ${v.nom||isin} — ${type} enregistré`);closeCartForm(isin);setTimeout(render,500);}
-  else toast('❌ Erreur sauvegarde — vérifier le token','var(--red)');
+  const ok=await ghPut(TABLE,`${type==='confirmer'?'✅':'✗'} ${type} ${v.nom||isin}`);
+  if(ok){toast(`${type==='confirmer'?'✅':'✗'} ${v.nom||isin} — ${type} enregistré`);closeCartForm(isin);setTimeout(render,800);}
+  else toast('❌ Erreur sauvegarde','var(--red)');
 }
 
-// ── SECTION 2 : ZONES MANQUANTES ──────────────────────────────────────────────
-function renderZoneCard(isin, v) {
-  const manquant=[];
-  if(!(v.zones&&v.zones.basse_min)) manquant.push('zones');
-  if(!v.risque) manquant.push('risque');
-  if(!v.categorie) manquant.push('catégorie');
-  if(!v.thematique) manquant.push('thématique');
-  const z = v.zones||{};
+// ── SECTION 2 : ZONES MANQUANTES ─────────────────────────────────────────────
+function renderZoneCard(isin,v){
+  const m=[];
+  if(!(v.zones&&v.zones.basse_min)) m.push('zones');
+  if(!v.risque) m.push('risque');
+  if(!v.categorie) m.push('catégorie');
+  if(!v.thematique) m.push('thématique');
+  const z=v.zones||{};
   return `
     <div class="zone-card">
       <div class="zone-head" onclick="toggleZoneForm('zf-${isin}')">
         <div class="zone-head-nom">${v.nom||isin}</div>
         <div class="zone-head-isin">${isin}</div>
-        <div class="zone-head-alert">⚠ ${manquant.join(', ')}</div>
+        <div class="zone-head-alert">⚠ ${m.join(', ')}</div>
         <div style="color:var(--text3);font-size:12px">›</div>
       </div>
       <div class="zone-form" id="zf-${isin}">
@@ -386,10 +389,8 @@ function renderZoneCard(isin, v) {
               ${CATS.map(c=>`<option value="${c}" ${c===v.categorie?'selected':''}>${c}</option>`).join('')}
             </select></div>
           <div class="fg"><label class="fl">Thématique</label>
-            <select class="fi fi-select" id="zt-${isin}">
-              <option value="">— Sélectionner</option>
-              ${THEMES.map(t=>`<option value="${t}" ${t===v.thematique?'selected':''}>${t}</option>`).join('')}
-            </select></div>
+            ${themeSelectHtml('zt-'+isin,'zta-'+isin,v.thematique)}
+          </div>
         </div>
         <div class="form-actions">
           <button class="btn-valider" onclick="saveZones('${isin}')">💾 Sauvegarder</button>
@@ -398,32 +399,30 @@ function renderZoneCard(isin, v) {
       </div>
     </div>`;
 }
-
 function toggleZoneForm(id){document.getElementById(id)?.classList.toggle('open');}
 
-async function saveZones(isin) {
-  const v = TABLE.valeurs[isin];
-  v.zones = {
-    basse_min:    parseFloat(document.getElementById('z1-'+isin)?.value)||0,
-    basse_max:    parseFloat(document.getElementById('z2-'+isin)?.value)||0,
-    surveillance: parseFloat(document.getElementById('z3-'+isin)?.value)||0,
-    complement:   parseFloat(document.getElementById('z4-'+isin)?.value)||0,
-    breakout:     parseFloat(document.getElementById('z5-'+isin)?.value)||0,
+async function saveZones(isin){
+  const v=TABLE.valeurs[isin];
+  v.zones={
+    basse_min:parseFloat(document.getElementById('z1-'+isin)?.value)||0,
+    basse_max:parseFloat(document.getElementById('z2-'+isin)?.value)||0,
+    surveillance:parseFloat(document.getElementById('z3-'+isin)?.value)||0,
+    complement:parseFloat(document.getElementById('z4-'+isin)?.value)||0,
+    breakout:parseFloat(document.getElementById('z5-'+isin)?.value)||0,
   };
-  v.risque    = document.getElementById('zr-'+isin)?.value||v.risque||null;
-  v.categorie = document.getElementById('zc-'+isin)?.value||v.categorie||null;
-  v.thematique= document.getElementById('zt-'+isin)?.value||v.thematique||null;
+  v.risque=document.getElementById('zr-'+isin)?.value||v.risque||null;
+  v.categorie=document.getElementById('zc-'+isin)?.value||v.categorie||null;
+  v.thematique=getTheme('zt-'+isin,'zta-'+isin)||v.thematique||null;
   toast('⏳ Sauvegarde…','var(--text3)');
-  const ok = await ghPut(TABLE,`📍 Zones ${v.nom||isin}`);
-  if(ok){toast(`✅ Zones de ${v.nom||isin} sauvegardées`);setTimeout(render,500);}
+  const ok=await ghPut(TABLE,`📍 Zones ${v.nom||isin}`);
+  if(ok){toast(`✅ Zones de ${v.nom||isin} sauvegardées`);setTimeout(render,800);}
   else toast('❌ Erreur sauvegarde','var(--red)');
 }
 
 // ── SECTION 3 : ESPACE AUTONOME ───────────────────────────────────────────────
-let autoCurrentIsin = null;
-let autoIsNew = false;
+let autoCurrentIsin=null, autoIsNew=false;
 
-function renderAutonome() {
+function renderAutonome(){
   return `
     <div class="autonome">
       <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">
@@ -469,16 +468,18 @@ function renderAutonome() {
               <select class="fi fi-select" id="az-cat"><option value="">— Sélectionner</option>
                 ${CATS.map(c=>`<option value="${c}">${c}</option>`).join('')}</select></div>
             <div class="fg"><label class="fl">Thématique</label>
-              <select class="fi fi-select" id="az-theme"><option value="">— Sélectionner</option>
-                ${THEMES.map(t=>`<option value="${t}">${t}</option>`).join('')}</select></div>
+              ${themeSelectHtml('az-theme','az-theme-autre')}</div>
           </div>
           <div class="fg-row">
             <div class="fg"><label class="fl">Enveloppe</label>
               <select class="fi fi-select" id="az-env">
                 <option value="PEA">PEA</option><option value="CTO">CTO</option><option value="PEA-PME">PEA-PME</option>
               </select></div>
-            <div class="fg"><label class="fl">Nom complet</label>
-              <input class="fi" id="az-nom" type="text" placeholder="Nom de la valeur"></div>
+            <div class="fg"><label class="fl">ISIN saisi</label>
+              <input class="fi" id="az-isin-display" type="text" readonly style="color:var(--text3)"></div>
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:12px">
+            ℹ Le nom de la valeur sera récupéré automatiquement lors de la prochaine MAJ du moteur.
           </div>
         </div>
         <div class="form-actions">
@@ -488,35 +489,28 @@ function renderAutonome() {
     </div>`;
 }
 
-function autoSearch(query) {
-  query = query.trim();
-  const resultEl = document.getElementById('auto-result');
-  const fieldsEl = document.getElementById('auto-fields');
-  const zonesEl  = document.getElementById('auto-zones-section');
+function autoSearch(query){
+  query=query.trim();
+  const resultEl=document.getElementById('auto-result');
+  const fieldsEl=document.getElementById('auto-fields');
+  const zonesEl=document.getElementById('auto-zones-section');
   if(!resultEl||!fieldsEl||!zonesEl) return;
-
-  if(!query || query.length < 3){
-    resultEl.style.display='none';
-    fieldsEl.classList.remove('visible');
-    autoCurrentIsin=null;
-    return;
+  if(!query||query.length<3){
+    resultEl.style.display='none';fieldsEl.classList.remove('visible');autoCurrentIsin=null;return;
   }
-  const vals = (TABLE&&TABLE.valeurs)||{};
-  const found = Object.entries(vals).find(([isin,v]) =>
-    isin.toUpperCase()===query.toUpperCase() ||
-    (v.nom&&v.nom.toLowerCase().includes(query.toLowerCase()))
+  const vals=(TABLE&&TABLE.valeurs)||{};
+  const found=Object.entries(vals).find(([isin,v])=>
+    isin.toUpperCase()===query.toUpperCase()||(v.nom&&v.nom.toLowerCase().includes(query.toLowerCase()))
   );
-
   if(found){
-    const [isin,v]=found;
-    autoCurrentIsin=isin; autoIsNew=false;
+    const [isin,v]=found;autoCurrentIsin=isin;autoIsNew=false;
     zonesEl.style.display='none';
     resultEl.style.display='block';
     resultEl.innerHTML=`
       <div class="auto-result">
-        <div class="auto-result-nom">📈 ${v.nom||isin}</div>
-        <div class="auto-result-meta">${isin} · ${v.enveloppe||'?'} · q=${v.quantite||0}</div>
-        <div class="auto-result-state">
+        <div style="font-weight:600;margin-bottom:6px">📈 ${v.nom||isin}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text2)">${isin} · ${v.enveloppe||'?'} · quantité actuelle : ${v.quantite||0}</div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
           <span class="cart-etat ${etatCss(v.etat_actuel)}">${v.etat_actuel||'—'}</span>
           ${v.risque?`<span style="font-family:var(--mono);font-size:9px;color:var(--text2);padding:2px 8px;background:var(--bg3);border-radius:4px">${v.risque}</span>`:''}
           ${v.categorie?`<span style="font-family:var(--mono);font-size:9px;color:var(--text2);padding:2px 8px;background:var(--bg3);border-radius:4px">${v.categorie}</span>`:''}
@@ -525,64 +519,69 @@ function autoSearch(query) {
     document.getElementById('auto-qty').value=v.quantite||'';
     fieldsEl.classList.add('visible');
   } else {
-    autoCurrentIsin=query; autoIsNew=true;
+    // ISIN inconnu — nouvelle valeur
+    autoCurrentIsin=query;autoIsNew=true;
     resultEl.style.display='block';
     resultEl.innerHTML=`
       <div class="auto-result" style="border-left:3px solid var(--gold)">
-        <div class="auto-result-nom">🆕 Nouvelle valeur : <strong>${query}</strong></div>
-        <div class="auto-result-meta">Non trouvée dans la table — renseignez les métadonnées ci-dessous</div>
+        <div style="font-weight:600;margin-bottom:4px">🆕 Nouvelle valeur : <strong>${query}</strong></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text2)">Non trouvée dans la table — renseignez les métadonnées ci-dessous</div>
       </div>`;
     zonesEl.style.display='block';
+    const disp=document.getElementById('az-isin-display');
+    if(disp) disp.value=query;
     fieldsEl.classList.add('visible');
   }
 }
 
-async function validerAutonome() {
-  const type = document.getElementById('auto-type')?.value||'ACHAT';
-  const qty  = parseFloat(document.getElementById('auto-qty')?.value)||0;
-  const prix = parseFloat(document.getElementById('auto-prix')?.value)||0;
+async function validerAutonome(){
+  const type=document.getElementById('auto-type')?.value||'ACHAT';
+  const qty=parseFloat(document.getElementById('auto-qty')?.value)||0;
+  const prix=parseFloat(document.getElementById('auto-prix')?.value)||0;
   if(!autoCurrentIsin){toast('Saisissez un ISIN ou un nom','var(--red)');return;}
-
-  const isin = autoCurrentIsin;
-  const vals = TABLE.valeurs;
+  const isin=autoCurrentIsin;
+  const vals=TABLE.valeurs;
 
   if(autoIsNew){
-    const nom = document.getElementById('az-nom')?.value||isin;
-    vals[isin]={isin,nom,quantite:qty,enveloppe:document.getElementById('az-env')?.value||'PEA',
-      cours:prix,pru:prix,
-      zones:{basse_min:parseFloat(document.getElementById('az1')?.value)||0,
+    // Nouvelle valeur — nom rempli par le moteur à la prochaine MAJ
+    vals[isin]={
+      isin, nom:'', quantite:qty,
+      enveloppe:document.getElementById('az-env')?.value||'PEA',
+      cours:prix||0,
+      zones:{
+        basse_min:parseFloat(document.getElementById('az1')?.value)||0,
         basse_max:parseFloat(document.getElementById('az2')?.value)||0,
         surveillance:parseFloat(document.getElementById('az3')?.value)||0,
         complement:parseFloat(document.getElementById('az4')?.value)||0,
-        breakout:parseFloat(document.getElementById('az5')?.value)||0},
+        breakout:parseFloat(document.getElementById('az5')?.value)||0,
+      },
       risque:document.getElementById('az-risque')?.value||null,
       categorie:document.getElementById('az-cat')?.value||null,
-      thematique:document.getElementById('az-theme')?.value||null,
+      thematique:getTheme('az-theme','az-theme-autre')||null,
       ancien_etat:null,etat_actuel:qty>0?'FULL':'WATCHLIST',
-      achat_vente:null,q_achat_vente:0,prix_achat_vente:0,historique_refus:[]};
+      achat_vente:null,q_achat_vente:0,prix_achat_vente:0,historique_refus:[],
+    };
   } else {
     const v=vals[isin];
     if(['VENTE','ALLEGER'].includes(type)){
       const newQty=Math.max(0,(v.quantite||0)-qty);
-      v.ancien_etat=v.etat_actuel; v.quantite=newQty;
+      v.ancien_etat=v.etat_actuel;v.quantite=newQty;
       if(newQty===0) v.etat_actuel='WATCHLIST';
     } else {
-      const oldQty=v.quantite||0; const oldPRU=v.pru||0; const newQty=oldQty+qty;
-      if(prix>0&&oldPRU>0) v.pru=(oldPRU*oldQty+prix*qty)/newQty;
-      else if(prix>0) v.pru=prix;
-      v.quantite=newQty; v.ancien_etat=v.etat_actuel; v.etat_actuel='FULL';
+      const newQty=(v.quantite||0)+qty;
+      v.quantite=newQty;v.ancien_etat=v.etat_actuel;v.etat_actuel='FULL';
     }
   }
 
   toast('⏳ Sauvegarde…','var(--text3)');
   const ok=await ghPut(TABLE,`📝 ${type} ${isin} — ${qty} titres`);
   if(ok){
-    toast(`✅ ${type} enregistré — ${isin}`);
+    toast(`✅ ${type} enregistré`);
     document.getElementById('auto-isin').value='';
     document.getElementById('auto-result').style.display='none';
     document.getElementById('auto-fields').classList.remove('visible');
-    autoCurrentIsin=null; autoIsNew=false;
-    setTimeout(render,500);
+    autoCurrentIsin=null;autoIsNew=false;
+    setTimeout(render,800);
   } else toast('❌ Erreur sauvegarde','var(--red)');
 }
 

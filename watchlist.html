@@ -14,53 +14,43 @@
   --blue:#4d9fff;--blue2:rgba(77,159,255,.12);
   --gold:#f0b429;--gold2:rgba(240,180,41,.12);
   --orange:#fb923c;--orange2:rgba(251,146,60,.12);
-  --mono:'IBM Plex Mono',monospace;
-  --sans:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-y:auto}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.page{padding:24px 32px 60px;max-width:1100px;margin:0 auto}
+.page{padding:24px 32px 60px;max-width:1200px;margin:0 auto}
 
-/* HEADER */
-.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.hdr-left{}
-.hdr-title{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
-.hdr-count{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--text)}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.hdr-count{font-family:var(--mono);font-size:22px;font-weight:700}
 .hdr-sub{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:3px}
 .btn-refresh{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:8px 14px;color:var(--text2);font-family:var(--mono);font-size:10px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s}
 .btn-refresh:hover{border-color:var(--blue);color:var(--blue)}
+.spin{display:inline-block}
 .btn-refresh.loading .spin{animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* FILTRES */
 .filtres{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
 .filtre-btn{font-family:var(--mono);font-size:9px;padding:4px 12px;border-radius:4px;border:1px solid var(--border2);background:var(--bg2);color:var(--text3);cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .12s}
 .filtre-btn.active{background:var(--blue2);color:var(--blue);border-color:rgba(77,159,255,.3)}
-.filtre-btn:hover:not(.active){color:var(--text2);border-color:var(--border2)}
 
-/* TABLE */
 .wl-table{width:100%;border-collapse:collapse}
-.wl-head{background:var(--bg3);position:sticky;top:0;z-index:10}
+.wl-head{background:var(--bg3)}
 .wl-head th{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);font-weight:400}
 .wl-head th.r{text-align:right}
-.wl-row{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+.wl-row{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
 .wl-row:hover{background:var(--bg2)}
 .wl-row.expanded{background:var(--bg2)}
 .wl-row td{padding:12px 14px;vertical-align:middle}
 .wl-row td.r{text-align:right}
 
-/* NOM + ISIN */
-.nom-wrap{}
 .nom-main{font-weight:500;font-size:13px}
 .nom-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
 .env-tag{font-family:var(--mono);font-size:8px;padding:1px 6px;border-radius:3px;background:var(--bg3);color:var(--text3);margin-left:6px;vertical-align:middle}
 
-/* COURS */
 .cours-val{font-family:var(--mono);font-size:14px;font-weight:700}
 .cours-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
 
-/* ETAT BADGE */
 .etat-badge{display:inline-flex;align-items:center;font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:4px}
 .e-watchlist{background:var(--border);color:var(--text2)}
 .e-building{background:var(--blue2);color:var(--blue)}
@@ -68,58 +58,59 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .e-alert{background:var(--gold2);color:var(--gold)}
 .e-weakening{background:var(--orange2);color:var(--orange)}
 .e-exit{background:var(--red2);color:var(--red)}
-.e-protection{background:var(--gold2);color:var(--gold)}
-.e-nouveau{background:var(--blue2);color:var(--blue)}
 
-/* ZONE INDICATOR */
-.zone-wrap{display:flex;align-items:center;gap:8px}
-.zone-label{font-family:var(--mono);font-size:9px;min-width:90px}
-.zone-pct{font-family:var(--mono);font-size:11px;font-weight:600;min-width:52px;text-align:right}
-.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text2)}
-
-/* BARRE DE ZONES */
-.zone-bar-wrap{position:relative;height:6px;background:var(--bg4);border-radius:3px;width:100%;overflow:visible}
-.zone-bar-segment{position:absolute;height:100%;transition:all .3s}
-.zone-marker{position:absolute;top:-4px;width:2px;height:14px;border-radius:1px;transform:translateX(-50%);z-index:2}
-.zone-cursor{position:absolute;top:-6px;width:3px;height:18px;border-radius:2px;background:var(--text);transform:translateX(-50%);z-index:3;box-shadow:0 0 6px rgba(232,238,247,.4)}
-
-/* DETAIL EXPAND */
-.wl-detail{display:none;background:var(--bg3);border-bottom:1px solid var(--border)}
-.wl-detail.open{display:table-row}
-.wl-detail td{padding:16px 14px}
-.detail-inner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-.detail-section{}
-.detail-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
-.zone-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
-.zone-row:last-child{border-bottom:none}
-.zone-row-lbl{font-family:var(--mono);font-size:10px;color:var(--text2)}
-.zone-row-val{font-family:var(--mono);font-size:11px;font-weight:600}
-.zone-row-pct{font-family:var(--mono);font-size:10px}
-.zone-active{background:var(--gold2);border-radius:4px;padding:5px 8px;margin:-5px -8px}
-
-/* LOADING */
-.loading-dots span{animation:blink 1.2s infinite;opacity:.3}
-.loading-dots span:nth-child(2){animation-delay:.2s}
-.loading-dots span:nth-child(3){animation-delay:.4s}
-@keyframes blink{50%{opacity:1}}
-
-/* EMPTY */
-.empty{text-align:center;padding:60px 20px;color:var(--text3);font-family:var(--mono);font-size:11px}
-.empty-icon{font-size:36px;margin-bottom:12px}
-
-/* POSITIONNEMENT DANS ZONES */
 .position-tag{font-family:var(--mono);font-size:8px;padding:2px 8px;border-radius:3px;font-weight:700;letter-spacing:1px}
 .pos-dans{background:var(--green2);color:var(--green)}
 .pos-au-dessus{background:var(--blue2);color:var(--blue)}
 .pos-en-dessous{background:var(--orange2);color:var(--orange)}
 .pos-breakout{background:var(--gold2);color:var(--gold)}
+
+.zone-bar-wrap{position:relative;height:6px;background:var(--bg4);border-radius:3px;width:100%;overflow:visible}
+.zone-bar-seg{position:absolute;height:100%}
+.zone-cursor{position:absolute;top:-6px;width:3px;height:18px;border-radius:2px;background:var(--text);transform:translateX(-50%);z-index:3;box-shadow:0 0 6px rgba(232,238,247,.4)}
+
+/* DETAIL EXPAND */
+.wl-detail{display:none;background:var(--bg3);border-bottom:1px solid var(--border)}
+.wl-detail.open{display:table-row}
+.wl-detail td{padding:0}
+.detail-inner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
+.detail-col{padding:16px 18px;border-right:1px solid var(--border)}
+.detail-col:last-child{border-right:none}
+.detail-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+.d-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
+.d-row:last-child{border-bottom:none}
+.d-key{font-family:var(--mono);font-size:10px;color:var(--text2)}
+.d-val{font-family:var(--mono);font-size:11px;font-weight:600}
+.d-pct{font-family:var(--mono);font-size:10px}
+.zone-active-row{background:rgba(240,180,41,.08);border-radius:4px;padding:5px 8px;margin:-5px -8px}
+
+/* EDIT ZONES INLINE */
+.edit-zones-btn{font-family:var(--mono);font-size:8px;padding:3px 10px;border-radius:4px;background:var(--bg4);border:1px solid var(--border2);color:var(--text3);cursor:pointer;transition:all .15s}
+.edit-zones-btn:hover{border-color:var(--gold);color:var(--gold)}
+.edit-zones-form{display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px}
+.edit-zones-form.open{display:block}
+.zones-grid-sm{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px}
+.meta-grid-sm{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.fi{background:var(--bg4);border:1px solid var(--border2);border-radius:5px;padding:6px 10px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;width:100%}
+.fi:focus{border-color:var(--blue)}
+.fi-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237a8fa8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.btn-save-sm{background:var(--green);color:var(--bg);border:none;border-radius:5px;padding:7px 14px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;margin-right:6px}
+.btn-cancel-sm{background:var(--bg4);color:var(--text2);border:1px solid var(--border2);border-radius:5px;padding:7px 12px;font-family:var(--sans);font-size:12px;cursor:pointer}
+
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text2)}
+.empty{text-align:center;padding:60px 20px;color:var(--text3);font-family:var(--mono);font-size:11px}
+.empty-icon{font-size:36px;margin-bottom:12px}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 18px;font-family:var(--mono);font-size:11px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
 <div class="page">
   <div class="hdr">
-    <div class="hdr-left">
-      <div class="hdr-title">Watchlist</div>
+    <div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">Watchlist</div>
       <div class="hdr-count" id="hdr-count">—</div>
       <div class="hdr-sub" id="hdr-sub">Chargement…</div>
     </div>
@@ -127,458 +118,359 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
       <span class="spin">↻</span> Actualiser
     </button>
   </div>
-
   <div class="filtres">
-    <button class="filtre-btn active" data-f="all" onclick="setFiltre('all',this)">Tous</button>
-    <button class="filtre-btn" data-f="dans_zone" onclick="setFiltre('dans_zone',this)">Dans zone</button>
-    <button class="filtre-btn" data-f="proche" onclick="setFiltre('proche',this)">&lt; 5% zone</button>
-    <button class="filtre-btn" data-f="watchlist" onclick="setFiltre('watchlist',this)">WATCHLIST</button>
-    <button class="filtre-btn" data-f="building" onclick="setFiltre('building',this)">BUILDING</button>
+    <button class="filtre-btn active" onclick="setFiltre('all',this)">Tous</button>
+    <button class="filtre-btn" onclick="setFiltre('dans_zone',this)">Dans zone</button>
+    <button class="filtre-btn" onclick="setFiltre('proche',this)">&lt; 5% zone</button>
+    <button class="filtre-btn" onclick="setFiltre('watchlist',this)">WATCHLIST</button>
+    <button class="filtre-btn" onclick="setFiltre('building',this)">BUILDING</button>
   </div>
-
-  <div id="table-wrap">
-    <div class="empty"><div class="empty-icon">⏳</div>Chargement des données…</div>
-  </div>
+  <div id="table-wrap"><div class="empty"><div class="empty-icon">⏳</div>Chargement…</div></div>
 </div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════════════════════════════════════════
-const GH_USER = 'Cookiem420';
-const GH_REPO = 'hermes-data';
-const RAW = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/`;
+const GH_USER='Cookiem420',GH_REPO='hermes-data';
+const RAW=`https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/`;
+const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/`;
 
-// Yahoo Finance via proxy CORS public (allorigins)
-const YAHOO_PROXY = 'https://query1.finance.yahoo.com/v8/finance/chart/';
+const RISQUES=['Faible','Modéré','Élevé','Spéculatif'];
+const CATS=['ETF_large','ETF_sectoriel','Qualite','Cyclique','Croissance','Speculatif'];
+const THEMES=['Tech','Finance','Eau & Env.','Défense','Global','Asie','Matières 1ères','Santé','Infrastructure','Diversifié','Autre'];
 
-let TABLE = null;
-let COURS = {}; // isin → { prix, variation, nom_yahoo }
-let filtre = 'all';
-let expandedIsin = null;
+const ISIN_TO_TICKER={
+  'FR0014004QR6':'EXENS.PA','FR0011341205':'NANO.PA','FR0010096354':'ABVX.PA',
+  'DE000HAG0005':'HAG.DE','FR0004007813':'EXA.PA','FR0010331421':'IPH.PA','BE0003878957':'XFAB.PA',
+  'FR001400AED5':'','LU1834983550':'AMRS.PA','FR0010307819':'LR.PA','FR001400PFU4':'PLAN.PA',
+  'FR0000038242':'LBIRD.PA','DE000A2QP372':'EXV1.DE','FR0010202606':'SIDET.PA',
+  'FR0011882364':'CEAU.PA','FR0000065484':'LSS.PA','FR0000125486':'DG.PA',
+  'US8740391003':'TSM','US98419M1009':'XYL','DE0006047004':'H.DE','LU1681045537':'CW8.PA',
+  'IE00BLS09M33':'PNR','IE00BKT6FV49':'IJPE.AS','LU1900068328':'AEME.PA','GB00BNKGZC51':'AMA.L',
+};
 
-// ══════════════════════════════════════════════════════════════════════════════
-// UTILS
-// ══════════════════════════════════════════════════════════════════════════════
+let TABLE=null,COURS={},filtre='all',expandedIsin=null;
+
+function getToken(){return sessionStorage.getItem('hermes_gh_token')||localStorage.getItem('hermes_gh_token')||'';}
+if(!getToken()){window.parent.postMessage({type:'HERMES_TOKEN_REQUEST'},'*');}
+window.addEventListener('message',e=>{
+  if(e.data?.type==='HERMES_TOKEN'&&e.data.token){
+    sessionStorage.setItem('hermes_gh_token',e.data.token);
+    localStorage.setItem('hermes_gh_token',e.data.token);
+  }
+});
+
 function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function fmtPct(n,d=1){if(n==null||isNaN(n))return'—';return(n>0?'+':'')+n.toFixed(d)+'%'}
 function pc(v){return v>0.05?'pos':v<-0.05?'neg':'neu'}
+function toast(msg,color='var(--green)'){
+  const el=document.getElementById('toast');el.textContent=msg;el.style.color=color;
+  el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800);
+}
 function etatCss(e){
   const m={FULL:'e-full',BUILDING:'e-building',ALERT_SENT:'e-alert',WATCHLIST:'e-watchlist',
-    WEAKENING_STRUCT:'e-weakening',WEAKENING_TECH:'e-weakening',EXIT_READY:'e-exit',
-    EXITED:'e-exit',PROFIT_PROTECTION:'e-protection',NOUVEAU:'e-nouveau'};
+    WEAKENING_STRUCT:'e-weakening',WEAKENING_TECH:'e-weakening',EXIT_READY:'e-exit',EXITED:'e-exit'};
   return m[e]||'e-watchlist';
 }
+function themeSelectHtml(idSel,idInp,valActuel=''){
+  const isAutre=valActuel&&!THEMES.slice(0,-1).includes(valActuel);
+  const valSel=isAutre?'Autre':(valActuel||'');
+  return `<select class="fi fi-select" id="${idSel}" onchange="toggleAutre('${idSel}','${idInp}')">
+    <option value="">— Sélectionner</option>
+    ${THEMES.map(t=>`<option value="${t}" ${t===valSel?'selected':''}>${t}</option>`).join('')}
+  </select>
+  <input class="fi" id="${idInp}" type="text" placeholder="Préciser…"
+    style="margin-top:5px;display:${isAutre?'block':'none'}" value="${isAutre?valActuel:''}">`;
+}
+function toggleAutre(idSel,idInp){
+  const s=document.getElementById(idSel),i=document.getElementById(idInp);
+  if(i) i.style.display=s.value==='Autre'?'block':'none';
+}
+function getTheme(idSel,idInp){
+  const s=document.getElementById(idSel);if(!s)return null;
+  if(s.value==='Autre'){const i=document.getElementById(idInp);return i?.value?.trim()||'Autre';}
+  return s.value||null;
+}
 
-// Ticker Yahoo depuis ISIN (heuristique basique + table manuelle)
-const ISIN_TO_TICKER = {
-  'FR0014004QR6':'EXENS.PA',   // Exosens
-  'FR0011341205':'NANO.PA',    // Nanobiotix
-  'FR0010096354':'ABVX.PA',    // Abivax
-  'DE000HAG0005':'HAG.DE',     // Hensoldt
-  'FR0004007813':'EXA.PA',     // Exail Technologies
-  'FR0010331421':'IPH.PA',     // Innate Pharma
-  'BE0003878957':'XFAB.PA',    // X-FAB
-  // Positions détenues aussi présentes ici pour enrichissement éventuel
-  'FR001400AED5':'',           // PEA Profile — pas coté séparément
-  'LU1834983550':'AMRS.PA',
-  'FR0010307819':'LR.PA',      // Legrand
-  'FR001400PFU4':'PLAN.PA',    // Planisware
-  'FR0000038242':'LBIRD.PA',   // Lumibird
-  'DE000A2QP372':'EXV1.DE',    // iShares Banks
-  'FR0010202606':'SIDET.PA',   // Sidetrade
-  'FR0011882364':'CEAU.PA',    // Amundi Eau
-  'FR0000065484':'LSS.PA',     // Lectra
-  'FR0000125486':'DG.PA',      // Vinci
-  'US8740391003':'TSM',        // TSMC ADR
-  'US98419M1009':'XYL',        // Xylem
-  'DE0006047004':'H.DE',       // HeidelbergMat (HBCG)
-  'LU1681045537':'CW8.PA',     // Amundi World
-  'IE00BLS09M33':'PNR',        // Pentair
-  'IE00BKT6FV49':'IJPE.AS',    // iShares Japan
-  'LU1900068328':'AEME.PA',    // Amundi Asia Pac
-  'GB00BNKGZC51':'AMA.L',      // AMA Corp
-};
-
-// ══════════════════════════════════════════════════════════════════════════════
-// LOAD TABLE
-// ══════════════════════════════════════════════════════════════════════════════
-async function loadTable() {
-  const r = await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
+async function loadTable(){
+  const r=await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
   if(!r.ok) throw new Error('HTTP '+r.status);
-  TABLE = await r.json();
+  TABLE=await r.json();
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// FETCH COURS YAHOO (toutes les valeurs watchlist + détenues)
-// ══════════════════════════════════════════════════════════════════════════════
-async function fetchCours(entries) {
-  const tickers = entries
-    .map(([isin]) => ISIN_TO_TICKER[isin])
-    .filter(t => t && t.length > 0);
-
+async function fetchCours(entries){
+  const tickers=entries.map(([isin])=>ISIN_TO_TICKER[isin]).filter(t=>t&&t.length>0);
   if(!tickers.length) return;
-
-  // Batch : Yahoo accepte ?symbols=T1,T2,...
-  const symbols = [...new Set(tickers)].join(',');
-  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChangePercent,shortName`;
-
-  // Proxies CORS en cascade
-  const proxies = [
-    s => `https://corsproxy.io/?${encodeURIComponent(s)}`,
-    s => `https://api.allorigins.win/get?url=${encodeURIComponent(s)}`,
-    s => `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(s)}`,
+  const symbols=[...new Set(tickers)].join(',');
+  const url=`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChangePercent,shortName`;
+  const proxies=[
+    s=>`https://corsproxy.io/?${encodeURIComponent(s)}`,
+    s=>`https://api.allorigins.win/get?url=${encodeURIComponent(s)}`,
   ];
-
-  let fetched = false;
-  for(const makeProxy of proxies) {
-    if(fetched) break;
-    try {
-      const proxyUrl = makeProxy(url);
-      const r = await fetch(proxyUrl, {signal: AbortSignal.timeout(6000)});
+  for(const mkProxy of proxies){
+    try{
+      const r=await fetch(mkProxy(url),{signal:AbortSignal.timeout(6000)});
       if(!r.ok) continue;
-      const raw = await r.json();
-      // allorigins encapsule dans {contents:...}, corsproxy.io retourne direct
-      const parsed = raw?.quoteResponse ? raw : (raw?.contents ? JSON.parse(raw.contents) : null);
-      const quotes = parsed?.quoteResponse?.result || [];
+      const raw=await r.json();
+      const parsed=raw?.quoteResponse?raw:(raw?.contents?JSON.parse(raw.contents):null);
+      const quotes=parsed?.quoteResponse?.result||[];
       if(!quotes.length) continue;
-
-      quotes.forEach(q => {
-        const isin = Object.entries(ISIN_TO_TICKER).find(([,t])=>t===q.symbol)?.[0];
-        if(isin) {
-          COURS[isin] = {
-            prix: q.regularMarketPrice,
-            variation: q.regularMarketChangePercent,
-            nom: q.shortName,
-          };
-        }
+      quotes.forEach(q=>{
+        const isin=Object.entries(ISIN_TO_TICKER).find(([,t])=>t===q.symbol)?.[0];
+        if(isin) COURS[isin]={prix:q.regularMarketPrice,variation:q.regularMarketChangePercent};
       });
-      fetched = true;
-    } catch(e) {
-      console.warn('Proxy tentative échouée:', e.message);
-    }
-  }
-
-  if(!fetched) {
-    // Fallback : utiliser les cours stockés dans le JSON (dernière valeur connue)
-    console.warn('Tous les proxies Yahoo ont échoué — cours du JSON utilisés');
+      break;
+    }catch(e){console.warn('proxy fail:',e.message);}
   }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// CALCUL POSITION DANS ZONES
-// ══════════════════════════════════════════════════════════════════════════════
-function calcZoneInfo(prix, zones) {
-  if(!zones || !prix) return null;
-  const {basse_min, basse_max, surveillance, complement, breakout} = zones;
-
-  if(!basse_min && !basse_max && !surveillance) return null;
-
-  let position = 'en_dessous'; // sous basse_min
-  let zoneLabel = 'Sous zone';
-  let couleur = 'var(--red)';
-  let distZone = null; // % vers basse_min
-
-  if(prix >= breakout) {
-    position='breakout'; zoneLabel='Breakout'; couleur='var(--gold)';
-  } else if(prix >= complement) {
-    position='complement'; zoneLabel='Complément'; couleur='var(--blue)';
-  } else if(prix >= surveillance) {
-    position='surveillance'; zoneLabel='Surveillance'; couleur='var(--blue)';
-  } else if(prix >= basse_max) {
-    position='entre_basse_surv'; zoneLabel='Entre zones'; couleur='var(--text2)';
-  } else if(prix >= basse_min) {
-    position='dans_zone'; zoneLabel='✓ Zone basse'; couleur='var(--green)';
-  } else {
-    position='en_dessous'; zoneLabel='Sous zone'; couleur='var(--red)';
-  }
-
-  // Distance vers chaque borne
-  const distMin = basse_min ? (prix - basse_min) / basse_min * 100 : null;
-  const distMax = basse_max ? (prix - basse_max) / basse_max * 100 : null;
-  const distSurv = surveillance ? (prix - surveillance) / surveillance * 100 : null;
-  const distBreak = breakout ? (prix - breakout) / breakout * 100 : null;
-
-  return {position, zoneLabel, couleur, distMin, distMax, distSurv, distBreak};
+function calcZone(prix,zones){
+  if(!zones||!prix||!zones.basse_min) return null;
+  const {basse_min,basse_max,surveillance,complement,breakout}=zones;
+  let pos,lbl,col;
+  if(prix>=breakout){pos='breakout';lbl='Breakout';col='var(--gold)';}
+  else if(prix>=complement){pos='complement';lbl='Complément';col='var(--blue)';}
+  else if(prix>=surveillance){pos='surveillance';lbl='Surveillance';col='var(--blue)';}
+  else if(prix>=basse_max){pos='entre';lbl='Entre zones';col='var(--text2)';}
+  else if(prix>=basse_min){pos='dans_zone';lbl='✓ Zone basse';col='var(--green)';}
+  else{pos='en_dessous';lbl='Sous zone';col='var(--red)';}
+  return {pos,lbl,col};
 }
+function pctVers(prix,cible){if(!prix||!cible)return null;return(cible-prix)/prix*100;}
 
-function calcPctVers(prix, cible) {
-  if(!prix || !cible) return null;
-  return (cible - prix) / prix * 100;
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// FILTRAGE
-// ══════════════════════════════════════════════════════════════════════════════
-function setFiltre(f, btn) {
-  filtre = f;
+function setFiltre(f,btn){
+  filtre=f;
   document.querySelectorAll('.filtre-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderTable();
+  btn.classList.add('active');renderTable();
 }
 
-function passeFiltre(isin, v) {
-  const cours = COURS[isin]?.prix || v.cours || 0;
-  const zi = calcZoneInfo(cours, v.zones);
-
-  if(filtre==='all') return true;
-  if(filtre==='watchlist') return v.etat_actuel==='WATCHLIST';
-  if(filtre==='building') return v.etat_actuel==='BUILDING';
-  if(filtre==='dans_zone') return zi?.position==='dans_zone';
-  if(filtre==='proche') {
-    if(!zi) return false;
-    const pct = Math.abs(calcPctVers(cours, v.zones.basse_min));
-    return pct !== null && pct <= 5;
-  }
-  return true;
+function renderZoneBar(prix,zones){
+  if(!zones||!zones.basse_min||!zones.breakout) return '';
+  const mn=zones.basse_min*.85,mx=zones.breakout*1.1,rng=mx-mn;
+  const p=v=>Math.max(0,Math.min(100,(v-mn)/rng*100));
+  const [p1,p2,p3,p4,p5,pc]=[zones.basse_min,zones.basse_max,zones.surveillance,zones.complement,zones.breakout,prix||0].map(p);
+  return `<div class="zone-bar-wrap">
+    <div class="zone-bar-seg" style="left:0;width:${p1}%;background:rgba(255,77,106,.15);border-radius:3px 0 0 3px"></div>
+    <div class="zone-bar-seg" style="left:${p1}%;width:${p2-p1}%;background:rgba(0,214,143,.25)"></div>
+    <div class="zone-bar-seg" style="left:${p2}%;width:${p3-p2}%;background:rgba(77,159,255,.1)"></div>
+    <div class="zone-bar-seg" style="left:${p3}%;width:${p4-p3}%;background:rgba(77,159,255,.2)"></div>
+    <div class="zone-bar-seg" style="left:${p4}%;width:${p5-p4}%;background:rgba(77,159,255,.3)"></div>
+    <div class="zone-bar-seg" style="left:${p5}%;width:${100-p5}%;background:rgba(240,180,41,.2);border-radius:0 3px 3px 0"></div>
+    ${prix?`<div class="zone-cursor" style="left:${pc}%"></div>`:''}
+  </div>`;
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// RENDER BARRE DE ZONES
-// ══════════════════════════════════════════════════════════════════════════════
-function renderZoneBar(prix, zones) {
-  if(!zones || !zones.basse_min || !zones.breakout) return '';
-
-  const min = zones.basse_min * 0.85; // échelle: 15% sous basse_min
-  const max = zones.breakout * 1.1;   // 10% au-dessus breakout
-  const range = max - min;
-
-  function pct(v) { return Math.max(0, Math.min(100, (v - min) / range * 100)); }
-
-  const p1 = pct(zones.basse_min);
-  const p2 = pct(zones.basse_max);
-  const p3 = pct(zones.surveillance);
-  const p4 = pct(zones.complement);
-  const p5 = pct(zones.breakout);
-  const pc = pct(prix||0);
-
-  return `
-    <div class="zone-bar-wrap">
-      <!-- Segments colorés -->
-      <div class="zone-bar-segment" style="left:0;width:${p1}%;background:rgba(255,77,106,.15);border-radius:3px 0 0 3px"></div>
-      <div class="zone-bar-segment" style="left:${p1}%;width:${p2-p1}%;background:rgba(0,214,143,.25)"></div>
-      <div class="zone-bar-segment" style="left:${p2}%;width:${p3-p2}%;background:rgba(77,159,255,.1)"></div>
-      <div class="zone-bar-segment" style="left:${p3}%;width:${p4-p3}%;background:rgba(77,159,255,.2)"></div>
-      <div class="zone-bar-segment" style="left:${p4}%;width:${p5-p4}%;background:rgba(77,159,255,.3)"></div>
-      <div class="zone-bar-segment" style="left:${p5}%;width:${100-p5}%;background:rgba(240,180,41,.2);border-radius:0 3px 3px 0"></div>
-      <!-- Curseur prix actuel -->
-      ${prix ? `<div class="zone-cursor" style="left:${pc}%"></div>` : ''}
-    </div>`;
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// RENDER TABLE
-// ══════════════════════════════════════════════════════════════════════════════
-function renderTable() {
+function renderTable(){
   if(!TABLE) return;
+  const vals=TABLE.valeurs||{};
+  const entries=Object.entries(vals).filter(([,v])=>v.quantite===0||['WATCHLIST','BUILDING','ALERT_SENT','WEAKENING_STRUCT','WEAKENING_TECH','EXIT_READY'].includes(v.etat_actuel));
 
-  const vals = TABLE.valeurs || {};
-  const entries = Object.entries(vals).filter(([isin, v]) => {
-    // Watchlist = quantite === 0, ou positions avec état WATCHLIST/BUILDING/etc.
-    return v.quantite === 0 || ['WATCHLIST','BUILDING','ALERT_SENT','WEAKENING_STRUCT','WEAKENING_TECH','EXIT_READY'].includes(v.etat_actuel);
+  const filtered=entries.filter(([isin,v])=>{
+    const cours=COURS[isin]?.prix||v.cours||0;
+    const zi=calcZone(cours,v.zones);
+    if(filtre==='all') return true;
+    if(filtre==='watchlist') return v.etat_actuel==='WATCHLIST';
+    if(filtre==='building') return v.etat_actuel==='BUILDING';
+    if(filtre==='dans_zone') return zi?.pos==='dans_zone';
+    if(filtre==='proche'){
+      const pct=v.zones?.basse_min?Math.abs(pctVers(cours,v.zones.basse_min)):null;
+      return pct!==null&&pct<=5;
+    }
+    return true;
   });
 
-  const filtered = entries.filter(([isin, v]) => passeFiltre(isin, v));
-
-  // Tri : dans zone d'abord, puis par % vers zone basse
-  filtered.sort(([ia, a], [ib, b]) => {
-    const pa = COURS[ia]?.prix || a.cours || 0;
-    const pb = COURS[ib]?.prix || b.cours || 0;
-    const za = calcZoneInfo(pa, a.zones);
-    const zb = calcZoneInfo(pb, b.zones);
-    // Dans zone en premier
-    if(za?.position==='dans_zone' && zb?.position!=='dans_zone') return -1;
-    if(zb?.position==='dans_zone' && za?.position!=='dans_zone') return 1;
-    // Puis par distance à la zone (plus proche = premier)
-    const da = pa && a.zones?.basse_max ? Math.abs(calcPctVers(pa, a.zones.basse_max)) : 999;
-    const db = pb && b.zones?.basse_max ? Math.abs(calcPctVers(pb, b.zones.basse_max)) : 999;
-    return da - db;
+  filtered.sort(([ia,a],[ib,b])=>{
+    const pa=COURS[ia]?.prix||a.cours||0,pb=COURS[ib]?.prix||b.cours||0;
+    const za=calcZone(pa,a.zones),zb=calcZone(pb,b.zones);
+    if(za?.pos==='dans_zone'&&zb?.pos!=='dans_zone') return -1;
+    if(zb?.pos==='dans_zone'&&za?.pos!=='dans_zone') return 1;
+    const da=pa&&a.zones?.basse_max?Math.abs(pctVers(pa,a.zones.basse_max)):999;
+    const db=pb&&b.zones?.basse_max?Math.abs(pctVers(pb,b.zones.basse_max)):999;
+    return da-db;
   });
 
-  document.getElementById('hdr-count').textContent = `${filtered.length} valeur${filtered.length>1?'s':''}`;
-  document.getElementById('hdr-sub').textContent = `sur ${entries.length} en watchlist · cours actualisés`;
+  document.getElementById('hdr-count').textContent=`${filtered.length} valeur${filtered.length>1?'s':''}`;
+  document.getElementById('hdr-sub').textContent=`sur ${entries.length} en watchlist · cours mis à jour`;
 
-  if(!filtered.length) {
-    document.getElementById('table-wrap').innerHTML =
-      `<div class="empty"><div class="empty-icon">🔍</div>Aucune valeur ne correspond au filtre</div>`;
+  if(!filtered.length){
+    document.getElementById('table-wrap').innerHTML=`<div class="empty"><div class="empty-icon">🔍</div>Aucune valeur ne correspond au filtre</div>`;
     return;
   }
 
-  let rows = filtered.map(([isin, v]) => {
-    const cours = COURS[isin]?.prix || v.cours || 0;
-    const variation = COURS[isin]?.variation;
-    const zi = calcZoneInfo(cours, v.zones);
-    const pctVersZone = cours && v.zones?.basse_min ? calcPctVers(cours, v.zones.basse_min) : null;
-    const pctVersBreak = cours && v.zones?.breakout ? calcPctVers(cours, v.zones.breakout) : null;
-    const isExpanded = expandedIsin === isin;
-
-    // Étiquette position
-    let posTag = '';
-    if(zi) {
-      if(zi.position==='dans_zone') posTag = `<span class="position-tag pos-dans">DANS ZONE</span>`;
-      else if(zi.position==='breakout') posTag = `<span class="position-tag pos-breakout">BREAKOUT</span>`;
-      else if(zi.position==='en_dessous') posTag = `<span class="position-tag pos-en-dessous">SOUS ZONE</span>`;
+  const rows=filtered.map(([isin,v])=>{
+    const cours=COURS[isin]?.prix||v.cours||0;
+    const variation=COURS[isin]?.variation;
+    const zi=calcZone(cours,v.zones);
+    const pvz=cours&&v.zones?.basse_min?pctVers(cours,v.zones.basse_min):null;
+    const pvb=cours&&v.zones?.breakout?pctVers(cours,v.zones.breakout):null;
+    const isExp=expandedIsin===isin;
+    let posTag='';
+    if(zi){
+      if(zi.pos==='dans_zone') posTag=`<span class="position-tag pos-dans">DANS ZONE</span>`;
+      else if(zi.pos==='breakout') posTag=`<span class="position-tag pos-breakout">BREAKOUT</span>`;
+      else if(zi.pos==='en_dessous') posTag=`<span class="position-tag pos-en-dessous">SOUS ZONE</span>`;
     }
-
-    // Zone label + couleur
-    const zoneLbl = zi ? `<span style="color:${zi.couleur};font-family:var(--mono);font-size:10px">${zi.zoneLabel}</span>` : '<span class="neu">—</span>';
+    const zoneLbl=zi?`<span style="color:${zi.col};font-family:var(--mono);font-size:10px">${zi.lbl}</span>`:'<span class="neu">—</span>';
 
     return `
-      <tr class="wl-row ${isExpanded?'expanded':''}" onclick="toggleRow('${isin}')">
-        <td>
-          <div class="nom-wrap">
-            <div class="nom-main">${v.nom||isin} <span class="env-tag">${v.enveloppe||'?'}</span></div>
-            <div class="nom-sub">${isin} ${posTag}</div>
-          </div>
-        </td>
-        <td class="r">
-          ${cours > 0
-            ? `<div class="cours-val">${fmt(cours, cours < 10 ? 3 : 2)} €</div>
-               <div class="cours-sub ${pc(variation||0)}">${variation!=null?fmtPct(variation):'—'}</div>`
-            : `<div class="cours-val neu">—</div><div class="cours-sub">Pas de cours</div>`}
-        </td>
+      <tr class="wl-row ${isExp?'expanded':''}" onclick="toggleRow('${isin}')">
+        <td><div class="nom-main">${v.nom||isin}<span class="env-tag">${v.enveloppe||'?'}</span></div>
+            <div class="nom-sub">${isin} ${posTag}</div></td>
+        <td class="r">${cours>0
+          ?`<div class="cours-val">${fmt(cours,cours<10?3:2)} €</div><div class="cours-sub ${pc(variation||0)}">${variation!=null?fmtPct(variation):'—'}</div>`
+          :`<div class="cours-val neu">—</div>`}</td>
         <td>${zoneLbl}</td>
-        <td class="r">
-          ${pctVersZone !== null
-            ? `<span class="${pc(-pctVersZone)}" style="font-family:var(--mono);font-size:12px;font-weight:600">${fmtPct(pctVersZone)}</span>
-               <div style="font-family:var(--mono);font-size:9px;color:var(--text3)">vs zone basse</div>`
-            : '<span class="neu">—</span>'}
-        </td>
-        <td class="r">
-          ${pctVersBreak !== null
-            ? `<span style="font-family:var(--mono);font-size:12px;color:var(--gold)">${fmtPct(pctVersBreak)}</span>
-               <div style="font-family:var(--mono);font-size:9px;color:var(--text3)">vs breakout</div>`
-            : '<span class="neu">—</span>'}
-        </td>
-        <td>
-          <span class="etat-badge ${etatCss(v.etat_actuel)}">${v.etat_actuel||'—'}</span>
-        </td>
-        <td style="padding:10px 14px">
-          ${v.zones?.basse_min ? renderZoneBar(cours, v.zones) : '<span class="neu" style="font-family:var(--mono);font-size:9px">Zones non renseignées</span>'}
-        </td>
-        <td style="text-align:right;color:var(--text3);font-size:11px">${isExpanded?'▲':'▼'}</td>
+        <td class="r">${pvz!==null?`<span class="${pc(-pvz)}" style="font-family:var(--mono);font-size:12px;font-weight:600">${fmtPct(pvz)}</span><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">vs zone basse</div>`:'<span class="neu">—</span>'}</td>
+        <td class="r">${pvb!==null?`<span style="font-family:var(--mono);font-size:12px;color:var(--gold)">${fmtPct(pvb)}</span><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">vs breakout</div>`:'<span class="neu">—</span>'}</td>
+        <td><span class="etat-badge ${etatCss(v.etat_actuel)}">${v.etat_actuel||'—'}</span></td>
+        <td style="padding:10px 14px">${v.zones?.basse_min?renderZoneBar(cours,v.zones):'<span class="neu" style="font-family:var(--mono);font-size:9px">Zones manquantes</span>'}</td>
+        <td style="text-align:right;color:var(--text3);font-size:11px">${isExp?'▲':'▼'}</td>
       </tr>
-      <tr class="wl-detail ${isExpanded?'open':''}" id="det-${isin}">
-        <td colspan="8">
-          ${renderDetail(isin, v, cours, zi)}
-        </td>
+      <tr class="wl-detail ${isExp?'open':''}" id="det-${isin}">
+        <td colspan="8">${isExp?renderDetail(isin,v,cours,zi):''}</td>
       </tr>`;
   }).join('');
 
-  document.getElementById('table-wrap').innerHTML = `
+  document.getElementById('table-wrap').innerHTML=`
     <table class="wl-table">
-      <thead class="wl-head">
-        <tr>
-          <th style="width:22%">Valeur</th>
-          <th class="r" style="width:10%">Cours</th>
-          <th style="width:12%">Position</th>
-          <th class="r" style="width:10%">Δ Zone basse</th>
-          <th class="r" style="width:10%">Δ Breakout</th>
-          <th style="width:10%">État</th>
-          <th style="width:22%">Zones</th>
-          <th style="width:4%"></th>
-        </tr>
-      </thead>
+      <thead class="wl-head"><tr>
+        <th style="width:22%">Valeur</th>
+        <th class="r" style="width:10%">Cours</th>
+        <th style="width:12%">Position</th>
+        <th class="r" style="width:10%">Δ Zone basse</th>
+        <th class="r" style="width:10%">Δ Breakout</th>
+        <th style="width:9%">État</th>
+        <th style="width:23%">Zones</th>
+        <th style="width:4%"></th>
+      </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// RENDER DETAIL EXPAND
-// ══════════════════════════════════════════════════════════════════════════════
-function renderDetail(isin, v, cours, zi) {
-  const zones = v.zones || {};
-
-  const zoneRows = [
-    {lbl:'Basse min',  val:zones.basse_min,   active: cours >= zones.basse_min && cours <= zones.basse_max},
-    {lbl:'Basse max',  val:zones.basse_max,   active: cours >= zones.basse_min && cours <= zones.basse_max},
-    {lbl:'Surveillance',val:zones.surveillance,active: cours >= zones.basse_max && cours < zones.surveillance},
-    {lbl:'Complément', val:zones.complement,  active: cours >= zones.surveillance && cours < zones.complement},
-    {lbl:'Breakout',   val:zones.breakout,    active: cours >= zones.breakout},
-  ].map(z => {
-    const pct = z.val && cours ? calcPctVers(cours, z.val) : null;
-    return `
-      <div class="zone-row ${z.active?'zone-active':''}">
-        <span class="zone-row-lbl">${z.lbl}</span>
-        <span class="zone-row-val">${z.val ? fmt(z.val, z.val<10?3:2)+' €' : '—'}</span>
-        <span class="zone-row-pct ${pct!=null?pc(-pct):'neu'}">${pct!=null?fmtPct(pct):''}</span>
-      </div>`;
+function renderDetail(isin,v,cours,zi){
+  const z=v.zones||{};
+  const zRows=[
+    {lbl:'Basse min',val:z.basse_min,active:cours>=z.basse_min&&cours<=z.basse_max},
+    {lbl:'Basse max',val:z.basse_max,active:cours>=z.basse_min&&cours<=z.basse_max},
+    {lbl:'Surveillance',val:z.surveillance,active:cours>=z.basse_max&&cours<z.surveillance},
+    {lbl:'Complément',val:z.complement,active:cours>=z.surveillance&&cours<z.complement},
+    {lbl:'Breakout',val:z.breakout,active:cours>=z.breakout},
+  ].map(zz=>{
+    const pct=zz.val&&cours?pctVers(cours,zz.val):null;
+    return `<div class="d-row ${zz.active?'zone-active-row':''}">
+      <span class="d-key">${zz.lbl}</span>
+      <span class="d-val">${zz.val?fmt(zz.val,zz.val<10?3:2)+' €':'—'}</span>
+      <span class="d-pct ${pct!=null?pc(-pct):'neu'}">${pct!=null?fmtPct(pct):''}</span>
+    </div>`;
   }).join('');
 
-  const ticker = ISIN_TO_TICKER[isin]||'';
-  const yahooLink = ticker ? `<a href="https://finance.yahoo.com/quote/${ticker}" target="_blank"
-    style="font-family:var(--mono);font-size:9px;color:var(--blue);text-decoration:none">↗ Yahoo Finance</a>` : '';
-
-  return `
-    <div class="detail-inner">
-      <div class="detail-section">
-        <div class="detail-lbl">Zones de cours</div>
-        ${zoneRows}
-        <div style="margin-top:10px">${yahooLink}</div>
+  return `<div class="detail-inner">
+    <div class="detail-col">
+      <div class="detail-lbl">Zones de cours</div>
+      ${zRows}
+      <div style="margin-top:10px">
+        <button class="edit-zones-btn" onclick="toggleEditZones('${isin}',event)">✏ Modifier les zones</button>
       </div>
-      <div class="detail-section">
-        <div class="detail-lbl">Classification</div>
-        <div class="zone-row"><span class="zone-row-lbl">Risque</span><span class="zone-row-val">${v.risque||'—'}</span></div>
-        <div class="zone-row"><span class="zone-row-lbl">Catégorie</span><span class="zone-row-val">${v.categorie||'—'}</span></div>
-        <div class="zone-row"><span class="zone-row-lbl">Thématique</span><span class="zone-row-val">${v.thematique||'—'}</span></div>
-        <div class="zone-row"><span class="zone-row-lbl">Enveloppe cible</span><span class="zone-row-val">${v.enveloppe||'—'}</span></div>
-        <div class="zone-row"><span class="zone-row-lbl">État ancien</span><span class="zone-row-val" style="color:var(--text3)">${v.ancien_etat||'—'}</span></div>
+      <div class="edit-zones-form" id="ez-${isin}">
+        <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">5 zones (€)</div>
+        <div class="zones-grid-sm">
+          <div class="fg"><label class="fl">Basse min</label><input class="fi" id="ez1-${isin}" type="number" step="0.01" value="${z.basse_min||''}"></div>
+          <div class="fg"><label class="fl">Basse max</label><input class="fi" id="ez2-${isin}" type="number" step="0.01" value="${z.basse_max||''}"></div>
+          <div class="fg"><label class="fl">Surv.</label><input class="fi" id="ez3-${isin}" type="number" step="0.01" value="${z.surveillance||''}"></div>
+          <div class="fg"><label class="fl">Compl.</label><input class="fi" id="ez4-${isin}" type="number" step="0.01" value="${z.complement||''}"></div>
+          <div class="fg"><label class="fl">Breakout</label><input class="fi" id="ez5-${isin}" type="number" step="0.01" value="${z.breakout||''}"></div>
+        </div>
+        <div class="meta-grid-sm">
+          <div class="fg"><label class="fl">Risque</label>
+            <select class="fi fi-select" id="ezr-${isin}">
+              <option value="">—</option>
+              ${RISQUES.map(r=>`<option value="${r}" ${r===v.risque?'selected':''}>${r}</option>`).join('')}
+            </select></div>
+          <div class="fg"><label class="fl">Catégorie</label>
+            <select class="fi fi-select" id="ezc-${isin}">
+              <option value="">—</option>
+              ${CATS.map(c=>`<option value="${c}" ${c===v.categorie?'selected':''}>${c}</option>`).join('')}
+            </select></div>
+          <div class="fg"><label class="fl">Thématique</label>
+            ${themeSelectHtml('ezt-'+isin,'ezta-'+isin,v.thematique||'')}</div>
+        </div>
+        <div style="margin-top:8px">
+          <button class="btn-save-sm" onclick="saveZonesWL('${isin}')">💾 Sauvegarder</button>
+          <button class="btn-cancel-sm" onclick="toggleEditZones('${isin}',null)">Annuler</button>
+        </div>
       </div>
-      <div class="detail-section">
-        <div class="detail-lbl">Signal en cours</div>
-        ${v.achat_vente
-          ? `<div style="background:var(--green2);border:1px solid rgba(0,214,143,.2);border-radius:6px;padding:10px;font-family:var(--mono);font-size:11px;color:var(--green)">
-              <div style="font-weight:700;margin-bottom:6px">${v.achat_vente}</div>
-              <div style="color:var(--text2)">Qté : ${v.q_achat_vente||'—'} · Prix : ${v.prix_achat_vente||'—'} €</div>
-             </div>`
-          : `<div style="color:var(--text3);font-family:var(--mono);font-size:10px">Aucun signal actif</div>`}
-        ${v.historique_refus?.length
-          ? `<div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--text3)">${v.historique_refus.length} refus enregistré(s)</div>`
-          : ''}
-      </div>
-    </div>`;
+    </div>
+    <div class="detail-col">
+      <div class="detail-lbl">Classification</div>
+      <div class="d-row"><span class="d-key">Risque</span><span class="d-val">${v.risque||'—'}</span></div>
+      <div class="d-row"><span class="d-key">Catégorie</span><span class="d-val">${v.categorie||'—'}</span></div>
+      <div class="d-row"><span class="d-key">Thématique</span><span class="d-val">${v.thematique||'—'}</span></div>
+      <div class="d-row"><span class="d-key">Enveloppe</span><span class="d-val">${v.enveloppe||'—'}</span></div>
+    </div>
+    <div class="detail-col">
+      <div class="detail-lbl">Signal</div>
+      ${v.achat_vente
+        ?`<div style="background:var(--green2);border:1px solid rgba(0,214,143,.2);border-radius:6px;padding:10px;font-family:var(--mono);font-size:11px;color:var(--green)">
+            <div style="font-weight:700;margin-bottom:4px">${v.achat_vente}</div>
+            <div style="color:var(--text2)">Qté : ${v.q_achat_vente||'—'} · Prix : ${v.prix_achat_vente||'—'} €</div>
+           </div>`
+        :`<div style="color:var(--text3);font-family:var(--mono);font-size:10px">Aucun signal actif</div>`}
+      ${v.historique_refus?.length?`<div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--text3)">${v.historique_refus.length} refus enregistré(s)</div>`:''}
+    </div>
+  </div>`;
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// TOGGLE ROW
-// ══════════════════════════════════════════════════════════════════════════════
-function toggleRow(isin) {
-  expandedIsin = expandedIsin === isin ? null : isin;
+function toggleEditZones(isin,e){
+  if(e) e.stopPropagation();
+  document.getElementById('ez-'+isin)?.classList.toggle('open');
+}
+
+async function saveZonesWL(isin){
+  const v=TABLE.valeurs[isin];
+  v.zones={
+    basse_min:parseFloat(document.getElementById('ez1-'+isin)?.value)||0,
+    basse_max:parseFloat(document.getElementById('ez2-'+isin)?.value)||0,
+    surveillance:parseFloat(document.getElementById('ez3-'+isin)?.value)||0,
+    complement:parseFloat(document.getElementById('ez4-'+isin)?.value)||0,
+    breakout:parseFloat(document.getElementById('ez5-'+isin)?.value)||0,
+  };
+  v.risque=document.getElementById('ezr-'+isin)?.value||v.risque||null;
+  v.categorie=document.getElementById('ezc-'+isin)?.value||v.categorie||null;
+  v.thematique=getTheme('ezt-'+isin,'ezta-'+isin)||v.thematique||null;
+
+  const token=getToken();
+  if(!token){toast('❌ Token absent — recharger la page','var(--red)');return;}
+  const url=GH_API+'table_infos_valeurs.json';
+  let sha=null;
+  try{const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});if(gr.ok){const j=await gr.json();sha=j.sha;}}catch(e){}
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(TABLE,null,2))));
+  const body={message:`📍 Zones ${v.nom||isin}`,content};if(sha)body.sha=sha;
+  toast('⏳ Sauvegarde…','var(--text3)');
+  const r=await fetch(url,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r.ok){toast(`✅ Zones de ${v.nom||isin} sauvegardées`);setTimeout(()=>refresh(),800);}
+  else toast('❌ Erreur sauvegarde','var(--red)');
+}
+
+function toggleRow(isin){
+  expandedIsin=expandedIsin===isin?null:isin;
   renderTable();
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// REFRESH
-// ══════════════════════════════════════════════════════════════════════════════
-async function refresh() {
-  const btn = document.getElementById('btn-refresh');
-  btn.classList.add('loading');
-  btn.disabled = true;
-
-  try {
+async function refresh(){
+  const btn=document.getElementById('btn-refresh');
+  btn.classList.add('loading');btn.disabled=true;
+  try{
     await loadTable();
-
-    const vals = TABLE?.valeurs || {};
-    const entries = Object.entries(vals).filter(([,v]) => v.quantite === 0 || v.etat_actuel === 'WATCHLIST');
-
+    const vals=TABLE?.valeurs||{};
+    const entries=Object.entries(vals).filter(([,v])=>v.quantite===0||v.etat_actuel==='WATCHLIST');
     await fetchCours(entries);
     renderTable();
-  } catch(e) {
-    document.getElementById('table-wrap').innerHTML =
-      `<div class="empty"><div class="empty-icon">⚠️</div>Erreur : ${e.message}</div>`;
-  } finally {
-    btn.classList.remove('loading');
-    btn.disabled = false;
-  }
+  }catch(e){
+    document.getElementById('table-wrap').innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div>Erreur : ${e.message}</div>`;
+  }finally{btn.classList.remove('loading');btn.disabled=false;}
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════════════════════════════
 refresh();
-
-// Auto-refresh toutes les 5 minutes
-setInterval(refresh, 5 * 60 * 1000);
+setInterval(refresh,5*60*1000);
 </script>
 </body>
 </html>

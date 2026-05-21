@@ -4,232 +4,266 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HERMÈS</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2306090f'/%3E%3Ctext x='16' y='23' font-family='serif' font-size='20' font-weight='bold' fill='%23f0b429' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>⚡</text></svg>">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 :root{
   --bg:#06090f;--bg2:#0b0f18;--bg3:#111722;
   --border:#1e2a3d;--border2:#2a3a52;
   --text:#e8eef7;--text2:#7a8fa8;--text3:#3d5068;
-  --green:#00d68f;--red:#ff4d6a;--blue:#4d9fff;--gold:#f0b429;
-  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
-  --nav:220px;
+  --green:#00d68f;--gold:#f0b429;--blue:#4d9fff;--red:#ff4d6a;
+  --nav-w:210px;--hdr-h:50px;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'IBM Plex Sans',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;overflow:hidden;height:100vh}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;-webkit-font-smoothing:antialiased}
 
 /* LOGIN */
 #login-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center}
-.login-box{width:360px}
-.login-logo{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--gold);letter-spacing:6px;text-align:center;margin-bottom:6px}
-.login-sub{font-family:var(--mono);font-size:10px;color:var(--text3);text-align:center;letter-spacing:2px;margin-bottom:32px}
-.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:28px}
-.login-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
-.login-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:12px 16px;color:var(--text);font-family:var(--mono);font-size:20px;letter-spacing:6px;text-align:center;outline:none;margin-bottom:12px;transition:border-color .15s}
-.login-input:focus{border-color:var(--blue)}
-.login-btn{width:100%;padding:12px;background:var(--blue);border:none;border-radius:6px;color:#fff;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:40px;width:320px;text-align:center}
+.login-logo{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:4px;margin-bottom:6px}
+.login-logo span{color:var(--gold)}
+.login-sub{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;margin-bottom:32px}
+.login-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;color:var(--text);font-family:var(--mono);font-size:16px;text-align:center;letter-spacing:8px;outline:none;transition:border-color .2s;margin-bottom:12px}
+.login-input:focus{border-color:var(--gold)}
+.login-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:12px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s}
 .login-btn:hover{opacity:.85}
-.login-err{display:none;text-align:center;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--red)}
+.login-err{display:none;margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--red)}
 
-/* APP */
-#app{display:none;height:100vh}
+/* LAYOUT */
+#app{display:none;height:100vh;display:none;flex-direction:row}
 #app.visible{display:flex}
 
 /* SIDEBAR */
-.sidebar{width:var(--nav);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh}
-.sidebar-logo{padding:20px;font-family:var(--mono);font-size:14px;font-weight:700;color:var(--gold);letter-spacing:4px;border-bottom:1px solid var(--border)}
-.sidebar-logo span{color:var(--text3);font-weight:400}
-.nav-items{flex:1;padding:8px 0}
-.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;cursor:pointer;color:var(--text2);font-size:13px;transition:color .12s,background .12s;border-left:2px solid transparent}
+.sidebar{width:var(--nav-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border)}
+.sidebar-logo-text{font-family:var(--mono);font-size:16px;font-weight:700;letter-spacing:3px}
+.sidebar-logo-text span{color:var(--gold)}
+.nav-section{padding:16px 0;flex:1}
+.nav-label{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;padding:0 20px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;transition:all .12s;border-left:2px solid transparent;color:var(--text2);font-size:13px}
 .nav-item:hover{background:var(--bg3);color:var(--text)}
-.nav-item.active{background:rgba(77,159,255,.08);color:var(--blue);border-left-color:var(--blue)}
-.nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
-.nav-sep{height:1px;background:var(--border);margin:8px 16px}
-.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--text3);line-height:1.8}
-.status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:5px}
+.nav-item.active{background:rgba(77,159,255,.08);border-left-color:var(--blue);color:var(--text)}
+.nav-item .ic{font-size:14px;width:18px;text-align:center}
+.nav-sep{height:1px;background:var(--border);margin:8px 20px}
+.sidebar-foot{padding:16px 20px;border-top:1px solid var(--border)}
+.foot-status{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.foot-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.foot-txt{font-family:var(--mono);font-size:9px;color:var(--text3)}
 
 /* CONTENT */
-.content-area{flex:1;overflow:hidden;position:relative}
-.content-area iframe{width:100%;height:100%;border:none;display:none}
-.content-area iframe.active{display:block}
-.coming-soon{display:none;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:var(--text3);font-family:var(--mono);font-size:11px}
+.content-area{flex:1;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+.content-header{height:var(--hdr-h);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;flex-shrink:0}
+.content-header-title{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:2px;text-transform:uppercase}
+.content-body{flex:1;overflow:hidden;position:relative}
+.content-body iframe{width:100%;height:100%;border:none;display:none}
+.content-body iframe.active{display:block}
+.coming-soon{display:none;width:100%;height:100%;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--text3);font-family:var(--mono);font-size:11px}
 .coming-soon.active{display:flex}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 16px;font-family:var(--mono);font-size:11px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:500}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">HERM<span>ÈS</span></div>
-    <div class="login-sub">PILOTAGE PATRIMONIAL</div>
-    <div class="login-card">
-      <div class="login-label">Mot de passe</div>
-      <input id="pwd" class="login-input" type="password" placeholder="••••" onkeydown="if(event.key==='Enter')doLogin()"/>
-      <button class="login-btn" onclick="doLogin()">Accéder</button>
-      <div id="login-err" class="login-err">Mot de passe incorrect</div>
-    </div>
+    <div class="login-logo">HERM<span>È</span>S</div>
+    <div class="login-sub">Pilotage patrimonial</div>
+    <input class="login-input" id="login-pwd" type="password" placeholder="••••"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Accéder</button>
+    <div class="login-err" id="login-err"></div>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app">
   <div class="sidebar">
-    <div class="sidebar-logo">HERM<span>ÈS</span></div>
-    <div class="nav-items">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">HERM<span>È</span>S</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Portefeuille</div>
       <div class="nav-item active" data-page="passif" onclick="nav(this)">
-        <div class="nav-icon">◈</div><div>Patrimoine</div>
+        <span class="ic">◈</span> Patrimoine
       </div>
       <div class="nav-item" data-page="actions" onclick="nav(this)">
-        <div class="nav-icon">⚡</div><div>Actions</div>
+        <span class="ic">⚡</span> Actions
       </div>
       <div class="nav-item" data-page="watchlist" onclick="nav(this)">
-        <div class="nav-icon">◎</div><div>Watchlist</div>
+        <span class="ic">◎</span> Watchlist
       </div>
       <div class="nav-item" data-page="historique" onclick="nav(this)">
-        <div class="nav-icon">◷</div><div>Historique</div>
+        <span class="ic">◷</span> Historique
       </div>
       <div class="nav-sep"></div>
       <div class="nav-item" data-page="maj" onclick="nav(this)">
-        <div class="nav-icon">↑</div><div>Mise à jour</div>
+        <span class="ic">↑</span> Mise à jour
       </div>
     </div>
-    <div class="sidebar-footer">
-      <div><span class="status-dot"></span>Hermès actif</div>
-      <div id="footer-date"></div>
+    <div class="sidebar-foot">
+      <div class="foot-status">
+        <div class="foot-dot"></div>
+        <div class="foot-txt">Hermès actif</div>
+      </div>
+      <div class="foot-txt" id="foot-date">—</div>
     </div>
   </div>
 
-  <div class="content-area" id="content">
-    <iframe id="frame-passif" class="active" src="passif.html"></iframe>
-    <iframe id="frame-maj" src="about:blank"></iframe>
-    <iframe id="frame-actions" src="about:blank"></iframe>
-    <iframe id="frame-watchlist" src="about:blank"></iframe>
-    <div id="frame-historique" class="coming-soon"><div style="font-size:32px">◷</div><div>Produit 4 — bientôt</div></div>
+  <div class="content-area">
+    <div class="content-header">
+      <div class="content-header-title" id="page-title">Patrimoine</div>
+    </div>
+    <div class="content-body">
+      <iframe id="frame-passif" class="active" src="passif.html"></iframe>
+      <iframe id="frame-actions" src="about:blank"></iframe>
+      <iframe id="frame-watchlist" src="about:blank"></iframe>
+      <iframe id="frame-maj" src="about:blank"></iframe>
+      <div id="frame-historique" class="coming-soon">
+        <div style="font-size:32px">◷</div>
+        <div>Produit 4 — bientôt</div>
+      </div>
+    </div>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-// ── SHA-256 ───────────────────────────────────────────────────────
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
+// ── CONFIG ────────────────────────────────────────────────────────────────────
+const GH_USER = 'Cookiem420';
+const GH_REPO_DATA = 'hermes-data';
+// Token injecté au login — stocké ici pour les iframes enfants via sessionStorage
+const GH_TOKEN = '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';
+const AUTH_URL = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO_DATA}/main/auth.json`;
 
-const PWD_HASH     = 'f74fee330886f88ceea28e9bdb43c9db1df048010398f407c9cb67e1c1c80e5e';
-const TG_BOT       = '8675954697:AAHRlyrxA2WwWrLGTEE0Ljq2nkfxLDUj_nw';
-const TG_CHAT      = '8818994234';
-const MAX_ATTEMPTS = 3;
-let   loginAttempts = parseInt(sessionStorage.getItem('hermes_attempts')||'0');
-let   isBlocked     = sessionStorage.getItem('hermes_blocked') === '1';
+const PAGE_TITLES = {
+  passif:'Patrimoine', actions:'Actions', watchlist:'Watchlist',
+  historique:'Historique', maj:'Mise à jour'
+};
+const PAGE_SRCS = {
+  passif:'passif.html', actions:'actions.html',
+  watchlist:'watchlist.html', maj:'maj.html'
+};
 
-// Générer un code de déblocage aléatoire 6 chiffres
-function genUnlockCode() {
-  let code = sessionStorage.getItem('hermes_unlock_code');
-  if (!code) {
-    code = Math.floor(100000 + Math.random() * 900000).toString();
-    sessionStorage.setItem('hermes_unlock_code', code);
-  }
-  return code;
-}
+// ── TOKEN AU DÉMARRAGE ────────────────────────────────────────────────────────
+// Injecté immédiatement dans sessionStorage pour que toutes les iframes le trouvent
+sessionStorage.setItem('hermes_gh_token', GH_TOKEN);
+localStorage.setItem('hermes_gh_token', GH_TOKEN);
 
-async function sendTelegramAlert(code) {
-  const msg = encodeURIComponent(
-    `🔒 HERMÈS — Tentative de connexion suspecte\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `${MAX_ATTEMPTS} erreurs consécutives détectées.\n` +
-    `Code de déblocage : *${code}*\n` +
-    `━━━━━━━━━━━━━━━━━━\n` +
-    `Si ce n'est pas toi, change ton mot de passe.`
-  );
-  try {
-    await fetch(
-      `https://api.telegram.org/bot${TG_BOT}/sendMessage?chat_id=${TG_CHAT}&text=${msg}&parse_mode=Markdown`
-    );
-  } catch(e) { console.warn('Telegram alert failed:', e); }
-}
+// ── DATE SIDEBAR ──────────────────────────────────────────────────────────────
+const days = ['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'];
+const months = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+const now = new Date();
+document.getElementById('foot-date').textContent =
+  `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}`;
 
-async function doLogin() {
-  // Vérifier si bloqué
-  if (isBlocked) {
-    const entered = document.getElementById('pwd').value;
-    const expected = sessionStorage.getItem('hermes_unlock_code');
-    if (entered === expected) {
-      // Débloquer
-      sessionStorage.removeItem('hermes_blocked');
-      sessionStorage.removeItem('hermes_attempts');
-      sessionStorage.removeItem('hermes_unlock_code');
-      isBlocked = false;
-      loginAttempts = 0;
-      document.getElementById('login-err').style.display = 'none';
-      document.getElementById('pwd').placeholder = '••••';
-      return;
-    } else {
-      const err = document.getElementById('login-err');
-      err.textContent = 'Compte bloqué — saisir le code reçu par Telegram';
-      err.style.display = 'block';
-      return;
-    }
-  }
-
-  const pwd = document.getElementById('pwd').value;
-  const hash = await sha256(pwd);
-
-  if (hash === PWD_HASH) {
-    sessionStorage.setItem('hermes_auth','1');
-    sessionStorage.removeItem('hermes_attempts');
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').classList.add('visible');
-    document.getElementById('footer-date').textContent =
-      new Date().toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'});
-  } else {
-    loginAttempts++;
-    sessionStorage.setItem('hermes_attempts', loginAttempts.toString());
-
-    const err = document.getElementById('login-err');
-
-    if (loginAttempts >= MAX_ATTEMPTS) {
-      // Bloquer et envoyer Telegram
-      isBlocked = true;
-      sessionStorage.setItem('hermes_blocked','1');
-      const code = genUnlockCode();
-      await sendTelegramAlert(code);
-      err.textContent = `Compte bloqué (${MAX_ATTEMPTS} erreurs) — code de déblocage envoyé par Telegram`;
-      err.style.display = 'block';
-      document.getElementById('pwd').value = '';
-      document.getElementById('pwd').placeholder = 'Code Telegram...';
-    } else {
-      err.textContent = `Mot de passe incorrect (${loginAttempts}/${MAX_ATTEMPTS})`;
-      err.style.display = 'block';
-      setTimeout(() => err.style.display = 'none', 2500);
-    }
-  }
-}
-
-// ── Navigation ────────────────────────────────────────────────────
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
 function nav(el) {
   const page = el.dataset.page;
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   el.classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_TITLES[page] || page;
 
   // Cacher tout
-  document.querySelectorAll('.content-area iframe, .content-area .coming-soon')
+  document.querySelectorAll('.content-body iframe, .content-body .coming-soon')
     .forEach(f => { f.classList.remove('active'); });
 
   const frame = document.getElementById('frame-' + page);
-  if (!frame) return;
+  if(!frame) return;
 
-  // Charger si iframe pas encore initialisée
-  if (frame.tagName === 'IFRAME' && (frame.src === 'about:blank' || frame.src === '')) {
-    frame.src = page + '.html';
+  // Charger iframe si pas encore fait
+  if(frame.tagName === 'IFRAME' && frame.src === 'about:blank' && PAGE_SRCS[page]) {
+    // Transmettre le token via l'URL n'est pas safe — on le passe via postMessage après load
+    frame.src = PAGE_SRCS[page];
+    frame.onload = () => {
+      try {
+        frame.contentWindow.postMessage({type:'HERMES_TOKEN', token: GH_TOKEN}, '*');
+      } catch(e){}
+    };
   }
   frame.classList.add('active');
 }
 
-// ── Auto-login ────────────────────────────────────────────────────
-if (sessionStorage.getItem('hermes_auth') === '1') {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').classList.add('visible');
-  document.getElementById('footer-date').textContent =
-    new Date().toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'});
+// Écouter les demandes de token depuis les iframes enfants
+window.addEventListener('message', e => {
+  if(e.data?.type === 'HERMES_TOKEN_REQUEST') {
+    e.source?.postMessage({type:'HERMES_TOKEN', token: GH_TOKEN}, '*');
+  }
+});
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+let loginAttempts = 0;
+const MAX_ATTEMPTS = 3;
+
+async function doLogin() {
+  const blockedUntil = localStorage.getItem('hermes_blocked_until');
+  if(blockedUntil && Date.now() < parseInt(blockedUntil)) {
+    document.getElementById('login-err').textContent = 'Accès bloqué 24h suite à trop de tentatives';
+    document.getElementById('login-err').style.display = 'block';
+    return;
+  }
+  const pwd = document.getElementById('login-pwd').value;
+  if(!pwd) return;
+  const hash = await sha256(pwd);
+
+  // Hash MDP 1347
+  const validHash = await sha256('1347');
+  if(hash === validHash) {
+    loginAttempts = 0;
+    localStorage.removeItem('hermes_blocked_until');
+    sessionStorage.setItem('hermes_auth', hash);
+    // Token déjà injecté au démarrage
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+  } else {
+    loginAttempts++;
+    const remaining = MAX_ATTEMPTS - loginAttempts;
+    const err = document.getElementById('login-err');
+    if(loginAttempts >= MAX_ATTEMPTS) {
+      localStorage.setItem('hermes_blocked_until', (Date.now() + 24*3600*1000).toString());
+      // Alerte Telegram
+      fetch(`https://api.telegram.org/bot8675954697:AAHRlyrxA2WwWrLGTEE0Ljq2nkfxLDUj_nw/sendMessage`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:'8818994234',text:'⚠️ Hermès : 3 tentatives échouées — accès bloqué 24h'})
+      }).catch(()=>{});
+      err.textContent = 'Accès bloqué 24h — alerte envoyée';
+    } else {
+      err.textContent = `Mot de passe incorrect — ${remaining} tentative${remaining>1?'s':''} restante${remaining>1?'s':''}`;
+    }
+    err.style.display = 'block';
+    document.getElementById('login-pwd').value = '';
+    document.getElementById('login-pwd').focus();
+    document.getElementById('login-pwd').style.borderColor = 'var(--red)';
+    setTimeout(()=>document.getElementById('login-pwd').style.borderColor='',1000);
+  }
+}
+
+// Vérifier si déjà authentifié
+(async () => {
+  const auth = sessionStorage.getItem('hermes_auth');
+  if(auth) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+  }
+})();
+
+function toast(msg, color='var(--green)'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.style.color=color;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2800);
 }
 </script>
 </body>
