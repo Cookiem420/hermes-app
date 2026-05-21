@@ -207,6 +207,32 @@ async function ghPut(data,message){
   return r.ok;
 }
 
+// ── SAVE HISTORIQUE ───────────────────────────────────────────────────────────
+async function addHistorique(entry){
+  const token=getToken();
+  if(!token) return;
+  const url=GH_API+'historique.json';
+  let hist={entries:[]};
+  let sha=null;
+  try{
+    const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});
+    if(gr.ok){
+      const j=await gr.json();
+      sha=j.sha;
+      hist=JSON.parse(atob(j.content.replace(/\n/g,'')));
+    }
+  }catch(e){}
+  hist.entries.unshift({...entry, date: new Date().toISOString().split('T')[0]});
+  // Garder max 500 entrées
+  if(hist.entries.length>500) hist.entries=hist.entries.slice(0,500);
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(hist,null,2))));
+  const body={message:`📋 Historique: ${entry.categorie} ${entry.isin}`,content};
+  if(sha) body.sha=sha;
+  await fetch(url,{method:'PUT',
+    headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+    body:JSON.stringify(body)}).catch(()=>{});
+}
+
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function render(){
   try{
@@ -335,20 +361,33 @@ async function validerAction(isin,type){
   const prix=parseFloat(document.getElementById('cp-'+isin)?.value)||0;
   const motif=document.getElementById('cm-'+isin)?.value||'';
   const etat=document.getElementById('ce-'+isin)?.value||v.etat_actuel;
+  const etatAvant=v.etat_actuel;
+  const notes=document.getElementById('cn-'+isin)?.value||'';
+  const sig=v.achat_vente;
+
   if(type==='confirmer'){
     v.ancien_etat=v.etat_actuel;v.etat_actuel=etat;
     if(qty>0) v.quantite=qty;
     v.achat_vente=null;v.q_achat_vente=0;v.prix_achat_vente=0;
   } else {
-    const sig=v.achat_vente;
     v.achat_vente=null;v.q_achat_vente=0;v.prix_achat_vente=0;
     if(!v.historique_refus) v.historique_refus=[];
-    v.historique_refus.push({date:new Date().toISOString().split('T')[0],signal:sig,motif,
-      notes:document.getElementById('cn-'+isin)?.value||''});
+    v.historique_refus.push({date:new Date().toISOString().split('T')[0],signal:sig,motif,notes});
   }
   toast('⏳ Sauvegarde…','var(--text3)');
   const ok=await ghPut(TABLE,`${type==='confirmer'?'✅':'✗'} ${type} ${v.nom||isin}`);
-  if(ok){toast(`${type==='confirmer'?'✅':'✗'} ${v.nom||isin} — ${type} enregistré`);closeCartForm(isin);setTimeout(render,800);}
+  if(ok){
+    // Écrire dans historique.json
+    addHistorique(type==='confirmer'
+      ? {categorie:'confirme',isin,nom:v.nom||isin,enveloppe:v.enveloppe,
+         signal:sig,quantite:qty,prix_reel:prix||null,
+         etat_avant:etatAvant,etat_apres:etat,notes}
+      : {categorie:'refuse',isin,nom:v.nom||isin,enveloppe:v.enveloppe,
+         signal:sig,motif,notes}
+    );
+    toast(`${type==='confirmer'?'✅':'✗'} ${v.nom||isin} — ${type} enregistré`);
+    closeCartForm(isin);setTimeout(render,800);
+  }
   else toast('❌ Erreur sauvegarde','var(--red)');
 }
 
@@ -573,6 +612,12 @@ async function validerAutonome(){
   toast('⏳ Sauvegarde…','var(--text3)');
   const ok=await ghPut(TABLE,`📝 ${type} ${isin} — ${qty} titres`);
   if(ok){
+    // Écrire dans historique.json
+    const nomVal=TABLE.valeurs[isin]?.nom||isin;
+    const envVal=TABLE.valeurs[isin]?.enveloppe||'';
+    const etatApres=TABLE.valeurs[isin]?.etat_actuel||'';
+    addHistorique({categorie:'autonome',isin,nom:nomVal,enveloppe:envVal,
+      operation:type,quantite:qty,etat_apres:etatApres});
     toast(`✅ ${type} enregistré`);
     document.getElementById('auto-isin').value='';
     document.getElementById('auto-result').style.display='none';

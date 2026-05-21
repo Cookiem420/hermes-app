@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Historique</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#06090f;--bg2:#0b0f18;--bg3:#111722;--bg4:#1a2133;
+  --border:#1e2a3d;--border2:#2a3a52;
+  --text:#e8eef7;--text2:#7a8fa8;--text3:#3d5068;
+  --green:#00d68f;--green2:rgba(0,214,143,.12);
+  --red:#ff4d6a;--red2:rgba(255,77,106,.12);
+  --blue:#4d9fff;--blue2:rgba(77,159,255,.12);
+  --gold:#f0b429;--gold2:rgba(240,180,41,.12);
+  --orange:#fb923c;--orange2:rgba(251,146,60,.12);
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-y:auto}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.page{padding:24px 32px 60px;max-width:1100px;margin:0 auto}
+
+/* HEADER */
+.hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.hdr-stats{display:flex;gap:20px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 18px;min-width:100px}
+.stat-val{font-family:var(--mono);font-size:20px;font-weight:700;margin-bottom:2px}
+.stat-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+
+/* FILTRES */
+.filtres{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.filtre-btn{font-family:var(--mono);font-size:9px;padding:4px 12px;border-radius:4px;border:1px solid var(--border2);background:var(--bg2);color:var(--text3);cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .12s}
+.filtre-btn.active{background:var(--blue2);color:var(--blue);border-color:rgba(77,159,255,.3)}
+.filtre-sep{flex:1}
+.search-input{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:6px 12px;color:var(--text);font-family:var(--mono);font-size:11px;outline:none;width:200px}
+.search-input:focus{border-color:var(--blue)}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-month{margin-bottom:24px}
+.tl-month-label{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:12px}
+.tl-entries{display:flex;flex-direction:column;gap:8px}
+
+/* ENTRY */
+.entry{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;display:flex;align-items:stretch}
+.entry-side{width:4px;flex-shrink:0}
+.entry-side.confirme{background:var(--green)}
+.entry-side.refuse{background:var(--red)}
+.entry-side.autonome{background:var(--blue)}
+.entry-body{flex:1;padding:12px 16px;display:flex;align-items:center;gap:16px}
+.entry-date{font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap;min-width:70px}
+.entry-type{flex-shrink:0}
+.type-badge{font-family:var(--mono);font-size:8px;font-weight:700;padding:3px 8px;border-radius:3px;letter-spacing:1px;text-transform:uppercase}
+.tb-achat{background:var(--green2);color:var(--green);border:1px solid rgba(0,214,143,.2)}
+.tb-renfort{background:var(--blue2);color:var(--blue);border:1px solid rgba(77,159,255,.2)}
+.tb-alleger{background:var(--orange2);color:var(--orange);border:1px solid rgba(251,146,60,.2)}
+.tb-vente{background:var(--red2);color:var(--red);border:1px solid rgba(255,77,106,.2)}
+.tb-conserver{background:var(--border);color:var(--text2);border:1px solid var(--border2)}
+.tb-refuse{background:var(--red2);color:var(--red);border:1px solid rgba(255,77,106,.2)}
+.tb-autonome{background:var(--blue2);color:var(--blue);border:1px solid rgba(77,159,255,.2)}
+.entry-nom{flex:1;font-weight:500}
+.entry-isin{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
+.entry-detail{font-family:var(--mono);font-size:10px;color:var(--text2);text-align:right;min-width:120px}
+.entry-detail-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
+.entry-notes{font-family:var(--mono);font-size:9px;color:var(--text3);font-style:italic;border-left:2px solid var(--border2);padding-left:10px;margin-left:8px;max-width:200px}
+
+.pos{color:var(--green)}.neg{color:var(--red)}.neu{color:var(--text2)}
+.empty{text-align:center;padding:60px 20px;color:var(--text3);font-family:var(--mono);font-size:11px}
+.empty-icon{font-size:36px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Historique des opérations</div>
+      <div class="hdr-stats" id="hdr-stats">
+        <div class="stat"><div class="stat-val" id="s-total">—</div><div class="stat-lbl">Opérations</div></div>
+        <div class="stat"><div class="stat-val pos" id="s-conf">—</div><div class="stat-lbl">Confirmées</div></div>
+        <div class="stat"><div class="stat-val neg" id="s-ref">—</div><div class="stat-lbl">Refusées</div></div>
+        <div class="stat"><div class="stat-val" style="color:var(--blue)" id="s-auto">—</div><div class="stat-lbl">Autonomes</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filtres">
+    <button class="filtre-btn active" onclick="setFiltre('all',this)">Tous</button>
+    <button class="filtre-btn" onclick="setFiltre('confirme',this)">Confirmés</button>
+    <button class="filtre-btn" onclick="setFiltre('refuse',this)">Refusés</button>
+    <button class="filtre-btn" onclick="setFiltre('autonome',this)">Autonomes</button>
+    <div class="filtre-sep"></div>
+    <input class="search-input" id="search" placeholder="Rechercher ISIN ou nom…" oninput="render()">
+  </div>
+
+  <div id="timeline-wrap">
+    <div class="empty"><div class="empty-icon">⏳</div>Chargement…</div>
+  </div>
+</div>
+
+<script>
+const GH_USER='Cookiem420',GH_REPO='hermes-data';
+const RAW='https://raw.githubusercontent.com/'+GH_USER+'/'+GH_REPO+'/main/';
+
+let HIST=[];
+let filtre='all';
+
+function getToken(){return sessionStorage.getItem('hermes_gh_token')||localStorage.getItem('hermes_gh_token')||'';}
+if(!getToken()){window.parent.postMessage({type:'HERMES_TOKEN_REQUEST'},'*');}
+window.addEventListener('message',e=>{
+  if(e.data?.type==='HERMES_TOKEN'&&e.data.token){
+    sessionStorage.setItem('hermes_gh_token',e.data.token);
+    localStorage.setItem('hermes_gh_token',e.data.token);
+  }
+});
+
+function setFiltre(f,btn){
+  filtre=f;
+  document.querySelectorAll('.filtre-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function typeCss(type,cat){
+  if(cat==='refuse') return 'tb-refuse';
+  if(cat==='autonome') return 'tb-autonome';
+  const m={ACHAT:'tb-achat',RENFORT:'tb-renfort',ALLEGER:'tb-alleger',VENTE:'tb-vente',CONSERVER:'tb-conserver'};
+  return m[type]||'tb-conserver';
+}
+
+function badgeLabel(entry){
+  if(entry.categorie==='refuse') return '✗ REFUS';
+  if(entry.categorie==='autonome') return entry.operation||'OP.';
+  return entry.signal||entry.type||'?';
+}
+
+async function load(){
+  try{
+    const r=await fetch(RAW+'historique.json?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    HIST=data.entries||[];
+    // Trier par date desc
+    HIST.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  }catch(e){
+    // Fichier absent → historique vide (normal au 1er chargement)
+    HIST=[];
+  }
+  render();
+}
+
+function render(){
+  const search=document.getElementById('search')?.value?.toLowerCase()||'';
+
+  const filtered=HIST.filter(e=>{
+    if(filtre!=='all'&&e.categorie!==filtre) return false;
+    if(search&&!e.nom?.toLowerCase().includes(search)&&!e.isin?.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  // Stats
+  document.getElementById('s-total').textContent=HIST.length;
+  document.getElementById('s-conf').textContent=HIST.filter(e=>e.categorie==='confirme').length;
+  document.getElementById('s-ref').textContent=HIST.filter(e=>e.categorie==='refuse').length;
+  document.getElementById('s-auto').textContent=HIST.filter(e=>e.categorie==='autonome').length;
+
+  if(!filtered.length){
+    document.getElementById('timeline-wrap').innerHTML=
+      `<div class="empty"><div class="empty-icon">${HIST.length===0?'📋':'🔍'}</div>${HIST.length===0?'Aucune opération enregistrée pour le moment':'Aucun résultat'}</div>`;
+    return;
+  }
+
+  // Grouper par mois
+  const byMonth={};
+  filtered.forEach(e=>{
+    const d=new Date(e.date);
+    const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    const months=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    const label=months[d.getMonth()]+' '+d.getFullYear();
+    if(!byMonth[key]) byMonth[key]={label,entries:[]};
+    byMonth[key].entries.push(e);
+  });
+
+  const html=Object.keys(byMonth).sort((a,b)=>b.localeCompare(a)).map(key=>{
+    const {label,entries}=byMonth[key];
+    return `
+      <div class="tl-month">
+        <div class="tl-month-label">${label} <span style="color:var(--text3);font-size:8px">(${entries.length})</span></div>
+        <div class="tl-entries">
+          ${entries.map(e=>renderEntry(e)).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('timeline-wrap').innerHTML=`<div class="timeline">${html}</div>`;
+}
+
+function renderEntry(e){
+  const cat=e.categorie||'confirme';
+  const d=new Date(e.date);
+  const dateStr=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+
+  let detail='';
+  let detailSub='';
+  let notes='';
+
+  if(cat==='confirme'){
+    detail=e.quantite?`${e.quantite} titre${e.quantite>1?'s':''}${e.prix_reel?' · '+e.prix_reel+' €':''}` :'—';
+    detailSub=e.etat_avant&&e.etat_apres?`${e.etat_avant} → ${e.etat_apres}`:'';
+    if(e.notes) notes=e.notes;
+  } else if(cat==='refuse'){
+    detail=e.motif||'—';
+    detailSub=`Signal : ${e.signal||'?'}`;
+    if(e.notes) notes=e.notes;
+  } else if(cat==='autonome'){
+    detail=e.quantite?`${e.quantite} titre${e.quantite>1?'s':''}`:e.operation||'—';
+    detailSub=e.etat_apres||'';
+  }
+
+  return `
+    <div class="entry">
+      <div class="entry-side ${cat}"></div>
+      <div class="entry-body">
+        <div class="entry-date">${dateStr}</div>
+        <div class="entry-type">
+          <span class="type-badge ${typeCss(e.signal||e.operation,cat)}">${badgeLabel(e)}</span>
+        </div>
+        <div style="flex:1">
+          <div class="entry-nom">${e.nom||e.isin||'—'}</div>
+          <div class="entry-isin">${e.isin||''} ${e.enveloppe?'· '+e.enveloppe:''}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="entry-detail">${detail}</div>
+          ${detailSub?`<div class="entry-detail-sub">${detailSub}</div>`:''}
+        </div>
+        ${notes?`<div class="entry-notes">${notes}</div>`:''}
+      </div>
+    </div>`;
+}
+
+load();
+</script>
+</body>
+</html>

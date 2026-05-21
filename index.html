@@ -132,9 +132,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
       <iframe id="frame-actions" src="about:blank"></iframe>
       <iframe id="frame-watchlist" src="about:blank"></iframe>
       <iframe id="frame-maj" src="about:blank"></iframe>
-      <div id="frame-historique" class="coming-soon">
-        <div style="font-size:32px">◷</div><div>Produit 4 — bientôt</div>
-      </div>
+      <iframe id="frame-historique" src="about:blank"></iframe>
     </div>
   </div>
 </div>
@@ -156,7 +154,7 @@ document.getElementById('foot-date').textContent=days[now.getDay()]+' '+now.getD
 
 // Navigation
 const PAGE_TITLES={passif:'Patrimoine',actions:'Actions',watchlist:'Watchlist',historique:'Historique',maj:'Mise à jour'};
-const PAGE_SRCS={passif:'passif.html',actions:'actions.html',watchlist:'watchlist.html',maj:'maj.html'};
+const PAGE_SRCS={passif:'passif.html',actions:'actions.html',watchlist:'watchlist.html',maj:'maj.html',historique:'historique.html'};
 
 function nav(el) {
   const page=el.dataset.page;
