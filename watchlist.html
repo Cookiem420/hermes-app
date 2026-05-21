@@ -223,29 +223,45 @@ async function fetchCours(entries) {
   const symbols = [...new Set(tickers)].join(',');
   const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChangePercent,shortName`;
 
-  try {
-    // Via allorigins pour contourner CORS
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-    const r = await fetch(proxyUrl, {signal: AbortSignal.timeout(8000)});
-    if(!r.ok) throw new Error('proxy '+r.status);
-    const data = await r.json();
-    const parsed = JSON.parse(data.contents);
-    const quotes = parsed?.quoteResponse?.result || [];
+  // Proxies CORS en cascade
+  const proxies = [
+    s => `https://corsproxy.io/?${encodeURIComponent(s)}`,
+    s => `https://api.allorigins.win/get?url=${encodeURIComponent(s)}`,
+    s => `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(s)}`,
+  ];
 
-    quotes.forEach(q => {
-      // Retrouver l'ISIN correspondant au ticker
-      const isin = Object.entries(ISIN_TO_TICKER).find(([,t])=>t===q.symbol)?.[0];
-      if(isin) {
-        COURS[isin] = {
-          prix: q.regularMarketPrice,
-          variation: q.regularMarketChangePercent,
-          nom: q.shortName,
-        };
-      }
-    });
-  } catch(e) {
-    console.warn('Yahoo fetch error:', e.message);
-    // Fallback : on garde les cours du JSON si disponibles
+  let fetched = false;
+  for(const makeProxy of proxies) {
+    if(fetched) break;
+    try {
+      const proxyUrl = makeProxy(url);
+      const r = await fetch(proxyUrl, {signal: AbortSignal.timeout(6000)});
+      if(!r.ok) continue;
+      const raw = await r.json();
+      // allorigins encapsule dans {contents:...}, corsproxy.io retourne direct
+      const parsed = raw?.quoteResponse ? raw : (raw?.contents ? JSON.parse(raw.contents) : null);
+      const quotes = parsed?.quoteResponse?.result || [];
+      if(!quotes.length) continue;
+
+      quotes.forEach(q => {
+        const isin = Object.entries(ISIN_TO_TICKER).find(([,t])=>t===q.symbol)?.[0];
+        if(isin) {
+          COURS[isin] = {
+            prix: q.regularMarketPrice,
+            variation: q.regularMarketChangePercent,
+            nom: q.shortName,
+          };
+        }
+      });
+      fetched = true;
+    } catch(e) {
+      console.warn('Proxy tentative échouée:', e.message);
+    }
+  }
+
+  if(!fetched) {
+    // Fallback : utiliser les cours stockés dans le JSON (dernière valeur connue)
+    console.warn('Tous les proxies Yahoo ont échoué — cours du JSON utilisés');
   }
 }
 
