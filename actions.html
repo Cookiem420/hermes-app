@@ -247,7 +247,9 @@ function render(){
     const entries=Object.entries(vals);
     const withAction=entries.filter(([,v])=>v.achat_vente&&v.achat_vente!==null&&v.achat_vente!=='');
     const missingZones=entries.filter(([,v])=>
-      v.quantite>0&&(!(v.zones&&v.zones.basse_min)||!v.risque||!v.categorie)
+      v.quantite>0 && v.budget_cible !== 0 && (  // budget_cible=0 = pas de signal, skip
+        !(v.zones&&v.zones.basse_min)||!v.risque||!v.categorie||v.budget_cible==null
+      )
     );
 
     const s1html=withAction.length===0
@@ -405,6 +407,7 @@ function renderZoneCard(isin,v){
   if(!v.risque) m.push('risque');
   if(!v.categorie) m.push('catégorie');
   if(!v.thematique) m.push('thématique');
+  if(v.budget_cible==null) m.push('budget cible');
   const z=v.zones||{};
   return `
     <div class="zone-card">
@@ -438,6 +441,17 @@ function renderZoneCard(isin,v){
             ${themeSelectHtml('zt-'+isin,'zta-'+isin,v.thematique)}
           </div>
         </div>
+        <div class="fg-row" style="margin-bottom:12px">
+          <div class="fg"><label class="fl">Budget cible (€)</label>
+            <input class="fi" id="zb-${isin}" type="number" step="100"
+              value="${v.budget_cible||''}" placeholder="Ex: 1000">
+            <div style="font-size:10px;color:var(--text3);margin-top:3px">Montant max à investir sur cette valeur</div>
+          </div>
+          <div class="fg"><label class="fl">SL actuel (€)</label>
+            <input class="fi" id="zsl-${isin}" type="number" step="0.01"
+              value="${v.sl_actuel||''}" placeholder="Optionnel">
+          </div>
+        </div>
         <div class="form-actions">
           <button class="btn-valider" onclick="saveZones('${isin}')">💾 Sauvegarder</button>
           <button class="btn-annuler" onclick="toggleZoneForm('zf-${isin}')">Annuler</button>
@@ -459,6 +473,12 @@ async function saveZones(isin){
   v.risque=document.getElementById('zr-'+isin)?.value||v.risque||null;
   v.categorie=document.getElementById('zc-'+isin)?.value||v.categorie||null;
   v.thematique=getTheme('zt-'+isin,'zta-'+isin)||v.thematique||null;
+  const budgetVal=document.getElementById('zb-'+isin)?.value;
+  if(budgetVal!==undefined&&budgetVal!=='') v.budget_cible=parseFloat(budgetVal)||null;
+  const slVal=document.getElementById('zsl-'+isin)?.value;
+  if(slVal!==undefined&&slVal!=='') v.sl_actuel=parseFloat(slVal)||null;
+  // Init learning si absent
+  if(!v.learning) v.learning={rsi_bonus:0,macd_min:0,breakout_bloque:false,cooldown_until:null,refus_consecutifs:0,dernier_motif:null};
   toast('⏳ Sauvegarde…','var(--text3)');
   const ok=await ghPut(TABLE,`📍 Zones ${v.nom||isin}`);
   if(ok){toast(`✅ Zones de ${v.nom||isin} sauvegardées`);setTimeout(render,800);}
