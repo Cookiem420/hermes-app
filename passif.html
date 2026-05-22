@@ -136,7 +136,19 @@ const GH_REPO = 'hermes-data';
 const RAW = `https://raw.githubusercontent.com/${GH_USER}/${GH_REPO}/main/`;
 const EC = {PEA:'#4d9fff',CTO:'#a78bfa','PEA-PME':'#00d68f',AV:'#f0b429',PEE:'#fb923c',Livrets:'#38bdf8',SCPI:'#e879f9',Revolut:'#34d399'};
 const ANA_C = ['#4d9fff','#a78bfa','#00d68f','#f0b429','#fb923c','#38bdf8','#e879f9','#34d399','#ff4d6a'];
-const RISQ_C = {Faible:'#00d68f',Modéré:'#f0b429',Élevé:'#fb923c',Spéculatif:'#ff4d6a'};
+const RISQ_C = {Faible:'#00d68f','Modéré':'#f0b429','Élevé':'#fb923c','Spéculatif':'#ff4d6a'};
+const THEME_C = {
+  Tech:'#4d9fff',Finance:'#a78bfa','Eau & Env.':'#00d68f',Défense:'#fb923c',
+  Global:'#38bdf8',Asie:'#e879f9','Matières 1ères':'#f0b429',Santé:'#ff4d6a',
+  Infrastructure:'#34d399',Diversifié:'#7a8fa8',FCPR:'#c084fc',Immobilier:'#fbbf24',
+  'Crowdfunding Immobilier':'#fbbf24',Autre:'#64748b',
+};
+const CAT_C = {
+  ETF_large:'#4d9fff',ETF_sectoriel:'#38bdf8',Qualite:'#00d68f',Cyclique:'#f0b429',
+  Croissance:'#a78bfa',Speculatif:'#ff4d6a',Fonds_euros:'#34d399',Diversifie:'#7a8fa8',
+  FCPR:'#c084fc',Livret:'#00d68f',Cash:'#64748b',SCPI:'#fbbf24',Crowdfunding:'#fb923c',
+  'Eau & Env.':'#00d68f',
+};
 
 let MAJ=null, MAJ1=null, MAJ_GRAPH=null, TABLE_INFOS=null;
 let chartLine=null, chartDonut=null;
@@ -285,15 +297,27 @@ function buildEnvelopes() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// ANALYSE N3/4/5 depuis table_infos_valeurs.json
+// ANALYSE N3/4/5 — TOUT le patrimoine (cotés + non-cotés)
+// Cotés   → match par ISIN dans table_infos_valeurs
+// Non-cotés → match par nom (AV/PEE/livrets/SCPI/Revolut)
 // ══════════════════════════════════════════════════════════════════
 function buildAnalysis() {
   const infos = TABLE_INFOS?.valeurs || {};
   const risque={}, themes={}, cats={};
-  const allPos = [...(MAJ?.pea_positions||[]), ...(MAJ?.cto_positions||[]), ...(MAJ?.pme_positions||[])];
-  const base = allPos.reduce((s,p)=>s+(p.montant||0),0)||1;
 
-  allPos.forEach(p => {
+  // Index nom→info pour les non-cotés
+  const infoByNom = {};
+  Object.values(infos).forEach(v => {
+    if(v.type === 'non_cote' && v.nom) infoByNom[v.nom.trim()] = v;
+  });
+
+  // ── Positions cotées (PEA/CTO/PME) — match par ISIN ──
+  const allPosCote = [
+    ...(MAJ?.pea_positions||[]),
+    ...(MAJ?.cto_positions||[]),
+    ...(MAJ?.pme_positions||[]),
+  ];
+  allPosCote.forEach(p => {
     const val = p.montant||0;
     if(!val) return;
     const key = (p.isin||'').trim().replace(/\s/g,'').toUpperCase();
@@ -302,6 +326,57 @@ function buildAnalysis() {
     if(info?.thematique) themes[info.thematique] = (themes[info.thematique]||0)+val;
     if(info?.categorie)  cats[info.categorie]    = (cats[info.categorie]||0)+val;
   });
+
+  // ── AV — match par nom ──
+  (MAJ?.av||[]).forEach(f => {
+    const val = f.valeur||0;
+    if(!val) return;
+    const info = infoByNom[f.nom?.trim()];
+    if(info?.risque)     risque[info.risque]     = (risque[info.risque]||0)+val;
+    if(info?.thematique) themes[info.thematique] = (themes[info.thematique]||0)+val;
+    if(info?.categorie)  cats[info.categorie]    = (cats[info.categorie]||0)+val;
+  });
+
+  // ── PEE — match par nom ──
+  (MAJ?.pee||[]).forEach(f => {
+    const val = f.valeur||0;
+    if(!val) return;
+    const info = infoByNom[f.nom?.trim()];
+    if(info?.risque)     risque[info.risque]     = (risque[info.risque]||0)+val;
+    if(info?.thematique) themes[info.thematique] = (themes[info.thematique]||0)+val;
+    if(info?.categorie)  cats[info.categorie]    = (cats[info.categorie]||0)+val;
+  });
+
+  // ── Livrets — match par nom ──
+  (MAJ?.livrets||[]).forEach(f => {
+    const val = f.valeur||0;
+    if(!val) return;
+    const info = infoByNom[f.nom?.trim()];
+    if(info?.risque)     risque[info.risque]     = (risque[info.risque]||0)+val;
+    if(info?.thematique) themes[info.thematique] = (themes[info.thematique]||0)+val;
+    if(info?.categorie)  cats[info.categorie]    = (cats[info.categorie]||0)+val;
+  });
+
+  // ── SCPI ──
+  const scpiVal = typeof MAJ?.scpi === 'number' ? MAJ.scpi : 0;
+  if(scpiVal) {
+    const info = infoByNom['SCPI Corum Origin'];
+    if(info?.risque)     risque[info.risque]     = (risque[info.risque]||0)+scpiVal;
+    if(info?.thematique) themes[info.thematique] = (themes[info.thematique]||0)+scpiVal;
+    if(info?.categorie)  cats[info.categorie]    = (cats[info.categorie]||0)+scpiVal;
+  }
+
+  // ── Revolut ──
+  const revVal = typeof MAJ?.revolut === 'number' ? MAJ.revolut : 0;
+  if(revVal) {
+    const info = infoByNom['Revolut ETF Trading'];
+    if(info?.risque)     risque[info.risque]     = (risque[info.risque]||0)+revVal;
+    if(info?.thematique) themes[info.thematique] = (themes[info.thematique]||0)+revVal;
+    if(info?.categorie)  cats[info.categorie]    = (cats[info.categorie]||0)+revVal;
+  }
+
+  // Base = total patrimoine complet
+  const base = (MAJ?.totaux?.total||0) || 1;
   return {risque, themes, cats, base};
 }
 
@@ -383,7 +458,7 @@ function renderDrill(env) {
       h += `<div class="dr-line clickable-pos" style="${closedStyle}" onclick="openPanel('${l.isin}')" title="Détails & édition">
         <div class="dr-name">
           <div class="dr-nm">${l.nom}${l.isin?`<span style="color:var(--text3);font-family:var(--mono);font-size:9px;margin-left:6px">${l.isin}</span>`:''}${l.closed?`<span class="badge-new" style="background:var(--red2);color:var(--red)">CLÔTURÉ</span>`:''}</div>
-          <div class="dr-sub">${l.quantite} titres · PRU ${fmt(l.pru,2)} €</div>
+          <div class="dr-sub">${l.quantite} titres · PRU ${fmt(l.pru,2)} €${l.sl_actuel?` · <span style="color:var(--red);font-family:var(--mono)">SL ${fmt(l.sl_actuel,2)} €</span>`:''}</div>
         </div>
         <div class="dr-val">${fmt(l.val)} €</div>
         <div class="dr-pnl ${pc(l.pnlEur)}">
@@ -482,7 +557,12 @@ function renderBars(data, base, colorMap) {
     </div>`;
   }).join('');
   if(nonClass>50&&pctCovered<99)
-    html+=`<div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--text3);border-top:1px solid var(--border);padding-top:8px">⚠ ${(100-pctCovered).toFixed(0)}% non classifié (${fmt(nonClass)} €) — à renseigner dans Actions</div>`;
+    html+=`<div style="margin-top:8px;font-family:var(--mono);font-size:9px;color:var(--text3);border-top:1px solid var(--border);padding-top:8px">⚠ ${(100-pctCovered).toFixed(0)}% non classifié (${fmt(nonClass)} €)</div>`;
+  // Total section
+  html+=`<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border2);display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px">
+    <span style="color:var(--text3)">TOTAL CLASSIFIÉ</span>
+    <span style="color:var(--text);font-weight:600">${fmt(covered)} €</span>
+  </div>`;
   return html;
 }
 
@@ -554,8 +634,8 @@ function render() {
     <div class="sec"><div class="sec-t">Niveaux 3/4/5 — Risque · Thématique · Catégorie</div><div class="sec-l"></div></div>
     <div class="ana-grid">
       <div class="ana-card"><div class="ana-lbl">Niveau 3 — Risque</div>${renderBars(risque,base,RISQ_C)}</div>
-      <div class="ana-card"><div class="ana-lbl">Niveau 4 — Thématiques</div>${renderBars(themes,base,null)}</div>
-      <div class="ana-card"><div class="ana-lbl">Niveau 5 — Catégories</div>${renderBars(cats,base,null)}</div>
+      <div class="ana-card"><div class="ana-lbl">Niveau 4 — Thématiques</div>${renderBars(themes,base,THEME_C)}</div>
+      <div class="ana-card"><div class="ana-lbl">Niveau 5 — Catégories</div>${renderBars(cats,base,CAT_C)}</div>
     </div>
   `;
 
@@ -617,6 +697,18 @@ function openPanel(isin) {
         ${THEMES_P1.map(t=>`<option value="${t}" ${t===(info.thematique||'')?'selected':''}>${t}</option>`).join('')}
       </select></div>
 
+    <div class="pp-sec">Stop Loss</div>
+    <div class="pp-grid">
+      <div class="pp-fg"><label class="pp-fl">SL actuel (€)</label>
+        <input class="pp-fi" id="pp-sl" type="number" step="0.01"
+          value="${info.sl_actuel||''}" placeholder="Optionnel"></div>
+      <div class="pp-fg" style="justify-content:flex-end;padding-top:16px">
+        ${info.sl_actuel&&info.zones?.basse_min
+          ? `<span style="font-family:var(--mono);font-size:9px;color:var(--text3)">Marge SL : <span class="${pc((info.sl_actuel-info.zones.basse_min)/info.zones.basse_min*100)}">${(((info.sl_actuel||0)-(info.zones?.basse_min||0))/(info.zones?.basse_min||1)*100).toFixed(1)}% vs basse_min</span></span>`
+          : '<span style="font-family:var(--mono);font-size:9px;color:var(--text3)">—</span>'}
+      </div>
+    </div>
+
     <div class="pp-sec">Description / Thèse d'investissement</div>
     <div class="pp-fg">
       <textarea class="pp-fi" id="pp-desc" rows="4" placeholder="Notes, thèse, catalyseurs…" style="resize:vertical">${info.description||''}</textarea>
@@ -653,6 +745,8 @@ async function savePanel(isin){
   v.categorie=document.getElementById('pp-cat')?.value||v.categorie||null;
   v.thematique=document.getElementById('pp-theme')?.value||v.thematique||null;
   v.description=document.getElementById('pp-desc')?.value?.trim()||v.description||null;
+  const slVal=document.getElementById('pp-sl')?.value;
+  v.sl_actuel=slVal?parseFloat(slVal):v.sl_actuel||null;
   ppToast('⏳ Sauvegarde…','var(--text3)');
   const url='https://api.github.com/repos/Cookiem420/hermes-data/contents/table_infos_valeurs.json';
   async function getSha(){try{const r=await fetch(url,{headers:{Authorization:`token ${token}`}});if(r.ok){const j=await r.json();return j.sha;}}catch(e){}return null;}
