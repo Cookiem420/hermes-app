@@ -79,6 +79,40 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .leg{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px}
 .leg-i{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)}
 .leg-d{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* PANEL DETAIL POSITION */
+.pos-panel{display:none;position:fixed;top:0;right:0;width:420px;height:100vh;
+  background:var(--bg2);border-left:1px solid var(--border2);z-index:200;
+  overflow-y:auto;box-shadow:-8px 0 32px rgba(0,0,0,.5)}
+.pos-panel.open{display:flex;flex-direction:column}
+.pp-hdr{padding:20px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.pp-close{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0;line-height:1}
+.pp-close:hover{color:var(--text)}
+.pp-nom{font-weight:600;font-size:14px;margin-bottom:3px}
+.pp-isin{font-family:var(--mono);font-size:9px;color:var(--text3)}
+.pp-body{padding:16px 20px;flex:1}
+.pp-sec{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin:16px 0 8px}
+.pp-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.pp-row:last-child{border-bottom:none}
+.pp-key{font-family:var(--mono);font-size:10px;color:var(--text2)}
+.pp-val{font-family:var(--mono);font-size:11px;font-weight:600}
+.pp-fi{background:var(--bg4);border:1px solid var(--border2);border-radius:5px;padding:5px 9px;
+  color:var(--text);font-family:var(--mono);font-size:11px;outline:none;width:100%}
+.pp-fi:focus{border-color:var(--blue)}
+.pp-select{appearance:none}
+.pp-fg{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.pp-fl{font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.pp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pp-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.pp-btn-save{background:var(--green);color:var(--bg);border:none;border-radius:5px;
+  padding:9px 18px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;width:100%;margin-top:12px}
+.pp-btn-save:hover{opacity:.9}
+.pp-toast{font-family:var(--mono);font-size:10px;text-align:center;padding:6px;border-radius:4px;margin-top:8px;display:none}
+.pp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199}
+.pp-overlay.open{display:block}
+.dr-line.clickable-pos{cursor:pointer}
+.dr-line.clickable-pos:hover .dr-nm{color:var(--blue)}
+
 .empty-screen{display:flex;align-items:center;justify-content:center;height:75vh;flex-direction:column;gap:14px;text-align:center}
 .empty-icon{font-size:44px}
 .empty-ttl{font-family:var(--mono);font-size:13px;color:var(--text)}
@@ -86,6 +120,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 </style>
 </head>
 <body>
+
+<div class="pp-overlay" id="pp-overlay" onclick="closePanel()"></div>
+<div class="pos-panel" id="pos-panel">
+  <div class="pp-hdr">
+    <div><div class="pp-nom" id="pp-nom">—</div><div class="pp-isin" id="pp-isin">—</div></div>
+    <button class="pp-close" onclick="closePanel()">✕</button>
+  </div>
+  <div class="pp-body" id="pp-body"></div>
+</div>
 <div class="page" id="root"><div class="empty-screen"><div class="empty-icon">⏳</div><div class="empty-ttl">Chargement...</div></div></div>
 <script>
 const GH_USER = 'Cookiem420';
@@ -337,7 +380,7 @@ function renderDrill(env) {
         <div class="dr-dlt">${dltHtml(l.delta, l.deltaPct, l.isNew)}</div>
       </div>`;
     } else if(l.type==='pos') {
-      h += `<div class="dr-line" style="${closedStyle}">
+      h += `<div class="dr-line clickable-pos" style="${closedStyle}" onclick="openPanel('${l.isin}')" title="Détails & édition">
         <div class="dr-name">
           <div class="dr-nm">${l.nom}${l.isin?`<span style="color:var(--text3);font-family:var(--mono);font-size:9px;margin-left:6px">${l.isin}</span>`:''}${l.closed?`<span class="badge-new" style="background:var(--red2);color:var(--red)">CLÔTURÉ</span>`:''}</div>
           <div class="dr-sub">${l.quantite} titres · PRU ${fmt(l.pru,2)} €</div>
@@ -518,6 +561,115 @@ function render() {
 
   initChartLine();
   initChartDonut(envs, T.total);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PANEL DETAIL POSITION
+// ══════════════════════════════════════════════════════════════════
+const RISQUES_P1=['Faible','Modéré','Élevé','Spéculatif'];
+const CATS_P1=['ETF_large','ETF_sectoriel','Qualite','Cyclique','Croissance','Speculatif'];
+const THEMES_P1=['Tech','Finance','Eau & Env.','Défense','Global','Asie','Matières 1ères','Santé','Infrastructure','Diversifié','Autre'];
+
+function openPanel(isin) {
+  const isinKey=(isin||'').trim().replace(/\s/g,'').toUpperCase();
+  const info=(TABLE_INFOS?.valeurs||{})[isinKey]||{};
+  const allPos=[...(MAJ?.pea_positions||[]),...(MAJ?.cto_positions||[]),...(MAJ?.pme_positions||[])];
+  const pos=allPos.find(p=>(p.isin||'').trim().toUpperCase()===isinKey)||{};
+  const z=info.zones||{};
+
+  document.getElementById('pp-nom').textContent=info.nom||pos.nom||isin;
+  document.getElementById('pp-isin').textContent=isin;
+
+  const pnlEur=(pos.montant||0)-((pos.pru||0)*(pos.quantite||0));
+  const pnlPct=(pos.pru&&pos.quantite)?pnlEur/((pos.pru||0)*(pos.quantite||0))*100:null;
+
+  document.getElementById('pp-body').innerHTML=`
+    <div class="pp-sec">Position</div>
+    <div class="pp-row"><span class="pp-key">Quantité</span><span class="pp-val">${pos.quantite||'—'} titres</span></div>
+    <div class="pp-row"><span class="pp-key">PRU</span><span class="pp-val">${pos.pru?fmt(pos.pru,2)+' €':'—'}</span></div>
+    <div class="pp-row"><span class="pp-key">Valeur actuelle</span><span class="pp-val">${pos.montant?fmt(pos.montant)+' €':'—'}</span></div>
+    <div class="pp-row"><span class="pp-key">P&L</span><span class="pp-val ${pnlPct!=null?pc(pnlPct):''}">${pnlEur!=null?(pnlEur>=0?'+':'')+fmt(pnlEur)+' €':'—'}${pnlPct!=null?' ('+fmtPct(pnlPct)+')':''}</span></div>
+    <div class="pp-row"><span class="pp-key">Enveloppe</span><span class="pp-val">${info.enveloppe||pos.enveloppe||'—'}</span></div>
+    <div class="pp-row"><span class="pp-key">État moteur</span><span class="pp-val">${info.etat_actuel||'—'}</span></div>
+
+    <div class="pp-sec">Zones de cours (€)</div>
+    <div class="pp-grid3">
+      <div class="pp-fg"><label class="pp-fl">Basse min</label><input class="pp-fi" id="pp-z1" type="number" step="0.01" value="${z.basse_min||''}"></div>
+      <div class="pp-fg"><label class="pp-fl">Basse max</label><input class="pp-fi" id="pp-z2" type="number" step="0.01" value="${z.basse_max||''}"></div>
+      <div class="pp-fg"><label class="pp-fl">Surveillance</label><input class="pp-fi" id="pp-z3" type="number" step="0.01" value="${z.surveillance||''}"></div>
+    </div>
+    <div class="pp-grid">
+      <div class="pp-fg"><label class="pp-fl">Complément</label><input class="pp-fi" id="pp-z4" type="number" step="0.01" value="${z.complement||''}"></div>
+      <div class="pp-fg"><label class="pp-fl">Breakout</label><input class="pp-fi" id="pp-z5" type="number" step="0.01" value="${z.breakout||''}"></div>
+    </div>
+
+    <div class="pp-sec">Classification</div>
+    <div class="pp-fg"><label class="pp-fl">Risque</label>
+      <select class="pp-fi pp-select" id="pp-risque"><option value="">— Sélectionner</option>
+        ${RISQUES_P1.map(r=>`<option value="${r}" ${r===(info.risque||'')?'selected':''}>${r}</option>`).join('')}
+      </select></div>
+    <div class="pp-fg"><label class="pp-fl">Catégorie</label>
+      <select class="pp-fi pp-select" id="pp-cat"><option value="">— Sélectionner</option>
+        ${CATS_P1.map(c=>`<option value="${c}" ${c===(info.categorie||'')?'selected':''}>${c}</option>`).join('')}
+      </select></div>
+    <div class="pp-fg"><label class="pp-fl">Thématique</label>
+      <select class="pp-fi pp-select" id="pp-theme"><option value="">— Sélectionner</option>
+        ${THEMES_P1.map(t=>`<option value="${t}" ${t===(info.thematique||'')?'selected':''}>${t}</option>`).join('')}
+      </select></div>
+
+    <div class="pp-sec">Description / Thèse d'investissement</div>
+    <div class="pp-fg">
+      <textarea class="pp-fi" id="pp-desc" rows="4" placeholder="Notes, thèse, catalyseurs…" style="resize:vertical">${info.description||''}</textarea>
+    </div>
+
+    <button class="pp-btn-save" onclick="savePanel('${isin}')">💾 Sauvegarder</button>
+    <div class="pp-toast" id="pp-toast"></div>
+  `;
+
+  document.getElementById('pos-panel').classList.add('open');
+  document.getElementById('pp-overlay').classList.add('open');
+}
+
+function closePanel(){
+  document.getElementById('pos-panel').classList.remove('open');
+  document.getElementById('pp-overlay').classList.remove('open');
+}
+
+async function savePanel(isin){
+  const token=sessionStorage.getItem('hermes_gh_token')||localStorage.getItem('hermes_gh_token')||'';
+  if(!token){ppToast('❌ Token absent','var(--red)');return;}
+  const isinKey=(isin||'').trim().replace(/\s/g,'').toUpperCase();
+  if(!TABLE_INFOS) TABLE_INFOS={meta:{},valeurs:{}};
+  if(!TABLE_INFOS.valeurs[isinKey]) TABLE_INFOS.valeurs[isinKey]={isin:isinKey};
+  const v=TABLE_INFOS.valeurs[isinKey];
+  v.zones={
+    basse_min:parseFloat(document.getElementById('pp-z1')?.value)||0,
+    basse_max:parseFloat(document.getElementById('pp-z2')?.value)||0,
+    surveillance:parseFloat(document.getElementById('pp-z3')?.value)||0,
+    complement:parseFloat(document.getElementById('pp-z4')?.value)||0,
+    breakout:parseFloat(document.getElementById('pp-z5')?.value)||0,
+  };
+  v.risque=document.getElementById('pp-risque')?.value||v.risque||null;
+  v.categorie=document.getElementById('pp-cat')?.value||v.categorie||null;
+  v.thematique=document.getElementById('pp-theme')?.value||v.thematique||null;
+  v.description=document.getElementById('pp-desc')?.value?.trim()||v.description||null;
+  ppToast('⏳ Sauvegarde…','var(--text3)');
+  const url='https://api.github.com/repos/Cookiem420/hermes-data/contents/table_infos_valeurs.json';
+  async function getSha(){try{const r=await fetch(url,{headers:{Authorization:`token ${token}`}});if(r.ok){const j=await r.json();return j.sha;}}catch(e){}return null;}
+  const sha=await getSha();
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(TABLE_INFOS,null,2))));
+  const body={message:`📍 Infos ${v.nom||isin}`,content};
+  if(sha) body.sha=sha;
+  let r=await fetch(url,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r.status===409){const sha2=await getSha();if(sha2){body.sha=sha2;r=await fetch(url,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});}}
+  r.ok?ppToast('✅ Sauvegardé','var(--green)'):ppToast('❌ Erreur '+r.status,'var(--red)');
+}
+
+function ppToast(msg,color='var(--green)'){
+  const el=document.getElementById('pp-toast');
+  if(!el)return;
+  el.textContent=msg;el.style.color=color;el.style.display='block';
+  setTimeout(()=>{el.style.display='none';},2500);
 }
 
 load();

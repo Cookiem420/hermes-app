@@ -201,25 +201,61 @@ async function fetchCours(entries){
   const tickers=entries.map(([isin])=>ISIN_TO_TICKER[isin]).filter(t=>t&&t.length>0);
   if(!tickers.length) return;
   const symbols=[...new Set(tickers)].join(',');
-  const url=`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChangePercent,shortName`;
+  // Essai en batch sur plusieurs URLs Yahoo + proxies
+  const yahooUrls=[
+    `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChangePercent`,
+    `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChangePercent`,
+  ];
   const proxies=[
     s=>`https://corsproxy.io/?${encodeURIComponent(s)}`,
     s=>`https://api.allorigins.win/get?url=${encodeURIComponent(s)}`,
+    s=>`https://corsproxy.io/?url=${encodeURIComponent(s)}`,
+    s=>`https://thingproxy.freeboard.io/fetch/${s}`,
   ];
-  for(const mkProxy of proxies){
+  function parseQuotes(raw){
     try{
-      const r=await fetch(mkProxy(url),{signal:AbortSignal.timeout(6000)});
-      if(!r.ok) continue;
-      const raw=await r.json();
-      const parsed=raw?.quoteResponse?raw:(raw?.contents?JSON.parse(raw.contents):null);
-      const quotes=parsed?.quoteResponse?.result||[];
-      if(!quotes.length) continue;
-      quotes.forEach(q=>{
-        const isin=Object.entries(ISIN_TO_TICKER).find(([,t])=>t===q.symbol)?.[0];
-        if(isin) COURS[isin]={prix:q.regularMarketPrice,variation:q.regularMarketChangePercent};
-      });
-      break;
-    }catch(e){console.warn('proxy fail:',e.message);}
+      const parsed=raw?.quoteResponse?raw:(raw?.contents?JSON.parse(raw.contents):raw);
+      return parsed?.quoteResponse?.result||[];
+    }catch(e){return [];}
+  }
+  let success=false;
+  for(const baseUrl of yahooUrls){
+    if(success) break;
+    for(const mkProxy of proxies){
+      try{
+        const r=await fetch(mkProxy(baseUrl),{signal:AbortSignal.timeout(7000)});
+        if(!r.ok) continue;
+        const raw=await r.json();
+        const quotes=parseQuotes(raw);
+        if(!quotes.length) continue;
+        quotes.forEach(q=>{
+          const isin=Object.entries(ISIN_TO_TICKER).find(([,t])=>t===q.symbol)?.[0];
+          if(isin) COURS[isin]={prix:q.regularMarketPrice,variation:q.regularMarketChangePercent};
+        });
+        console.log('[P3] cours ok via proxy, '+quotes.length+' quotes');
+        success=true;break;
+      }catch(e){console.warn('proxy fail:',e.message);}
+    }
+  }
+  // Fallback ticker par ticker si batch échoue
+  if(!success){
+    console.warn('[P3] batch failed, trying ticker by ticker');
+    const tickerList=[...new Set(tickers)];
+    for(const ticker of tickerList){
+      const isin=Object.entries(ISIN_TO_TICKER).find(([,t])=>t===ticker)?.[0];
+      if(!isin) continue;
+      const u=`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ticker}&fields=regularMarketPrice,regularMarketChangePercent`;
+      for(const mkProxy of proxies.slice(0,2)){
+        try{
+          const r=await fetch(mkProxy(u),{signal:AbortSignal.timeout(5000)});
+          if(!r.ok) continue;
+          const raw=await r.json();
+          const quotes=parseQuotes(raw);
+          if(quotes[0]) COURS[isin]={prix:quotes[0].regularMarketPrice,variation:quotes[0].regularMarketChangePercent};
+          break;
+        }catch(e){}
+      }
+    }
   }
 }
 

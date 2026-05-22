@@ -192,18 +192,25 @@ async function ghPut(data,message){
   const token=getToken();
   if(!token){toast('❌ Token absent — recharger la page','var(--red)');return false;}
   const url=GH_API+'table_infos_valeurs.json';
-  let sha=null;
-  try{
-    const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});
-    if(gr.ok){const j=await gr.json();sha=j.sha;}
-  }catch(e){}
+  async function getSha(){
+    try{const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});
+    if(gr.ok){const j=await gr.json();return j.sha;}}catch(e){}
+    return null;
+  }
+  const sha=await getSha();
   const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
   const body={message,content};
   if(sha) body.sha=sha;
-  const r=await fetch(url,{method:'PUT',
+  let r=await fetch(url,{method:'PUT',
     headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
     body:JSON.stringify(body)});
-  if(!r.ok) console.error('ghPut error',r.status, await r.text().catch(()=>''));
+  if(r.status===409){
+    const sha2=await getSha();
+    if(sha2){body.sha=sha2;r=await fetch(url,{method:'PUT',
+      headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify(body)});}
+  }
+  if(!r.ok){const txt=await r.text().catch(()=>'');console.error('ghPut error',r.status,txt);}
   return r.ok;
 }
 
