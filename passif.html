@@ -630,9 +630,40 @@ function render() {
   const prevTotal= MAJ1?.totaux?.total || T.total;
   const delta    = T.total - prevTotal;
   const deltaPct = prevTotal>0 ? delta/prevTotal*100 : 0;
-  const cashTot  = (MAJ.cash?.pea||0)+(MAJ.cash?.cto||0)+(MAJ.cash?.pme||0);
-  const invCote  = (T.pea||0)+(T.cto||0)+(T.pme||0);
-  const garanti  = (T.av||0)+(T.pee||0)+(T.livrets||0)+(T.scpi||0);
+  const cashTot  = (MAJ.cash?.pea||0)+(MAJ.cash?.cto||0)+(MAJ.cash?.pme||0)+(MAJ.cash?.cc||0);
+  const total    = T.total || 0;
+
+  // Calcul des 4 buckets depuis table_infos_valeurs
+  const COTE_CATS     = new Set(['ETF_large','ETF_sectoriel','Qualite','Cyclique','Croissance','Speculatif']);
+  const NON_COTE_CATS = new Set(['FCPR','Crowdfunding','OPCVM']);
+  const GARANTI_CATS  = new Set(['Fonds_euros','Livret','SCPI']);
+
+  // Valorisations depuis table_infos (si disponibles) ou fallback totaux maj.json
+  let invCote=0, nonCote=0, garanti=0;
+  if(TABLE?.valeurs) {
+    Object.values(TABLE.valeurs).forEach(v => {
+      const cat = v.categorie;
+      const val = v.derniere_valorisation || 0;
+      if(COTE_CATS.has(cat))     invCote += val;
+      else if(NON_COTE_CATS.has(cat)) nonCote += val;
+      else if(GARANTI_CATS.has(cat))  garanti += val;
+    });
+    // Compléter garanti avec scpi et livrets depuis maj si pas dans table
+    if(garanti === 0) garanti = (T.av||0)+(T.pee||0)+(T.livrets||0)+(T.scpi||0);
+  } else {
+    // Fallback totaux maj.json
+    const allPos = [...(MAJ.pea_positions||[]),...(MAJ.cto_positions||[]),...(MAJ.pme_positions||[])];
+    invCote = allPos.reduce((s,p)=>s+(p.montant||0),0)+(MAJ.cash?.pea||0)+(MAJ.cash?.cto||0)+(MAJ.cash?.pme||0);
+    nonCote = (T.av||0)+(T.pee||0);
+    garanti = (T.livrets||0)+(T.scpi||0);
+  }
+  // Ajouter Revolut ETF dans coté
+  invCote += (T.revolut||0);
+  // % sur total
+  const pctCote    = total ? Math.round(invCote/total*100) : 0;
+  const pctNonCote = total ? Math.round(nonCote/total*100) : 0;
+  const pctGaranti = total ? Math.round(garanti/total*100) : 0;
+  const pctCash    = total ? Math.round(cashTot/total*100) : 0;
   const snaps    = MAJ_GRAPH?.snapshots||[];
   const nSnaps   = snaps.length;
   const {risque,themes,cats,base} = buildAnalysis();
@@ -655,11 +686,30 @@ function render() {
     </div>
 
     <div class="kpis">
-      <div class="kpi g"><div class="kpi-lbl">Investi coté</div><div class="kpi-val">${fmt(invCote)} €</div><div class="kpi-sub">PEA · CTO · PME</div></div>
-      <div class="kpi o"><div class="kpi-lbl">Garanti & non coté</div><div class="kpi-val">${fmt(garanti)} €</div><div class="kpi-sub">AV · PEE · Livrets · SCPI</div></div>
-      <div class="kpi b"><div class="kpi-lbl">Cash disponible</div><div class="kpi-val">${fmt(cashTot)} €</div><div class="kpi-sub">Espèces PEA+CTO+PME</div></div>
-      <div class="kpi"><div class="kpi-lbl">Total</div><div class="kpi-val">${fmt(T.total)} €</div>
-        <div class="kpi-sub ${pc(delta)}">${delta>=0?'+':''}${fmt(delta)} € vs MAJ préc.</div></div>
+      <div class="kpi g">
+        <div class="kpi-lbl">Actif coté</div>
+        <div class="kpi-val">${fmt(invCote)} €</div>
+        <div class="kpi-sub">PEA · CTO · PME · Revolut</div>
+        <div class="kpi-pct" style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:4px">${pctCote}%</div>
+      </div>
+      <div class="kpi o">
+        <div class="kpi-lbl">Actif non coté</div>
+        <div class="kpi-val">${fmt(nonCote)} €</div>
+        <div class="kpi-sub">AV UC · PEE · FCPR · Crowdfunding</div>
+        <div class="kpi-pct" style="font-family:var(--mono);font-size:10px;color:var(--gold);margin-top:4px">${pctNonCote}%</div>
+      </div>
+      <div class="kpi b">
+        <div class="kpi-lbl">Garanti</div>
+        <div class="kpi-val">${fmt(garanti)} €</div>
+        <div class="kpi-sub">Fonds € · Livrets · SCPI</div>
+        <div class="kpi-pct" style="font-family:var(--mono);font-size:10px;color:var(--blue);margin-top:4px">${pctGaranti}%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">Cash</div>
+        <div class="kpi-val">${fmt(cashTot)} €</div>
+        <div class="kpi-sub">PEA · PME · CTO · CC</div>
+        <div class="kpi-pct" style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:4px">${pctCash}%</div>
+      </div>
     </div>
 
     <div class="sec"><div class="sec-t">Niveau 1 — Enveloppes</div><div class="sec-l"></div></div>
