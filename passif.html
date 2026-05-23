@@ -640,8 +640,8 @@ function render() {
 
   // Construire index nom→categorie depuis table_infos
   const nomToCat = {};
-  if(TABLE?.valeurs) {
-    Object.values(TABLE.valeurs).forEach(v => {
+  if(TABLE_INFOS?.valeurs) {
+    Object.values(TABLE_INFOS.valeurs).forEach(v => {
       if(v.nom) nomToCat[v.nom.toLowerCase().trim()] = v.categorie;
     });
   }
@@ -652,7 +652,7 @@ function render() {
   let invCote = (T.revolut||0);
   let nonCote = 0;
   allPos.forEach(p => {
-    const cat = getCat(p.nom) || (TABLE?.valeurs?.[p.isin]?.categorie);
+    const cat = getCat(p.nom) || (TABLE_INFOS?.valeurs?.[p.isin]?.categorie);
     const val = p.montant||0;
     if(COTE_CATS.has(cat))      invCote += val;
     else if(NON_COTE_CATS.has(cat)) nonCote += val;
