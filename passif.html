@@ -285,9 +285,18 @@ function buildEnvelopes() {
       const isNew  = !prev;
       const delta  = prev ? (p.montant||0) - (prev.montant||0) : null;
       const deltaPct = prev && prev.montant > 0 ? delta/prev.montant*100 : null;
+      // Crowdfunding : calculer intérêts courus depuis table_infos
+      const tivEntry = (TABLE_INFOS?.valeurs||{})[isinKey];
+      let interetsCours = 0;
+      let montantTotal = p.montant||0;
+      if(tivEntry?.categorie === 'Crowdfunding' && tivEntry?.taux_interet && tivEntry?.date_debut && tivEntry?.montant_investi) {
+        const jours = Math.floor((Date.now() - new Date(tivEntry.date_debut).getTime()) / 86400000);
+        interetsCours = Math.round(tivEntry.montant_investi * tivEntry.taux_interet * jours / 365 * 100) / 100;
+        montantTotal = tivEntry.montant_investi + interetsCours;
+      }
       lines.push({type:'pos', nom:p.nom, isin:p.isin,
-        val:p.montant||0, pnlEur, pnlPct, quantite:p.quantite, pru:p.pru,
-        delta, deltaPct, isNew});
+        val:montantTotal, pnlEur:interetsCours||pnlEur, pnlPct, quantite:p.quantite, pru:p.pru,
+        delta, deltaPct, isNew, interetsCours, sl_actuel: tivEntry?.sl_actuel});
     });
     return lines;
   }
@@ -528,7 +537,10 @@ function renderDrill(env) {
       h += `<div class="dr-line clickable-pos" style="${closedStyle}" onclick="openPanel('${l.isin}')" title="Détails & édition">
         <div class="dr-name">
           <div class="dr-nm">${l.nom}${l.isin?`<span style="color:var(--text3);font-family:var(--mono);font-size:9px;margin-left:6px">${l.isin}</span>`:''}${l.closed?`<span class="badge-new" style="background:var(--red2);color:var(--red)">CLÔTURÉ</span>`:''}</div>
-          <div class="dr-sub">${l.quantite} titres · PRU ${fmt(l.pru,2)} €${l.sl_actuel?` · <span style="color:var(--red);font-family:var(--mono)">SL ${fmt(l.sl_actuel,2)} €</span>`:''}</div>
+          <div class="dr-sub">${l.interetsCours!=null && l.interetsCours>0
+            ? `<span style="color:var(--green);font-family:var(--mono)">+${fmt(l.interetsCours,2)} € intérêts courus</span>`
+            : `${l.quantite} titres · PRU ${fmt(l.pru,2)} €${l.sl_actuel?` · <span style="color:var(--red);font-family:var(--mono)">SL ${fmt(l.sl_actuel,2)} €</span>`:''}`
+          }</div>
           ${metaBadges(l.isin, l.nom)}
         </div>
         <div class="dr-val">${fmt(l.val)} €</div>

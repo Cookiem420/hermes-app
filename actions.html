@@ -453,6 +453,9 @@ function renderZoneCard(isin,v){
   if(!v.categorie) m.push('catégorie');
   if(!v.thematique) m.push('thématique');
   if(v.budget_cible==null) m.push('budget cible');
+  const isCrowd = v.categorie === 'Crowdfunding';
+  if(isCrowd && !v.taux_interet) m.push('taux intérêt');
+  if(isCrowd && !v.date_debut) m.push('date début');
   const z=v.zones||{};
   return `
     <div class="zone-card">
@@ -497,6 +500,25 @@ function renderZoneCard(isin,v){
               value="${v.sl_actuel||''}" placeholder="Optionnel">
           </div>
         </div>
+        \${v.categorie==='Crowdfunding'||document.getElementById('zc-${isin}')?.value==='Crowdfunding'?`
+        <div style="background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.3);border-radius:6px;padding:12px;margin-bottom:12px">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:1px;margin-bottom:10px">📈 CROWDFUNDING IMMOBILIER</div>
+          <div class="fg-row">
+            <div class="fg"><label class="fl">Montant investi (€)</label>
+              <input class="fi" id="zmi-${isin}" type="number" step="100"
+                value="\${v.montant_investi||1000}" placeholder="Ex: 1000">
+            </div>
+            <div class="fg"><label class="fl">Taux annuel (ex: 0.105)</label>
+              <input class="fi" id="zti-${isin}" type="number" step="0.001"
+                value="\${v.taux_interet||''}" placeholder="Ex: 0.105 pour 10.5%">
+            </div>
+            <div class="fg"><label class="fl">Date de début</label>
+              <input class="fi" id="zdd-${isin}" type="date"
+                value="\${v.date_debut||''}">
+            </div>
+          </div>
+        </div>
+        `:''}
         <div class="form-actions">
           <button class="btn-valider" onclick="saveZones('${isin}')">💾 Sauvegarder</button>
           <button class="btn-annuler" onclick="toggleZoneForm('zf-${isin}')">Annuler</button>
@@ -522,6 +544,13 @@ async function saveZones(isin){
   if(budgetVal!==undefined&&budgetVal!=='') v.budget_cible=parseFloat(budgetVal)||null;
   const slVal=document.getElementById('zsl-'+isin)?.value;
   if(slVal!==undefined&&slVal!=='') v.sl_actuel=parseFloat(slVal)||null;
+  // Crowdfunding fields
+  const miVal=document.getElementById('zmi-'+isin)?.value;
+  const tiVal=document.getElementById('zti-'+isin)?.value;
+  const ddVal=document.getElementById('zdd-'+isin)?.value;
+  if(miVal!==undefined&&miVal!=='') v.montant_investi=parseFloat(miVal)||null;
+  if(tiVal!==undefined&&tiVal!=='') v.taux_interet=parseFloat(tiVal)||null;
+  if(ddVal!==undefined&&ddVal!=='') v.date_debut=ddVal||null;
   // Init learning si absent
   if(!v.learning) v.learning={rsi_bonus:0,macd_min:0,breakout_bloque:false,cooldown_until:null,refus_consecutifs:0,dernier_motif:null};
   toast('⏳ Sauvegarde…','var(--text3)');
