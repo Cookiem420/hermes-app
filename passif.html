@@ -335,7 +335,19 @@ function buildEnvelopes() {
       lines: buildCoteLines(MAJ.pea_positions||[], prev_pea, cash.pea||0)},
     {key:'CTO',    nom:'CTO',          tot:T.cto,     prev:T1.cto||0,
       lines: buildCoteLines(MAJ.cto_positions||[], prev_cto, cash.cto||0)},
-    {key:'PEA-PME',nom:'PEA-PME',      tot:T.pme,     prev:T1.pme||0,
+    {key:'PEA-PME',nom:'PEA-PME',      tot:(()=>{
+        // Ajouter intérêts Crowdfunding au total PEA-PME
+        const tiv=TABLE_INFOS?.valeurs||{};
+        let interets=0;
+        (MAJ.pme_positions||[]).forEach(p=>{
+          const e=tiv[(p.isin||'').trim().toUpperCase()];
+          if(e?.categorie==='Crowdfunding'&&e?.taux_interet&&e?.date_debut&&e?.montant_investi){
+            const j=Math.floor((Date.now()-new Date(e.date_debut).getTime())/86400000);
+            interets+=e.montant_investi*e.taux_interet*j/365;
+          }
+        });
+        return (T.pme||0)+Math.round(interets*100)/100;
+      })(),     prev:T1.pme||0,
       lines: buildCoteLines(MAJ.pme_positions||[], prev_pme, cash.pme||0)},
     {key:'AV',     nom:'Ass. Vie',     tot:T.av,      prev:T1.av||0,
       lines: buildDetailLines(MAJ.av||[], prev_av)},
@@ -705,7 +717,14 @@ function render() {
   let nonCote = 0;
   allPos.forEach(p => {
     const cat = getCat(p.nom) || (TABLE_INFOS?.valeurs?.[p.isin]?.categorie);
-    const val = p.montant||0;
+    const isinK = (p.isin||'').trim().toUpperCase();
+    const e = TABLE_INFOS?.valeurs?.[isinK];
+    // Pour Crowdfunding : utiliser capital + intérêts
+    let val = p.montant||0;
+    if(e?.categorie==='Crowdfunding'&&e?.taux_interet&&e?.date_debut&&e?.montant_investi){
+      const j=Math.floor((Date.now()-new Date(e.date_debut).getTime())/86400000);
+      val=e.montant_investi+Math.round(e.montant_investi*e.taux_interet*j/365*100)/100;
+    }
     if(COTE_CATS.has(cat))      invCote += val;
     else if(NON_COTE_CATS.has(cat)) nonCote += val;
     // si catégorie inconnue → coté par défaut (PEA/CTO/PME)
