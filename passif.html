@@ -548,13 +548,20 @@ function initChartLine() {
   const keys=[{k:'pea',l:'PEA'},{k:'cto',l:'CTO'},{k:'pme',l:'PEA-PME'},{k:'av',l:'AV'},
     {k:'pee',l:'PEE'},{k:'livrets',l:'Livrets'},{k:'scpi',l:'SCPI'},{k:'revolut',l:'Revolut'}]
     .filter(d=>snaps.some(s=>(s.totaux?.[d.k]||0)>0));
+  const totalDataset = {
+    label:'Total patrimoine',
+    data:snaps.map(s=>s.totaux?.total||0),
+    borderColor:'#f0b429',backgroundColor:'#f0b42915',
+    fill:false,tension:.3,pointRadius:snaps.length>10?3:5,borderWidth:3,
+    borderDash:[],order:0,
+  };
   chartLine=new Chart(canvas,{
     type:'line',
-    data:{labels,datasets:keys.map(d=>({
+    data:{labels,datasets:[totalDataset,...keys.map(d=>({
       label:d.l,data:snaps.map(s=>s.totaux?.[d.k]||0),
       borderColor:EC[d.l]||'#4d9fff',backgroundColor:(EC[d.l]||'#4d9fff')+'15',
       fill:true,tension:.3,pointRadius:snaps.length>10?2:4,borderWidth:2,
-    }))},
+    }))]},
     options:{responsive:true,interaction:{mode:'index',intersect:false},
       plugins:{
         legend:{labels:{color:'#7a8fa8',font:{family:"'IBM Plex Mono'",size:10},boxWidth:10}},
