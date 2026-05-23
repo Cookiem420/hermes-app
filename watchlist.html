@@ -300,7 +300,12 @@ function renderZoneBar(prix,zones){
 function renderTable(){
   if(!TABLE) return;
   const vals=TABLE.valeurs||{};
-  const entries=Object.entries(vals).filter(([,v])=>v.quantite===0||['WATCHLIST','BUILDING','ALERT_SENT','WEAKENING_STRUCT','WEAKENING_TECH','EXIT_READY'].includes(v.etat_actuel));
+  const EXCL_ENV = new Set(['AV','PEE','Livrets','SCPI','Revolut']);
+  const entries=Object.entries(vals).filter(([,v])=>
+    !EXCL_ENV.has(v.enveloppe) &&           // Exclure AV/PEE/Livrets/SCPI/Revolut
+    (v.quantite===0||['WATCHLIST','BUILDING','ALERT_SENT','WEAKENING_STRUCT','WEAKENING_TECH','EXIT_READY'].includes(v.etat_actuel)) &&
+    !(v.quantite>0 && v.etat_actuel==='FULL') // Exclure positions FULL déjà en portefeuille
+  );
 
   const filtered=entries.filter(([isin,v])=>{
     const cours=COURS[isin]?.prix||v.cours||0;
@@ -499,7 +504,8 @@ async function refresh(){
   try{
     await loadTable();
     const vals=TABLE?.valeurs||{};
-    const entries=Object.entries(vals).filter(([,v])=>v.quantite===0||v.etat_actuel==='WATCHLIST');
+    const EXCL_ENV2 = new Set(['AV','PEE','Livrets','SCPI','Revolut']);
+    const entries=Object.entries(vals).filter(([,v])=>!EXCL_ENV2.has(v.enveloppe)&&(v.quantite===0||v.etat_actuel==='WATCHLIST')&&!(v.quantite>0&&v.etat_actuel==='FULL'));
     await fetchCours(entries);
     renderTable();
   }catch(e){

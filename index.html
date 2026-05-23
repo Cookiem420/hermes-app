@@ -138,20 +138,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
     <div class="nav-section">
       <div class="nav-label">Portefeuille</div>
       <div class="nav-item active" data-page="passif" onclick="nav(this)">
-        <span class="ic">◈</span> Patrimoine
+        <span class="ic">▦</span> Patrimoine
       </div>
       <div class="nav-item" data-page="actions" onclick="nav(this)">
         <span class="ic">⚡</span> Actions
       </div>
       <div class="nav-item" data-page="watchlist" onclick="nav(this)">
-        <span class="ic">◎</span> Watchlist
+        <span class="ic">👁</span> Watchlist
       </div>
       <div class="nav-item" data-page="historique" onclick="nav(this)">
-        <span class="ic">◷</span> Historique
+        <span class="ic">🗄</span> Historique
       </div>
       <div class="nav-sep"></div>
       <div class="nav-item" data-page="maj" onclick="nav(this)">
-        <span class="ic">↑</span> Mise à jour
+        <span class="ic">↓</span> Mise à jour
       </div>
     </div>
     <div class="sidebar-foot">
@@ -314,19 +314,19 @@ window.addEventListener('message', e => {
 <!-- BOTTOM NAV MOBILE -->
 <nav class="bottom-nav" id="bottom-nav">
   <button class="bn-item active" id="bn-passif" onclick="nav(document.querySelector('[data-page=passif]'))">
-    <span class="bn-ic">◈</span>Patrimoine
+    <span class="bn-ic">▦</span>Patrimoine
   </button>
   <button class="bn-item" id="bn-actions" onclick="nav(document.querySelector('[data-page=actions]'))">
     <span class="bn-ic">⚡</span>Actions
   </button>
   <button class="bn-item" id="bn-watchlist" onclick="nav(document.querySelector('[data-page=watchlist]'))">
-    <span class="bn-ic">◎</span>Watchlist
+    <span class="bn-ic">👁</span>Watchlist
   </button>
   <button class="bn-item" id="bn-historique" onclick="nav(document.querySelector('[data-page=historique]'))">
-    <span class="bn-ic">◷</span>Historique
+    <span class="bn-ic">🗄</span>Historique
   </button>
   <button class="bn-item" id="bn-maj" onclick="nav(document.querySelector('[data-page=maj]'))">
-    <span class="bn-ic">↑</span>MAJ
+    <span class="bn-ic">↓</span>MAJ
   </button>
 </nav>
 
