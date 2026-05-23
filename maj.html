@@ -272,8 +272,17 @@ function afterRender(id){
 function fmt(n,d=0){if(!n&&n!==0)return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function parseNum(v){
   if(v==null||v==='') return 0;
-  // Gérer formats : 1 234,56  /  1234.56  /  "1 234,56"
-  return parseFloat(String(v).replace(/\s/g,'').replace(/\u00a0/g,'').replace(',','.')) || 0;
+  // Gérer formats Boursorama : 1 234,56 / 1.234,56 / 1234.56 / 1 234.56
+  let s = String(v).replace(/\u00a0/g,' ').trim();
+  // Détecter le format : si virgule présente → c'est le séparateur décimal (format FR)
+  if(s.includes(',')) {
+    // Format FR : supprimer les points/espaces de milliers, remplacer virgule par point
+    s = s.replace(/[.\s]/g,'').replace(',','.');
+  } else {
+    // Format EN ou nombre entier : supprimer espaces uniquement
+    s = s.replace(/\s/g,'');
+  }
+  return parseFloat(s) || 0;
 }
 function todayStr(){return new Date().toISOString().split('T')[0]}
 
@@ -839,20 +848,36 @@ async function save(){
 // ── GitHub API PUT ────────────────────────────────────────────────
 async function ghPut(token,filename,data,message){
   const url=GH_API+filename;
-  let sha=null;
-  try{
-    const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});
-    if(gr.ok){const j=await gr.json();sha=j.sha;}
-  } catch(e){}
+  async function getSha(){
+    try{
+      const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});
+      if(gr.ok){const j=await gr.json();return j.sha;}
+    }catch(e){}
+    return null;
+  }
+  const sha=await getSha();
   const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
   const body={message,content};
   if(sha) body.sha=sha;
-  const r=await fetch(url,{
+  let r=await fetch(url,{
     method:'PUT',
     headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
     body:JSON.stringify(body),
   });
-  if(!r.ok) console.error('PUT failed:',filename,r.status,await r.text());
+  // Retry sur 409 (SHA périmé entre le GET et le PUT)
+  if(r.status===409){
+    const sha2=await getSha();
+    if(sha2){body.sha=sha2;}
+    r=await fetch(url,{
+      method:'PUT',
+      headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify(body),
+    });
+  }
+  if(!r.ok){
+    const txt=await r.text().catch(()=>'');
+    console.error('PUT failed:',filename,r.status,txt);
+  }
   return r.ok;
 }
 
