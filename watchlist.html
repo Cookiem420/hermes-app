@@ -303,8 +303,7 @@ function renderTable(){
   const EXCL_ENV = new Set(['AV','PEE','Livrets','SCPI','Revolut']);
   const entries=Object.entries(vals).filter(([,v])=>
     !EXCL_ENV.has(v.enveloppe) &&           // Exclure AV/PEE/Livrets/SCPI/Revolut
-    (v.quantite===0||['WATCHLIST','BUILDING','ALERT_SENT','WEAKENING_STRUCT','WEAKENING_TECH','EXIT_READY'].includes(v.etat_actuel)) &&
-    !(v.quantite>0 && v.etat_actuel==='FULL') // Exclure positions FULL déjà en portefeuille
+    v.quantite===0                           // Watchlist = pas encore en portefeuille
   );
 
   const filtered=entries.filter(([isin,v])=>{
@@ -505,7 +504,7 @@ async function refresh(){
     await loadTable();
     const vals=TABLE?.valeurs||{};
     const EXCL_ENV2 = new Set(['AV','PEE','Livrets','SCPI','Revolut']);
-    const entries=Object.entries(vals).filter(([,v])=>!EXCL_ENV2.has(v.enveloppe)&&(v.quantite===0||v.etat_actuel==='WATCHLIST')&&!(v.quantite>0&&v.etat_actuel==='FULL'));
+    const entries=Object.entries(vals).filter(([,v])=>!EXCL_ENV2.has(v.enveloppe)&&v.quantite===0);
     await fetchCours(entries);
     renderTable();
   }catch(e){
