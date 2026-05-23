@@ -920,6 +920,15 @@ function ppToast(msg,color='var(--green)'){
 }
 
 load();
+
+// Recevoir le token depuis index.html (parent)
+window.addEventListener('message', e => {
+  if(e.data?.type === 'HERMES_TOKEN' && e.data?.token) {
+    sessionStorage.setItem('hermes_gh_token', e.data.token);
+  }
+});
+// Demander le token au parent au cas où l'iframe charge après
+window.parent?.postMessage({type:'HERMES_TOKEN_REQUEST'}, '*');
 </script>
 </body>
 </html>
