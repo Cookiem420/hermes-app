@@ -147,6 +147,12 @@ input[type=file]{display:none}
   /* Wizard steps scrollable */
   .wizard-steps { white-space: nowrap; overflow-x: auto; }
   .step-item { display: inline-flex; min-width: 55px; }
+
+  /* Livrets — labels courts, inputs alignés */
+  .fg { display: flex; flex-direction: column; }
+  .fg label { min-height: 28px; display: flex; align-items: flex-start; font-size: 8px; }
+  .fi { width: 100%; }
+  .fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
 }
 
 </style>
@@ -366,7 +372,7 @@ function parsePositions(rows,env){
         else if(cell==='quantity'||cell.includes('quantit')) cols.qty=j;
         else if(cell==='buyingprice'||cell==='pru'||cell.includes('prixmoyen')||cell.includes('prixrev')) cols.pru=j;
         else if(cell==='lastprice') cols.cours=j;
-        else if(cell==='amount'||cell==='montant'||cell.includes('valoris')) cols.montant=j;
+        else if((cell==='amount'||cell==='montant'||cell.includes('valoris'))&&!cell.includes('variation')&&!cell.includes('ecart')) cols.montant=j;
       });
       console.log('['+env+'] header r'+i+' cols:',JSON.stringify(cols));
       break;
