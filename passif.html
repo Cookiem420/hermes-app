@@ -196,6 +196,7 @@ const CAT_C = {
 };
 
 let MAJ=null, MAJ1=null, MAJ_GRAPH=null, TABLE_INFOS=null;
+let _tivSha=null; // Cache SHA table_infos pour éviter double GET
 let chartLine=null, chartDonut=null;
 
 function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
@@ -223,7 +224,10 @@ async function load() {
     if(r1.ok) MAJ        = await r1.json();
     if(r2.ok) MAJ1       = await r2.json();
     if(r3.ok) MAJ_GRAPH  = await r3.json();
-    if(r4.ok) TABLE_INFOS= await r4.json();
+    if(r4.ok) {
+      const j4=await r4.json(); TABLE_INFOS=j4;
+      // Pas de SHA ici (raw URL), il sera récupéré au premier save
+    }
 
     console.log('[P1] maj ok:', !!MAJ, MAJ?.meta?.date_maj);
     console.log('[P1] maj_moins1 ok:', !!MAJ1, MAJ1?.meta?.date_maj);
@@ -914,14 +918,26 @@ async function savePanel(isin){
   v.sl_actuel=slVal?parseFloat(slVal):v.sl_actuel||null;
   ppToast('⏳ Sauvegarde…','var(--text3)');
   const url='https://api.github.com/repos/Cookiem420/hermes-data/contents/table_infos_valeurs.json';
-  async function getSha(){try{const r=await fetch(url,{headers:{Authorization:`token ${token}`}});if(r.ok){const j=await r.json();return j.sha;}}catch(e){}return null;}
-  const sha=await getSha();
+  async function fetchSha(){try{const r=await fetch(url,{headers:{Authorization:`token ${token}`}});if(r.ok){const j=await r.json();_tivSha=j.sha;return j.sha;}}catch(e){}return null;}
+  // Utiliser le SHA caché si disponible, sinon GET
+  if(!_tivSha) await fetchSha();
   const content=btoa(unescape(encodeURIComponent(JSON.stringify(TABLE_INFOS,null,2))));
   const body={message:`📍 Infos ${v.nom||isin}`,content};
-  if(sha) body.sha=sha;
+  if(_tivSha) body.sha=_tivSha;
   let r=await fetch(url,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(r.status===409){const sha2=await getSha();if(sha2){body.sha=sha2;r=await fetch(url,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});}}
-  r.ok?ppToast('✅ Sauvegardé','var(--green)'):ppToast('❌ Erreur '+r.status,'var(--red)');
+  if(r.status===409){
+    // SHA périmé → re-fetch et retry
+    await fetchSha();
+    if(_tivSha) body.sha=_tivSha;
+    r=await fetch(url,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  }
+  if(r.ok){
+    // Mettre à jour le SHA depuis la réponse (évite le prochain GET)
+    try{const rj=await r.json();_tivSha=rj?.content?.sha||null;}catch(e){}
+    ppToast('✅ Sauvegardé','var(--green)');
+  } else {
+    ppToast('❌ Erreur '+r.status,'var(--red)');
+  }
 }
 
 function ppToast(msg,color='var(--green)'){
