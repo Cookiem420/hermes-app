@@ -705,13 +705,25 @@ async function save(){
     const t    = computeTotaux();
     const date = todayStr();
 
+    // ── Enrichir pme_positions avec intérêts Crowdfunding ──────────
+    const pmeEnriched = D.pme.map(p => {
+      const isinKey = (p.isin||'').trim().toUpperCase();
+      const e = TABLE_INFOS?.valeurs?.[isinKey];
+      if(e?.categorie==='Crowdfunding' && e?.taux_interet && e?.date_debut && e?.montant_investi) {
+        const jours = Math.floor((Date.now() - new Date(e.date_debut).getTime()) / 86400000);
+        const interets = Math.round(e.montant_investi * e.taux_interet * jours / 365 * 100) / 100;
+        return {...p, montant: e.montant_investi + interets};
+      }
+      return p;
+    });
+
     // ── Construire le tampon (nouvelles données) ───────────────────
     const tampon = {
       meta: {date_maj:date, version:'2.0'},
       cash: {pea:D.cash_pea||0, cto:D.cash_cto||0, pme:D.cash_pme||0},
       pea_positions: D.pea,
       cto_positions: D.cto,
-      pme_positions: D.pme,
+      pme_positions: pmeEnriched,
       av:  D.av.filter(f=>f.valeur>0),
       pee: D.pee.filter(f=>f.valeur>0),
       livrets: [
@@ -722,8 +734,13 @@ async function save(){
       ].filter(l=>l.valeur>0),
       scpi:    D.scpi||0,
       revolut: D.revolut||0,
-      totaux: {pea:t.pea,cto:t.cto,pme:t.pme,av:t.av,pee:t.pee,
-               livrets:t.livrets,scpi:t.scpi,revolut:t.revolut,total:t.total},
+      totaux: (()=>{
+        // Recalculer pme avec intérêts Crowdfunding inclus
+        const pmeTotEnriched = pmeEnriched.reduce((s,p)=>s+(p.montant||0),0)+(D.cash_pme||0);
+        const totalEnriched = pmeTotEnriched + t.pea + t.cto + t.av + t.pee + t.livrets + t.scpi + t.revolut;
+        return {pea:t.pea,cto:t.cto,pme:pmeTotEnriched,av:t.av,pee:t.pee,
+               livrets:t.livrets,scpi:t.scpi,revolut:t.revolut,total:totalEnriched};
+      })(),
     };
 
     // ── Lire MAJ courante (pour l'écraser dans MAJ-1) ─────────────
