@@ -264,8 +264,11 @@ function afterRender(id){
 function fmt(n,d=0){if(!n&&n!==0)return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function parseNum(v){
   if(v==null||v==='') return 0;
-  // Gérer formats Boursorama : 1 234,56 / 1.234,56 / 1234.56 / 1 234.56
+  // Si déjà un number (XLSX raw:true), retourner directement
+  if(typeof v === 'number') return isNaN(v) ? 0 : v;
+  // Gérer formats string Boursorama : 1 234,56 / 1.234,56 / 1234.56 / 1 234.56
   let s = String(v).replace(/\u00a0/g,' ').trim();
+  if(!s) return 0;
   // Détecter le format : si virgule présente → c'est le séparateur décimal (format FR)
   if(s.includes(',')) {
     // Format FR : supprimer les points/espaces de milliers, remplacer virgule par point
@@ -335,7 +338,7 @@ function processFile(file,env){
       } else {
         const wb=XLSX.read(e.target.result,{type:'array'});
         const ws=wb.Sheets[wb.SheetNames[0]];
-        rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:false});
+        rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:''});
       }
       const positions=parsePositions(rows,env);
       D[env]=positions;
