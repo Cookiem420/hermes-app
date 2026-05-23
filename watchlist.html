@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta charset="UTF-8">
 <title>Watchlist</title>
 <style>
@@ -104,6 +105,64 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .empty-icon{font-size:36px;margin-bottom:12px}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px 18px;font-family:var(--mono);font-size:11px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100}
 .toast.show{opacity:1}
+
+/* ═══ RESPONSIVE MOBILE ═══ */
+@media (max-width: 768px) {
+  .page{padding:12px 14px 80px}
+  .hdr{flex-direction:column;gap:8px;margin-bottom:16px}
+  .hdr-meta{text-align:left}
+  .hdr-tot{font-size:24px}
+  .kpis{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  .kpi-val{font-size:16px}
+  .env-tbl th:nth-child(3),.env-tbl td:nth-child(3){display:none}
+  .env-tbl th,.env-tbl td{padding:8px 10px;font-size:11px}
+  .env-nom{font-size:12px}
+  .cs{font-size:9px}
+  .cm{font-size:11px}
+  .dr-inner{padding:0 0 4px 14px}
+  .dr-line{flex-wrap:wrap;gap:4px;padding:6px 10px 6px 0}
+  .dr-name{width:100%}
+  .dr-val,.dr-pnl,.dr-dlt{min-width:70px;font-size:10px}
+  .ana-grid{grid-template-columns:1fr;gap:10px}
+  .ch-grid{grid-template-columns:1fr;gap:10px}
+  .pos-panel{width:100%;height:85vh;top:auto;bottom:0;border-left:none;
+    border-top:1px solid var(--border2);border-radius:16px 16px 0 0}
+  .pp-overlay{background:rgba(0,0,0,.6)}
+  .actions-grid{grid-template-columns:1fr}
+  .card{padding:12px}
+  .badge{font-size:9px;padding:2px 6px}
+  .btns{flex-direction:column;gap:6px}
+  .btn-valider,.btn-refuser{width:100%;justify-content:center}
+  .zone-grid{grid-template-columns:1fr 1fr}
+  .meta-grid{grid-template-columns:1fr}
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  td,th{padding:7px 8px}
+  .cours-val{font-size:12px}
+  .zone-bar{display:none}
+  .filters{flex-wrap:wrap;gap:6px}
+  .filter-btn{font-size:9px;padding:4px 8px}
+  .hist-card{padding:12px}
+  .hist-meta{flex-wrap:wrap;gap:4px}
+  .wizard-steps{overflow-x:auto;padding-bottom:8px}
+  .step-item{min-width:60px;font-size:9px}
+  .upload-zone{padding:24px 12px}
+  .recap-grid{grid-template-columns:1fr 1fr}
+  .mobile-nav{display:flex}
+  /* P3 table scroll */
+  table{min-width:500px}
+  .sec-t{font-size:8px}
+}
+@media(min-width:769px){.mobile-nav{display:none}}
+.mobile-nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);
+  border-top:1px solid var(--border);padding:8px 0 env(safe-area-inset-bottom,12px);
+  z-index:100;justify-content:space-around;align-items:center}
+.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:1px;
+  text-transform:uppercase;padding:4px 12px;border-radius:6px;
+  cursor:pointer;border:none;background:none;text-decoration:none}
+.mobile-nav-item.active{color:var(--green)}
+.mobile-nav-icon{font-size:18px;line-height:1}
+
 </style>
 </head>
 <body>
@@ -198,64 +257,21 @@ async function loadTable(){
 }
 
 async function fetchCours(entries){
-  const tickers=entries.map(([isin])=>ISIN_TO_TICKER[isin]).filter(t=>t&&t.length>0);
-  if(!tickers.length) return;
-  const symbols=[...new Set(tickers)].join(',');
-  // Essai en batch sur plusieurs URLs Yahoo + proxies
-  const yahooUrls=[
-    `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChangePercent`,
-    `https://query2.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChangePercent`,
-  ];
-  const proxies=[
-    s=>`https://corsproxy.io/?${encodeURIComponent(s)}`,
-    s=>`https://api.allorigins.win/get?url=${encodeURIComponent(s)}`,
-    s=>`https://corsproxy.io/?url=${encodeURIComponent(s)}`,
-    s=>`https://thingproxy.freeboard.io/fetch/${s}`,
-  ];
-  function parseQuotes(raw){
-    try{
-      const parsed=raw?.quoteResponse?raw:(raw?.contents?JSON.parse(raw.contents):raw);
-      return parsed?.quoteResponse?.result||[];
-    }catch(e){return [];}
-  }
-  let success=false;
-  for(const baseUrl of yahooUrls){
-    if(success) break;
-    for(const mkProxy of proxies){
-      try{
-        const r=await fetch(mkProxy(baseUrl),{signal:AbortSignal.timeout(7000)});
-        if(!r.ok) continue;
-        const raw=await r.json();
-        const quotes=parseQuotes(raw);
-        if(!quotes.length) continue;
-        quotes.forEach(q=>{
-          const isin=Object.entries(ISIN_TO_TICKER).find(([,t])=>t===q.symbol)?.[0];
-          if(isin) COURS[isin]={prix:q.regularMarketPrice,variation:q.regularMarketChangePercent};
-        });
-        console.log('[P3] cours ok via proxy, '+quotes.length+' quotes');
-        success=true;break;
-      }catch(e){console.warn('proxy fail:',e.message);}
+  // Les cours sont écrits par le moteur Python dans table_infos_valeurs.json
+  // On les lit directement — pas d'appel Yahoo depuis le browser
+  entries.forEach(([isin,v])=>{
+    if(v.cours && v.cours > 0){
+      COURS[isin]={prix:v.cours, variation:null, timestamp:v.cours_timestamp||null};
     }
-  }
-  // Fallback ticker par ticker si batch échoue
-  if(!success){
-    console.warn('[P3] batch failed, trying ticker by ticker');
-    const tickerList=[...new Set(tickers)];
-    for(const ticker of tickerList){
-      const isin=Object.entries(ISIN_TO_TICKER).find(([,t])=>t===ticker)?.[0];
-      if(!isin) continue;
-      const u=`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ticker}&fields=regularMarketPrice,regularMarketChangePercent`;
-      for(const mkProxy of proxies.slice(0,2)){
-        try{
-          const r=await fetch(mkProxy(u),{signal:AbortSignal.timeout(5000)});
-          if(!r.ok) continue;
-          const raw=await r.json();
-          const quotes=parseQuotes(raw);
-          if(quotes[0]) COURS[isin]={prix:quotes[0].regularMarketPrice,variation:quotes[0].regularMarketChangePercent};
-          break;
-        }catch(e){}
-      }
-    }
+  });
+  // Afficher la fraîcheur des données
+  const withCours = entries.filter(([,v])=>v.cours>0).length;
+  const total = entries.length;
+  const hdr = document.getElementById('hdr-sub');
+  if(hdr){
+    const last = entries.map(([,v])=>v.cours_timestamp).filter(Boolean).sort().pop();
+    const lastStr = last ? new Date(last).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) : '—';
+    hdr.textContent = `${withCours}/${total} cours disponibles · moteur ${lastStr}`;
   }
 }
 
