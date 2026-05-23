@@ -633,32 +633,54 @@ function render() {
   const cashTot  = (MAJ.cash?.pea||0)+(MAJ.cash?.cto||0)+(MAJ.cash?.pme||0)+(MAJ.cash?.cc||0);
   const total    = T.total || 0;
 
-  // Calcul des 4 buckets depuis table_infos_valeurs
+  // Index nom → catégorie depuis table_infos_valeurs
   const COTE_CATS     = new Set(['ETF_large','ETF_sectoriel','Qualite','Cyclique','Croissance','Speculatif']);
   const NON_COTE_CATS = new Set(['FCPR','Crowdfunding','OPCVM']);
-  const GARANTI_CATS  = new Set(['Fonds_euros','Livret','SCPI']);
+  const GARANTI_CATS  = new Set(['Fonds_euros','Livret','SCPI','Cash']);
 
-  // Valorisations depuis table_infos (si disponibles) ou fallback totaux maj.json
-  let invCote=0, nonCote=0, garanti=0;
+  // Construire index nom→categorie depuis table_infos
+  const nomToCat = {};
   if(TABLE?.valeurs) {
     Object.values(TABLE.valeurs).forEach(v => {
-      const cat = v.categorie;
-      const val = v.derniere_valorisation || 0;
-      if(COTE_CATS.has(cat))     invCote += val;
-      else if(NON_COTE_CATS.has(cat)) nonCote += val;
-      else if(GARANTI_CATS.has(cat))  garanti += val;
+      if(v.nom) nomToCat[v.nom.toLowerCase().trim()] = v.categorie;
     });
-    // Compléter garanti avec scpi et livrets depuis maj si pas dans table
-    if(garanti === 0) garanti = (T.av||0)+(T.pee||0)+(T.livrets||0)+(T.scpi||0);
-  } else {
-    // Fallback totaux maj.json
-    const allPos = [...(MAJ.pea_positions||[]),...(MAJ.cto_positions||[]),...(MAJ.pme_positions||[])];
-    invCote = allPos.reduce((s,p)=>s+(p.montant||0),0)+(MAJ.cash?.pea||0)+(MAJ.cash?.cto||0)+(MAJ.cash?.pme||0);
-    nonCote = (T.av||0)+(T.pee||0);
-    garanti = (T.livrets||0)+(T.scpi||0);
   }
-  // Ajouter Revolut ETF dans coté
-  invCote += (T.revolut||0);
+  const getCat = (nom) => nomToCat[String(nom||'').toLowerCase().trim()] || null;
+
+  // Actif coté : positions PEA/CTO/PME cotées + Revolut
+  const allPos = [...(MAJ.pea_positions||[]),...(MAJ.cto_positions||[]),...(MAJ.pme_positions||[])];
+  let invCote = (T.revolut||0);
+  let nonCote = 0;
+  allPos.forEach(p => {
+    const cat = getCat(p.nom) || (TABLE?.valeurs?.[p.isin]?.categorie);
+    const val = p.montant||0;
+    if(COTE_CATS.has(cat))      invCote += val;
+    else if(NON_COTE_CATS.has(cat)) nonCote += val;
+    // si catégorie inconnue → coté par défaut (PEA/CTO/PME)
+    else invCote += val;
+  });
+
+  // AV ligne par ligne
+  (MAJ.av||[]).forEach(f => {
+    const cat = getCat(f.nom);
+    const val = f.valeur||0;
+    if(GARANTI_CATS.has(cat))       {} // compté dans garanti ci-dessous
+    else if(NON_COTE_CATS.has(cat)) nonCote += val;
+    else nonCote += val; // défaut AV → non coté
+  });
+
+  // PEE ligne par ligne → toujours non coté
+  const peeTot = (MAJ.pee||[]).reduce((s,f)=>s+(f.valeur||0),0);
+  nonCote += peeTot;
+
+  // Garanti : livrets + SCPI + fonds euros AV
+  const garantiLivSCPI = (T.livrets||0)+(T.scpi||0);
+  const garantiAV = (MAJ.av||[]).reduce((s,f) => {
+    const cat = getCat(f.nom);
+    return s + (GARANTI_CATS.has(cat) ? (f.valeur||0) : 0);
+  }, 0);
+  const garanti = garantiLivSCPI + garantiAV;
+
   // % sur total
   const pctCote    = total ? Math.round(invCote/total*100) : 0;
   const pctNonCote = total ? Math.round(nonCote/total*100) : 0;
@@ -690,25 +712,25 @@ function render() {
         <div class="kpi-lbl">Actif coté</div>
         <div class="kpi-val">${fmt(invCote)} €</div>
         <div class="kpi-sub">PEA · CTO · PME · Revolut</div>
-        <div class="kpi-pct" style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:4px">${pctCote}%</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:4px">${pctCote}%</div>
       </div>
       <div class="kpi o">
         <div class="kpi-lbl">Actif non coté</div>
         <div class="kpi-val">${fmt(nonCote)} €</div>
-        <div class="kpi-sub">AV UC · PEE · FCPR · Crowdfunding</div>
-        <div class="kpi-pct" style="font-family:var(--mono);font-size:10px;color:var(--gold);margin-top:4px">${pctNonCote}%</div>
+        <div class="kpi-sub">AV UC · PEE · FCPR · Crowd.</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--gold);margin-top:4px">${pctNonCote}%</div>
       </div>
       <div class="kpi b">
         <div class="kpi-lbl">Garanti</div>
         <div class="kpi-val">${fmt(garanti)} €</div>
         <div class="kpi-sub">Fonds € · Livrets · SCPI</div>
-        <div class="kpi-pct" style="font-family:var(--mono);font-size:10px;color:var(--blue);margin-top:4px">${pctGaranti}%</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--blue);margin-top:4px">${pctGaranti}%</div>
       </div>
       <div class="kpi">
         <div class="kpi-lbl">Cash</div>
         <div class="kpi-val">${fmt(cashTot)} €</div>
         <div class="kpi-sub">PEA · PME · CTO · CC</div>
-        <div class="kpi-pct" style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:4px">${pctCash}%</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-top:4px">${pctCash}%</div>
       </div>
     </div>
 
