@@ -161,16 +161,22 @@ let TABLE=null;
 function getToken(){
   return sessionStorage.getItem('hermes_gh_token')||localStorage.getItem('hermes_gh_token')||'';
 }
-// Demander le token au parent si absent
-if(!getToken()) {
-  window.parent.postMessage({type:'HERMES_TOKEN_REQUEST'},'*');
-}
+// Demander le token au parent avec retry
 window.addEventListener('message', e=>{
   if(e.data?.type==='HERMES_TOKEN' && e.data.token){
     sessionStorage.setItem('hermes_gh_token', e.data.token);
     localStorage.setItem('hermes_gh_token', e.data.token);
   }
 });
+(function requestToken(){
+  if(getToken()) return;
+  window.parent?.postMessage({type:'HERMES_TOKEN_REQUEST'},'*');
+  let tries=0;
+  const iv=setInterval(()=>{
+    if(getToken()||++tries>6) clearInterval(iv);
+    else window.parent?.postMessage({type:'HERMES_TOKEN_REQUEST'},'*');
+  },500);
+})();
 
 function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function fmtPct(n){if(!n&&n!==0)return'—';return(n>0?'+':'')+n.toFixed(1)+'%'}

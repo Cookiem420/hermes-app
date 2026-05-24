@@ -147,6 +147,50 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
   /* Wizard steps scrollable */
   .wizard-steps { white-space: nowrap; overflow-x: auto; }
   .step-item { display: inline-flex; min-width: 55px; }
+
+/* ══ P3 MOBILE ══ */
+@media (max-width: 768px) {
+  body { overflow-x: hidden !important; padding-bottom: calc(56px + env(safe-area-inset-bottom,0px)); }
+  .page { padding: 10px 12px calc(72px) !important; }
+
+  /* Masquer tableau desktop, afficher cartes mobile */
+  .wl-table, #table-wrap table { display: none !important; }
+  .wl-cards { display: flex !important; flex-direction: column; gap: 8px; }
+
+  /* Filtres scrollables */
+  .filtres { overflow-x: auto; white-space: nowrap; padding-bottom: 4px; }
+  .filtre-btn { font-size: 9px !important; padding: 5px 10px !important; }
+
+  /* Stats bar compacte */
+  .stats-bar { font-size: 9px !important; gap: 8px !important; }
+}
+
+@media (min-width: 769px) {
+  .wl-cards { display: none !important; }
+}
+
+/* Cartes watchlist mobile */
+.wl-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden; cursor: pointer;
+}
+.wl-card-hdr {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+}
+.wl-card-nom { flex: 1; }
+.wl-card-title { font-size: 12px; font-weight: 600; }
+.wl-card-isin { font-family: var(--mono); font-size: 8px; color: var(--text3); margin-top: 2px; }
+.wl-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.wl-card-cours { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+.wl-card-var { font-family: var(--mono); font-size: 9px; }
+.wl-card-bar { padding: 0 12px 8px; }
+.wl-card-detail { display: none; border-top: 1px solid var(--border); padding: 12px; }
+.wl-card-detail.open { display: block; }
+.wl-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.wl-card-cell { background: var(--bg3); border-radius: 6px; padding: 8px 10px; }
+.wl-card-cell-lbl { font-family: var(--mono); font-size: 8px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.wl-card-cell-val { font-family: var(--mono); font-size: 12px; font-weight: 600; }
+
 }
 
 </style>
@@ -171,6 +215,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
     <button class="filtre-btn" onclick="setFiltre('building',this)">BUILDING</button>
   </div>
   <div id="table-wrap"><div class="empty"><div class="empty-icon">⏳</div>Chargement…</div></div>
+  <div class="wl-cards" id="cards-wrap"></div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -335,6 +380,7 @@ function renderTable(){
 
   if(!filtered.length){
     document.getElementById('table-wrap').innerHTML=`<div class="empty"><div class="empty-icon">🔍</div>Aucune valeur ne correspond au filtre</div>`;
+    document.getElementById('cards-wrap').innerHTML='<div class="empty"><div class="empty-icon">🔍</div>Aucune valeur</div>';
     return;
   }
 
@@ -386,6 +432,56 @@ function renderTable(){
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
+
+  // Rendu cartes mobile
+  const cards = filtered.map(([isin,v])=>{
+    const cours=COURS[isin]?.prix||v.cours||0;
+    const variation=COURS[isin]?.variation;
+    const zi=calcZone(cours,v.zones);
+    const pvz=cours&&v.zones?.basse_min?pctVers(cours,v.zones.basse_min):null;
+    const pvb=cours&&v.zones?.breakout?pctVers(cours,v.zones.breakout):null;
+    const isExp=expandedIsin===isin;
+    const etatBadge=`<span class="etat-badge ${etatCss(v.etat_actuel)}" style="font-size:8px;padding:2px 6px">${v.etat_actuel||'—'}</span>`;
+    const detail = isExp ? `<div class="wl-card-detail open">
+      <div class="wl-card-grid">
+        <div class="wl-card-cell"><div class="wl-card-cell-lbl">Zone basse</div><div class="wl-card-cell-val">${v.zones?.basse_min?fmt(v.zones.basse_min,2)+' €':'—'}</div></div>
+        <div class="wl-card-cell"><div class="wl-card-cell-lbl">Breakout</div><div class="wl-card-cell-val">${v.zones?.breakout?fmt(v.zones.breakout,2)+' €':'—'}</div></div>
+        <div class="wl-card-cell"><div class="wl-card-cell-lbl">Δ Zone basse</div><div class="wl-card-cell-val ${pvz!=null?pc(-pvz):'neu'}">${pvz!=null?fmtPct(pvz):'—'}</div></div>
+        <div class="wl-card-cell"><div class="wl-card-cell-lbl">Δ Breakout</div><div class="wl-card-cell-val" style="color:var(--gold)">${pvb!=null?fmtPct(pvb):'—'}</div></div>
+        <div class="wl-card-cell"><div class="wl-card-cell-lbl">Risque</div><div class="wl-card-cell-val" style="color:${RISQ_C[v.risque]||'var(--text2)'}">${v.risque||'—'}</div></div>
+        <div class="wl-card-cell"><div class="wl-card-cell-lbl">Enveloppe</div><div class="wl-card-cell-val">${v.enveloppe||'—'}</div></div>
+      </div>
+      <div style="margin-bottom:8px">${v.zones?.basse_min?renderZoneBar(cours,v.zones):'<span style="font-family:var(--mono);font-size:9px;color:var(--text3)">Zones manquantes</span>'}</div>
+      <button class="edit-zones-btn" onclick="toggleEditZones('${isin}',event)">✏ Modifier les zones</button>
+      <div class="edit-zones-form" id="ezm-${isin}">
+        <div class="zones-grid-sm" style="margin-top:8px">
+          <div class="fg"><label class="fl">Basse min</label><input class="fi" id="em1-${isin}" type="number" step="0.01" value="${v.zones?.basse_min||''}"></div>
+          <div class="fg"><label class="fl">Basse max</label><input class="fi" id="em2-${isin}" type="number" step="0.01" value="${v.zones?.basse_max||''}"></div>
+          <div class="fg"><label class="fl">Surv.</label><input class="fi" id="em3-${isin}" type="number" step="0.01" value="${v.zones?.surveillance||''}"></div>
+          <div class="fg"><label class="fl">Compl.</label><input class="fi" id="em4-${isin}" type="number" step="0.01" value="${v.zones?.complement||''}"></div>
+          <div class="fg"><label class="fl">Breakout</label><input class="fi" id="em5-${isin}" type="number" step="0.01" value="${v.zones?.breakout||''}"></div>
+        </div>
+        <button class="save-zones-btn" style="margin-top:8px;width:100%" onclick="saveZones('${isin}','em1-${isin}','em2-${isin}','em3-${isin}','em4-${isin}','em5-${isin}')">💾 Sauvegarder</button>
+      </div>
+    </div>` : '<div class="wl-card-detail"></div>';
+
+    return `<div class="wl-card" onclick="toggleRow('${isin}')">
+      <div class="wl-card-hdr">
+        <div class="wl-card-nom">
+          <div class="wl-card-title">${v.nom||isin} <span class="env-tag" style="font-size:7px">${v.enveloppe||''}</span></div>
+          <div class="wl-card-isin">${isin}</div>
+        </div>
+        <div class="wl-card-right">
+          ${cours>0?`<div class="wl-card-cours">${fmt(cours,cours<10?3:2)} €</div><div class="wl-card-var ${pc(variation||0)}">${variation!=null?fmtPct(variation):'—'}</div>`:'<div class="wl-card-cours neu">—</div>'}
+          ${etatBadge}
+        </div>
+        <span style="color:var(--text3);font-size:11px;margin-left:4px">${isExp?'▲':'▼'}</span>
+      </div>
+      <div class="wl-card-bar">${v.zones?.basse_min?renderZoneBar(cours,v.zones):'<span style="font-family:var(--mono);font-size:9px;color:var(--text3)">Zones manquantes</span>'}</div>
+      ${detail}
+    </div>`;
+  }).join('');
+  document.getElementById('cards-wrap').innerHTML = cards;
 }
 
 function renderDetail(isin,v,cours,zi){
