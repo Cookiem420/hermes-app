@@ -570,16 +570,24 @@ async function saveZonesWL(isin){
 async function saveZonesMobile(isin){
   const v=TABLE?.valeurs?.[isin];
   if(!v) return;
-  const z={
+  v.zones={
     basse_min:parseFloat(document.getElementById('em1-'+isin)?.value)||0,
     basse_max:parseFloat(document.getElementById('em2-'+isin)?.value)||0,
     surveillance:parseFloat(document.getElementById('em3-'+isin)?.value)||0,
     complement:parseFloat(document.getElementById('em4-'+isin)?.value)||0,
     breakout:parseFloat(document.getElementById('em5-'+isin)?.value)||0,
   };
-  v.zones=z;
-  const ok=await ghPut(TABLE,'📍 Zones '+isin);
-  showStatus(ok?'✅ Zones sauvegardées':'❌ Erreur sauvegarde', ok?'var(--green)':'var(--red)');
+  const token=getToken();
+  if(!token){toast('❌ Token absent','var(--red)');return;}
+  const url=GH_API+'table_infos_valeurs.json';
+  toast('⏳ Sauvegarde…','var(--text3)');
+  let sha=null;
+  try{const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});if(gr.ok){const j=await gr.json();sha=j.sha;}}catch(e){}
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(TABLE,null,2))));
+  const body={message:`📍 Zones ${v.nom||isin}`,content};if(sha)body.sha=sha;
+  const r=await fetch(url,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r.ok) toast(`✅ ${v.nom||isin} sauvegardé`);
+  else toast('❌ Erreur sauvegarde','var(--red)');
 }
 
 function toggleRow(isin){
@@ -588,11 +596,9 @@ function toggleRow(isin){
 }
 
 function toggleCardMobile(isin, el){
-  // el = le div.wl-card cliqué
   const detail = el.querySelector('.wl-card-detail');
   const chevron = el.querySelector('.wl-card-chev');
   if(!detail) return;
-  // Fermer toutes les autres
   document.querySelectorAll('.wl-card-detail.open').forEach(d=>{
     if(d !== detail){
       d.classList.remove('open');
@@ -602,34 +608,40 @@ function toggleCardMobile(isin, el){
   });
   const isOpen = detail.classList.toggle('open');
   if(chevron) chevron.textContent = isOpen ? '▲' : '▼';
-  if(isOpen && !detail.dataset.built){
-    detail.dataset.built='1';
-    const v = TABLE?.valeurs?.[isin];
-    if(!v) return;
-    const cours = COURS[isin]?.prix||v.cours||0;
-    const pvz=cours&&v.zones?.basse_min?pctVers(cours,v.zones.basse_min):null;
-    const pvb=cours&&v.zones?.breakout?pctVers(cours,v.zones.breakout):null;
-    const z=v.zones||{};
-    detail.innerHTML=
-      '<div class="wl-card-grid">'
-      +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Zone basse</div><div class="wl-card-cell-val">'+(z.basse_min?fmt(z.basse_min,2)+' €':'—')+'</div></div>'
-      +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Breakout</div><div class="wl-card-cell-val">'+(z.breakout?fmt(z.breakout,2)+' €':'—')+'</div></div>'
-      +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Δ Zone basse</div><div class="wl-card-cell-val '+(pvz!=null?pc(-pvz):'neu')+'">'+(pvz!=null?fmtPct(pvz):'—')+'</div></div>'
-      +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Δ Breakout</div><div class="wl-card-cell-val" style="color:var(--gold)">'+(pvb!=null?fmtPct(pvb):'—')+'</div></div>'
-      +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Risque</div><div class="wl-card-cell-val" style="color:'+(RISQ_C[v.risque]||'var(--text2)')+'">'+( v.risque||'—')+'</div></div>'
-      +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Catégorie</div><div class="wl-card-cell-val">'+(v.categorie||'—')+'</div></div>'
-      +'</div>'
-      +(z.basse_min?'<div style="margin-bottom:8px">'+renderZoneBar(cours,z)+'</div>':'')
-      +'<div class="zones-grid-sm" style="margin-top:8px">'
-      +'<div class="fg"><label class="fl">Basse min</label><input class="fi" id="em1-'+isin+'" type="number" step="0.01" value="'+(z.basse_min||'')+'"></div>'
-      +'<div class="fg"><label class="fl">Basse max</label><input class="fi" id="em2-'+isin+'" type="number" step="0.01" value="'+(z.basse_max||'')+'"></div>'
-      +'<div class="fg"><label class="fl">Surv.</label><input class="fi" id="em3-'+isin+'" type="number" step="0.01" value="'+(z.surveillance||'')+'"></div>'
-      +'<div class="fg"><label class="fl">Compl.</label><input class="fi" id="em4-'+isin+'" type="number" step="0.01" value="'+(z.complement||'')+'"></div>'
-      +'<div class="fg"><label class="fl">Breakout</label><input class="fi" id="em5-'+isin+'" type="number" step="0.01" value="'+(z.breakout||'')+'"></div>'
-      +'</div>'
-      +'<button class="save-zones-btn" style="margin-top:8px;width:100%;padding:10px" onclick="event.stopPropagation();saveZonesMobile(''+isin+'')">💾 Sauvegarder</button>';
-  }
+  if(!isOpen || detail.dataset.built) return;
+  detail.dataset.built = '1';
+  const v = TABLE?.valeurs?.[isin];
+  if(!v) return;
+  const cours = COURS[isin]?.prix||v.cours||0;
+  const pvz = cours&&v.zones?.basse_min ? pctVers(cours,v.zones.basse_min) : null;
+  const pvb = cours&&v.zones?.breakout  ? pctVers(cours,v.zones.breakout)  : null;
+  const z = v.zones||{};
+  const btnId = 'save-mobile-'+isin;
+  detail.innerHTML =
+    '<div class="wl-card-grid">'
+    +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Zone basse</div><div class="wl-card-cell-val">'+(z.basse_min?fmt(z.basse_min,2)+' €':'—')+'</div></div>'
+    +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Breakout</div><div class="wl-card-cell-val">'+(z.breakout?fmt(z.breakout,2)+' €':'—')+'</div></div>'
+    +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Δ Zone basse</div><div class="wl-card-cell-val '+(pvz!=null?pc(-pvz):'neu')+'">'+(pvz!=null?fmtPct(pvz):'—')+'</div></div>'
+    +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Δ Breakout</div><div class="wl-card-cell-val" style="color:var(--gold)">'+(pvb!=null?fmtPct(pvb):'—')+'</div></div>'
+    +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Risque</div><div class="wl-card-cell-val" style="color:'+(RISQ_C[v.risque]||'var(--text2)')+'">'+( v.risque||'—')+'</div></div>'
+    +'<div class="wl-card-cell"><div class="wl-card-cell-lbl">Catégorie</div><div class="wl-card-cell-val">'+(v.categorie||'—')+'</div></div>'
+    +'</div>'
+    +(z.basse_min?'<div style="margin-bottom:8px">'+renderZoneBar(cours,z)+'</div>':'')
+    +'<div class="zones-grid-sm" style="margin-top:8px">'
+    +'<div class="fg"><label class="fl">Basse min</label><input class="fi" id="em1-'+isin+'" type="number" step="0.01" value="'+(z.basse_min||'')+'"></div>'
+    +'<div class="fg"><label class="fl">Basse max</label><input class="fi" id="em2-'+isin+'" type="number" step="0.01" value="'+(z.basse_max||'')+'"></div>'
+    +'<div class="fg"><label class="fl">Surv.</label><input class="fi" id="em3-'+isin+'" type="number" step="0.01" value="'+(z.surveillance||'')+'"></div>'
+    +'<div class="fg"><label class="fl">Compl.</label><input class="fi" id="em4-'+isin+'" type="number" step="0.01" value="'+(z.complement||'')+'"></div>'
+    +'<div class="fg"><label class="fl">Breakout</label><input class="fi" id="em5-'+isin+'" type="number" step="0.01" value="'+(z.breakout||'')+'"></div>'
+    +'</div>'
+    +'<button class="save-zones-btn" id="'+btnId+'" style="margin-top:8px;width:100%;padding:10px">💾 Sauvegarder</button>';
+  // Attacher l'event listener après insertion dans le DOM
+  document.getElementById(btnId)?.addEventListener('click', function(e){
+    e.stopPropagation();
+    saveZonesMobile(isin);
+  });
 }
+
 
 async function refresh(){
   const btn=document.getElementById('btn-refresh');
