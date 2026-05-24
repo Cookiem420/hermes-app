@@ -235,7 +235,13 @@ async function load(){
       `<div class="empty"><div class="empty-icon">⚠️</div>Erreur chargement : ${e.message}</div>`;
     return;
   }
-  render();
+  try {
+    render();
+  } catch(e) {
+    console.error('render crash:', e);
+    document.getElementById('root').innerHTML =
+      `<div class="empty"><div class="empty-icon">⚠️</div>Erreur affichage : ${e.message}</div>`;
+  }
 }
 
 // ── SAVE GITHUB ───────────────────────────────────────────────────────────────
@@ -297,11 +303,19 @@ function render(){
     const vals=(TABLE&&TABLE.valeurs)?TABLE.valeurs:{};
     const entries=Object.entries(vals);
     const withAction=entries.filter(([,v])=>v.achat_vente&&v.achat_vente!==null&&v.achat_vente!=='');
-    const missingZones=entries.filter(([,v])=>
-      v.quantite>0 && v.budget_cible !== 0 && (  // budget_cible=0 = pas de signal, skip
-        !(v.zones&&v.zones.basse_min)||!v.risque||!v.categorie||v.budget_cible==null
-      )
-    );
+    const missingZones=entries.filter(([,v])=>{
+      // Exclure : pas de quantité, ou budget_cible=0 (pas de suivi), ou enveloppes non cotées
+      const EXCL_ENV = new Set(['AV','PEE','Livrets','SCPI','Revolut']);
+      if(EXCL_ENV.has(v.enveloppe)) return false;
+      if(!v.quantite||v.quantite===0) return false;
+      if(v.budget_cible===0) return false; // 0 = skip intentionnel
+      // Infos manquantes
+      const isCrowd = v.categorie==='Crowdfunding';
+      return !(v.zones&&v.zones.basse_min) ||
+             !v.risque || !v.categorie ||
+             v.budget_cible==null ||
+             (isCrowd && (!v.taux_interet||!v.date_debut));
+    });
 
     const s1html=withAction.length===0
       ?`<div class="empty"><div class="empty-icon">✅</div>Aucune action en attente</div>`

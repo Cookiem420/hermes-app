@@ -142,18 +142,25 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
   .hdr-tot { font-size: 26px !important; }
   .hdr-delta { font-size: 10px !important; }
 
-  /* N1 tableau compact */
-  .env-tbl th, .env-row td { padding: 7px 8px !important; font-size: 11px !important; }
-  .env-nom { font-size: 11px !important; }
-  .cs { font-size: 9px !important; }
-  .cm { font-size: 11px !important; }
+  /* N1 tableau compact — tout visible, police réduite */
+  .env-tbl { font-size: 9px !important; }
+  .env-tbl th { padding: 4px 3px !important; font-size: 7px !important; letter-spacing: 0 !important; }
+  .env-row td { padding: 5px 3px !important; font-size: 9px !important; }
+  .env-nom { font-size: 9px !important; }
+  .env-dot { width: 6px !important; height: 6px !important; flex-shrink: 0; }
+  .env-nc { gap: 4px !important; }
+  .cs { font-size: 7px !important; margin-top: 0 !important; }
+  .cm { font-size: 9px !important; }
+  .tot-row td { padding: 5px 3px !important; font-size: 9px !important; }
 
-  /* drill-down compact */
-  .dr-inner { padding: 0 0 2px 16px !important; }
-  .dr-line { padding: 5px 8px 5px 0 !important; }
-  .dr-val, .dr-pnl, .dr-dlt { min-width: 70px !important; font-size: 10px !important; }
-  .dr-nm { font-size: 11px !important; }
-  .dr-sub { font-size: 9px !important; }
+  /* drill-down compact — tout visible */
+  .dr-inner { padding: 0 0 2px 8px !important; }
+  .dr-line { padding: 4px 3px 4px 0 !important; }
+  .dr-val { min-width: 55px !important; font-size: 9px !important; }
+  .dr-pnl { min-width: 55px !important; font-size: 9px !important; }
+  .dr-dlt { min-width: 50px !important; font-size: 9px !important; }
+  .dr-nm { font-size: 10px !important; }
+  .dr-sub { font-size: 8px !important; }
 
   /* Panel détail : plein écran sur mobile */
   .pos-panel { width: 100% !important; top: 0 !important; }
