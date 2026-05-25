@@ -446,7 +446,11 @@ function renderTable(){
       <tbody>${rows}</tbody>
     </table>`;
 
-  // Rendu cartes mobile
+  // Rendu cartes mobile uniquement
+  if(window.innerWidth > 768){
+    document.getElementById('cards-wrap').innerHTML = '';
+    return;
+  }
   const cards = filtered.map(([isin,v])=>{
     const cours=COURS[isin]?.prix||v.cours||0;
     const variation=COURS[isin]?.variation;
@@ -540,6 +544,12 @@ function renderDetail(isin,v,cours,zi){
         <div class="fg"><input class="fi" id="bgt-${isin}" type="number" step="100"
           value="${v.budget_cible!=null?v.budget_cible:''}" placeholder="€"></div>
       </div>
+      <div style="margin-top:10px">
+        <div class="detail-lbl" style="margin-bottom:6px">Description / Thèse</div>
+        <textarea class="fi" id="desc-${isin}" rows="3"
+          style="width:100%;resize:vertical;font-size:11px"
+          placeholder="Notes, thèse, catalyseurs…">${v.description||''}</textarea>
+      </div>
     </div>
     <div class="detail-col">
       <div class="detail-lbl">Signal</div>
@@ -573,6 +583,8 @@ async function saveZonesWL(isin){
   v.thematique=getTheme('ezt-'+isin,'ezta-'+isin)||v.thematique||null;
   const bgtEl=document.getElementById('bgt-'+isin);
   if(bgtEl && bgtEl.value!=='') v.budget_cible=parseFloat(bgtEl.value)||null;
+  const descEl=document.getElementById('desc-'+isin);
+  if(descEl) v.description=descEl.value||null;
 
   const token=getToken();
   if(!token){toast('❌ Token absent — recharger la page','var(--red)');return;}
