@@ -115,6 +115,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 
 /* ═══ RESPONSIVE MOBILE — FIXES ═══ */
 @media (max-width: 768px) {
+  /* Detail mobile : 1 colonne au lieu de 3 */
+  .detail-inner { grid-template-columns: 1fr !important; }
+  .detail-col { border-right: none !important; border-bottom: 1px solid var(--border); padding: 12px !important; }
+  .detail-col:last-child { border-bottom: none; }
+  .wl-card-detail .detail-inner { display: grid; }
+
   /* Padding bottom pour ne pas masquer le contenu sous la nav externe */
   body { padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important; }
   .page { padding: 12px 14px calc(56px + 20px) !important; }
