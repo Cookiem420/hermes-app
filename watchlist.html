@@ -444,7 +444,7 @@ function renderTable(){
     const etatBadge=`<span class="etat-badge ${etatCss(v.etat_actuel)}" style="font-size:8px;padding:2px 6px">${v.etat_actuel||'—'}</span>`;
     const detail = `<div class="wl-card-detail"></div>`;
 
-    return `<div class="wl-card" data-isin="${isin}" onclick="toggleCardMobile('${isin}',event)">
+    return `<div class="wl-card" data-isin="${isin}">
       <div class="wl-card-hdr">
         <div class="wl-card-nom">
           <div class="wl-card-title">${v.nom||isin} <span class="env-tag" style="font-size:7px">${v.enveloppe||''}</span></div>
@@ -461,6 +461,13 @@ function renderTable(){
     </div>`;
   }).join('');
   document.getElementById('cards-wrap').innerHTML = cards;
+  // Attacher les listeners sur les cartes mobiles après injection DOM
+  document.querySelectorAll('.wl-card').forEach(card=>{
+    card.addEventListener('click', function(e){
+      const isin = this.dataset.isin;
+      if(isin) toggleCardMobile(isin, this);
+    });
+  });
 }
 
 function renderDetail(isin,v,cours,zi){
@@ -595,8 +602,7 @@ function toggleRow(isin){
   renderTable();
 }
 
-function toggleCardMobile(isin, ev){
-  const el = ev.currentTarget || ev.target?.closest('.wl-card');
+function toggleCardMobile(isin, el){
   if(!el) return;
   const detail = el.querySelector('.wl-card-detail');
   const chevron = el.querySelector('.wl-card-chev');
