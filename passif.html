@@ -1018,7 +1018,14 @@ async function savePanel(isin){
     // Attendre propagation GitHub puis recharger
     // Refresh via API GitHub (sans cache CDN)
     const fresh=await refreshTableInfos(token);
-    if(fresh){ TABLE_INFOS=fresh; openPanel(isin); ppToast('✅ Interface mise à jour','var(--green)'); }
+    if(fresh){
+      TABLE_INFOS=fresh;
+      ppToast('✅ Interface mise à jour','var(--green)');
+      // Re-render complet pour mettre à jour N0/N1/N2/N3
+      try{ render(); }catch(e){}
+      // Réouvrir le panel avec données fraîches
+      setTimeout(()=>openPanel(isin), 100);
+    }
   } else {
     ppToast('❌ Erreur '+r.status,'var(--red)');
   }
