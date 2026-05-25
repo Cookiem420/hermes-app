@@ -185,8 +185,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .wl-card-cours { font-family: var(--mono); font-size: 13px; font-weight: 700; }
 .wl-card-var { font-family: var(--mono); font-size: 9px; }
 .wl-card-bar { padding: 0 12px 8px; }
-.wl-card-detail { display: none; border-top: 1px solid var(--border); padding: 12px; }
+.wl-card-detail { display: none; border-top: 1px solid var(--border); padding: 8px; overflow-x: hidden; }
 .wl-card-detail.open { display: block; }
+/* Forcer 1 colonne dans les cartes mobiles - surcharge le grid desktop */
+.wl-card-detail .detail-inner { display: flex !important; flex-direction: column !important; gap: 0; }
+.wl-card-detail .detail-col { border-right: none !important; border-bottom: 1px solid var(--border); padding: 10px 12px !important; }
+.wl-card-detail .detail-col:last-child { border-bottom: none !important; }
 .wl-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
 .wl-card-cell { background: var(--bg3); border-radius: 6px; padding: 8px 10px; }
 .wl-card-cell-lbl { font-family: var(--mono); font-size: 8px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
@@ -249,6 +253,18 @@ window.addEventListener('message',e=>{
     localStorage.setItem('hermes_gh_token',e.data.token);
   }
 });
+
+async function refreshTableInfos(token){
+  // Utiliser l'API GitHub (pas le CDN raw) pour avoir les données fraîches sans cache
+  const url='https://api.github.com/repos/Cookiem420/hermes-data/contents/table_infos_valeurs.json';
+  const headers={Accept:'application/vnd.github.v3.raw'};
+  if(token) headers['Authorization']='token '+token;
+  try{
+    const r=await fetch(url,{headers,cache:'no-store'});
+    if(r.ok) return await r.json();
+  }catch(e){}
+  return null;
+}
 
 function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function fmtPct(n,d=1){if(n==null||isNaN(n))return'—';return(n>0?'+':'')+n.toFixed(d)+'%'}
@@ -574,12 +590,8 @@ async function saveZonesWL(isin){
   if(r.ok){
     toast('✅ Sauvegardé — actualisation en cours…','var(--green)');
     // Attendre que GitHub propage, puis recharger et re-render
-    setTimeout(async ()=>{
-      try{
-        const rf=await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
-        if(rf.ok){ TABLE=await rf.json(); renderTable(); toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)'); }
-      }catch(e){ toast('⚠️ Rafraîchi manuellement','var(--gold)'); }
-    }, 1500);
+    const fresh=await refreshTableInfos(token);
+    if(fresh){ TABLE=fresh; renderTable(); toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)'); }
   } else toast('❌ Erreur sauvegarde','var(--red)');
 }
 

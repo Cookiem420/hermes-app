@@ -237,6 +237,18 @@ let MAJ=null, MAJ1=null, MAJ_GRAPH=null, TABLE_INFOS=null;
 let _tivSha=null; // Cache SHA table_infos pour éviter double GET
 let chartLine=null, chartDonut=null;
 
+async function refreshTableInfos(token){
+  // Utiliser l'API GitHub (pas le CDN raw) pour avoir les données fraîches sans cache
+  const url='https://api.github.com/repos/Cookiem420/hermes-data/contents/table_infos_valeurs.json';
+  const headers={Accept:'application/vnd.github.v3.raw'};
+  if(token) headers['Authorization']='token '+token;
+  try{
+    const r=await fetch(url,{headers,cache:'no-store'});
+    if(r.ok) return await r.json();
+  }catch(e){}
+  return null;
+}
+
 function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function fmtPct(n){if(n==null||isNaN(n))return'—';return(n>0?'+':'')+n.toFixed(2)+'%'}
 function pc(v){return v>0.01?'pos':v<-0.01?'neg':'neu'}
@@ -1004,16 +1016,9 @@ async function savePanel(isin){
     try{const rj=await r.json();_tivSha=rj?.content?.sha||null;}catch(e){}
     ppToast('✅ Sauvegardé — actualisation…','var(--green)');
     // Attendre propagation GitHub puis recharger
-    setTimeout(async ()=>{
-      try{
-        const rf=await fetch('https://raw.githubusercontent.com/Cookiem420/hermes-data/main/table_infos_valeurs.json?t='+Date.now());
-        if(rf.ok){
-          TABLE_INFOS=await rf.json();
-          openPanel(isin); // Réouvrir panel avec données fraîches
-          ppToast('✅ Interface mise à jour','var(--green)');
-        }
-      }catch(e){}
-    }, 1500);
+    // Refresh via API GitHub (sans cache CDN)
+    const fresh=await refreshTableInfos(token);
+    if(fresh){ TABLE_INFOS=fresh; openPanel(isin); ppToast('✅ Interface mise à jour','var(--green)'); }
   } else {
     ppToast('❌ Erreur '+r.status,'var(--red)');
   }

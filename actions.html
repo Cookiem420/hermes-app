@@ -178,6 +178,18 @@ window.addEventListener('message', e=>{
   },500);
 })();
 
+async function refreshTableInfos(token){
+  // Utiliser l'API GitHub (pas le CDN raw) pour avoir les données fraîches sans cache
+  const url='https://api.github.com/repos/Cookiem420/hermes-data/contents/table_infos_valeurs.json';
+  const headers={Accept:'application/vnd.github.v3.raw'};
+  if(token) headers['Authorization']='token '+token;
+  try{
+    const r=await fetch(url,{headers,cache:'no-store'});
+    if(r.ok) return await r.json();
+  }catch(e){}
+  return null;
+}
+
 function fmt(n,d=0){if(n==null||isNaN(n))return'—';return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)}
 function fmtPct(n){if(!n&&n!==0)return'—';return(n>0?'+':'')+n.toFixed(1)+'%'}
 function pc(v){return v>0?'pos':v<0?'neg':'neu'}
@@ -576,12 +588,8 @@ async function saveZones(isin){
   const ok=await ghPut(TABLE,`📍 Zones ${v.nom||isin}`);
   if(ok){
     toast('✅ Sauvegardé — actualisation…','var(--green)');
-    setTimeout(async ()=>{
-      try{
-        const rf=await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
-        if(rf.ok){ TABLE=await rf.json(); render(); toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)'); }
-      }catch(e){}
-    }, 1500);
+    const fresh=await refreshTableInfos(token||getToken());
+    if(fresh){ TABLE=fresh; render(); toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)'); }
   } else toast('❌ Erreur sauvegarde','var(--red)');
 }
 
