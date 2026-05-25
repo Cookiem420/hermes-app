@@ -589,7 +589,13 @@ async function saveZones(isin){
   if(ok){
     toast('✅ Sauvegardé — actualisation…','var(--green)');
     const fresh=await refreshTableInfos(token||getToken());
-    if(fresh){ TABLE=fresh; render(); toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)'); }
+    if(fresh){
+      TABLE=fresh;
+      render(); // Re-render complet P2
+      toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)');
+    } else {
+      toast('⚠️ Sauvegardé, actualiser manuellement','var(--gold)');
+    }
   } else toast('❌ Erreur sauvegarde','var(--red)');
 }
 

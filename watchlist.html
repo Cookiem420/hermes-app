@@ -185,12 +185,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .wl-card-cours { font-family: var(--mono); font-size: 13px; font-weight: 700; }
 .wl-card-var { font-family: var(--mono); font-size: 9px; }
 .wl-card-bar { padding: 0 12px 8px; }
-.wl-card-detail { display: none; border-top: 1px solid var(--border); padding: 8px; overflow-x: hidden; }
+.wl-card-detail { display: none; border-top: 1px solid var(--border); padding: 12px; }
 .wl-card-detail.open { display: block; }
-/* Forcer 1 colonne dans les cartes mobiles - surcharge le grid desktop */
-.wl-card-detail .detail-inner { display: flex !important; flex-direction: column !important; gap: 0; }
-.wl-card-detail .detail-col { border-right: none !important; border-bottom: 1px solid var(--border); padding: 10px 12px !important; }
-.wl-card-detail .detail-col:last-child { border-bottom: none !important; }
 .wl-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
 .wl-card-cell { background: var(--bg3); border-radius: 6px; padding: 8px 10px; }
 .wl-card-cell-lbl { font-family: var(--mono); font-size: 8px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
@@ -591,7 +587,13 @@ async function saveZonesWL(isin){
     toast('✅ Sauvegardé — actualisation en cours…','var(--green)');
     // Attendre que GitHub propage, puis recharger et re-render
     const fresh=await refreshTableInfos(token);
-    if(fresh){ TABLE=fresh; renderTable(); toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)'); }
+    if(fresh){
+      TABLE=fresh;
+      renderTable(); // Re-render complet P3 desktop + cartes mobile
+      toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)');
+    } else {
+      toast('⚠️ Sauvegardé, actualiser manuellement','var(--gold)');
+    }
   } else toast('❌ Erreur sauvegarde','var(--red)');
 }
 
