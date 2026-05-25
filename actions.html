@@ -574,8 +574,15 @@ async function saveZones(isin){
   if(!v.learning) v.learning={rsi_bonus:0,macd_min:0,breakout_bloque:false,cooldown_until:null,refus_consecutifs:0,dernier_motif:null};
   toast('⏳ Sauvegarde…','var(--text3)');
   const ok=await ghPut(TABLE,`📍 Zones ${v.nom||isin}`);
-  if(ok){toast(`✅ Zones de ${v.nom||isin} sauvegardées`);setTimeout(render,800);}
-  else toast('❌ Erreur sauvegarde','var(--red)');
+  if(ok){
+    toast(`✅ ${v.nom||isin} sauvegardé`);
+    // Refresh immédiat depuis raw GitHub
+    try{
+      const rf=await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
+      if(rf.ok) TABLE=await rf.json();
+    }catch(e){}
+    setTimeout(render, 200);
+  } else toast('❌ Erreur sauvegarde','var(--red)');
 }
 
 // ── SECTION 3 : ESPACE AUTONOME ───────────────────────────────────────────────

@@ -1001,9 +1001,15 @@ async function savePanel(isin){
     r=await fetch(url,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
   }
   if(r.ok){
-    // Mettre à jour le SHA depuis la réponse (évite le prochain GET)
     try{const rj=await r.json();_tivSha=rj?.content?.sha||null;}catch(e){}
     ppToast('✅ Sauvegardé','var(--green)');
+    // Refresh immédiat TABLE_INFOS depuis raw GitHub (sans cache)
+    try{
+      const rf=await fetch('https://raw.githubusercontent.com/Cookiem420/hermes-data/main/table_infos_valeurs.json?t='+Date.now());
+      if(rf.ok) TABLE_INFOS=await rf.json();
+    }catch(e){}
+    // Réouvrir le panel avec les données fraîches
+    setTimeout(()=>openPanel(isin), 300);
   } else {
     ppToast('❌ Erreur '+r.status,'var(--red)');
   }
