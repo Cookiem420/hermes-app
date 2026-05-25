@@ -870,8 +870,8 @@ function render() {
 // PANEL DETAIL POSITION
 // ══════════════════════════════════════════════════════════════════
 const RISQUES_P1=['Faible','Modéré','Élevé','Spéculatif'];
-const CATS_P1=['ETF_large','ETF_sectoriel','Qualite','Cyclique','Croissance','Speculatif'];
-const THEMES_P1=['Tech','Finance','Eau & Env.','Défense','Global','Asie','Matières 1ères','Santé','Infrastructure','Diversifié','Autre'];
+const CATS_P1=['ETF_large','ETF_sectoriel','Qualite','Cyclique','Croissance','Speculatif','OPCVM','FCPR','Crowdfunding','Fonds_euros','Livret','SCPI','Cash','Diversifie'];
+const THEMES_P1=['Tech','Finance','Eau & Env.','Défense','Global','Asie','Matières 1ères','Santé','Infrastructure','Diversifié','Immobilier','Small Caps EU','ISR','Semi-conducteurs','Capital invest.','Dette privée','Fonds euros','Épargne réglementée','Liquidités','Autre'];
 
 function openPanel(isin) {
   const isinKey=(isin||'').trim().replace(/\s/g,'').toUpperCase();
@@ -932,6 +932,13 @@ function openPanel(isin) {
       </div>
     </div>
 
+    <div class="pp-sec">Budget & Suivi</div>
+    <div class="pp-grid">
+      <div class="pp-fg"><label class="pp-fl">Budget cible (€)</label>
+        <input class="pp-fi" id="pp-budget" type="number" step="100"
+          value="${info.budget_cible!=null?info.budget_cible:''}" placeholder="Montant max à investir"></div>
+    </div>
+
     <div class="pp-sec">Description / Thèse d'investissement</div>
     <div class="pp-fg">
       <textarea class="pp-fi" id="pp-desc" rows="4" placeholder="Notes, thèse, catalyseurs…" style="resize:vertical">${info.description||''}</textarea>
@@ -973,6 +980,8 @@ async function savePanel(isin){
   const risqueEl=document.getElementById('pp-risque'); v.risque=(risqueEl?.value||'').trim()||v.risque||null;
   const catEl=document.getElementById('pp-cat'); v.categorie=(catEl?.value||'').trim()||v.categorie||null;
   const themeEl=document.getElementById('pp-theme'); v.thematique=(themeEl?.value||'').trim()||v.thematique||null;
+  const budgetEl=document.getElementById('pp-budget');
+  if(budgetEl && budgetEl.value!=='') v.budget_cible=parseFloat(budgetEl.value)||null;
   v.description=document.getElementById('pp-desc')?.value?.trim()||v.description||null;
   const slVal=document.getElementById('pp-sl')?.value;
   v.sl_actuel=slVal?parseFloat(slVal):v.sl_actuel||null;

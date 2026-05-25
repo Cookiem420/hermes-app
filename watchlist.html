@@ -115,11 +115,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 
 /* ═══ RESPONSIVE MOBILE — FIXES ═══ */
 @media (max-width: 768px) {
-  /* Detail mobile : 1 colonne au lieu de 3 */
-  .detail-inner { grid-template-columns: 1fr !important; }
-  .detail-col { border-right: none !important; border-bottom: 1px solid var(--border); padding: 12px !important; }
-  .detail-col:last-child { border-bottom: none; }
-  .wl-card-detail .detail-inner { display: grid; }
 
   /* Padding bottom pour ne pas masquer le contenu sous la nav externe */
   body { padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important; }
@@ -528,6 +523,11 @@ function renderDetail(isin,v,cours,zi){
       <div class="d-row"><span class="d-key">Catégorie</span><span class="d-val">${v.categorie||'—'}</span></div>
       <div class="d-row"><span class="d-key">Thématique</span><span class="d-val">${v.thematique||'—'}</span></div>
       <div class="d-row"><span class="d-key">Enveloppe</span><span class="d-val">${v.enveloppe||'—'}</span></div>
+      <div style="margin-top:10px">
+        <div class="detail-lbl" style="margin-bottom:6px">Budget cible</div>
+        <div class="fg"><input class="fi" id="bgt-${isin}" type="number" step="100"
+          value="${v.budget_cible!=null?v.budget_cible:''}" placeholder="€"></div>
+      </div>
     </div>
     <div class="detail-col">
       <div class="detail-lbl">Signal</div>
@@ -559,6 +559,8 @@ async function saveZonesWL(isin){
   v.risque=document.getElementById('ezr-'+isin)?.value||v.risque||null;
   v.categorie=document.getElementById('ezc-'+isin)?.value||v.categorie||null;
   v.thematique=getTheme('ezt-'+isin,'ezta-'+isin)||v.thematique||null;
+  const bgtEl=document.getElementById('bgt-'+isin);
+  if(bgtEl && bgtEl.value!=='') v.budget_cible=parseFloat(bgtEl.value)||null;
 
   const token=getToken();
   if(!token){toast('❌ Token absent — recharger la page','var(--red)');return;}
