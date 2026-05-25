@@ -461,13 +461,6 @@ function renderTable(){
     </div>`;
   }).join('');
   document.getElementById('cards-wrap').innerHTML = cards;
-  // Attacher les listeners sur les cartes mobiles après injection DOM
-  document.querySelectorAll('.wl-card').forEach(card=>{
-    card.addEventListener('click', function(e){
-      const isin = this.dataset.isin;
-      if(isin) toggleCardMobile(isin, this);
-    });
-  });
 }
 
 function renderDetail(isin,v,cours,zi){
@@ -665,6 +658,16 @@ async function refresh(){
     document.getElementById('table-wrap').innerHTML=`<div class="empty"><div class="empty-icon">⚠️</div>Erreur : ${e.message}</div>`;
   }finally{btn.classList.remove('loading');btn.disabled=false;}
 }
+
+// Event delegation unique sur cards-wrap — survit aux rerender
+document.getElementById('cards-wrap').addEventListener('click', function(e){
+  const card = e.target.closest('.wl-card');
+  if(!card) return;
+  // Ignorer les clics sur les inputs et boutons (save, etc.)
+  if(e.target.closest('input,button,select')) return;
+  const isin = card.dataset.isin;
+  if(isin) toggleCardMobile(isin, card);
+});
 
 refresh();
 setInterval(refresh,5*60*1000);

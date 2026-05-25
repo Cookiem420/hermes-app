@@ -246,17 +246,8 @@ async function load(){
 
 // ── SAVE GITHUB ───────────────────────────────────────────────────────────────
 async function ghPut(data,message){
-  let token=getToken();
-  // Si token absent, demander au parent et attendre jusqu'à 2s
-  if(!token){
-    window.parent?.postMessage({type:'HERMES_TOKEN_REQUEST'},'*');
-    for(let i=0;i<8;i++){
-      await new Promise(r=>setTimeout(r,250));
-      token=getToken();
-      if(token) break;
-    }
-  }
-  if(!token){toast('❌ Token absent — revenez sur l'écran de connexion','var(--red)');return false;}
+  const token=getToken();
+  if(!token){toast('❌ Token absent — recharger la page','var(--red)');return false;}
   const url=GH_API+'table_infos_valeurs.json';
   async function getSha(){
     try{const gr=await fetch(url,{headers:{Authorization:`token ${token}`}});
