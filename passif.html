@@ -1002,14 +1002,18 @@ async function savePanel(isin){
   }
   if(r.ok){
     try{const rj=await r.json();_tivSha=rj?.content?.sha||null;}catch(e){}
-    ppToast('✅ Sauvegardé','var(--green)');
-    // Refresh immédiat TABLE_INFOS depuis raw GitHub (sans cache)
-    try{
-      const rf=await fetch('https://raw.githubusercontent.com/Cookiem420/hermes-data/main/table_infos_valeurs.json?t='+Date.now());
-      if(rf.ok) TABLE_INFOS=await rf.json();
-    }catch(e){}
-    // Réouvrir le panel avec les données fraîches
-    setTimeout(()=>openPanel(isin), 300);
+    ppToast('✅ Sauvegardé — actualisation…','var(--green)');
+    // Attendre propagation GitHub puis recharger
+    setTimeout(async ()=>{
+      try{
+        const rf=await fetch('https://raw.githubusercontent.com/Cookiem420/hermes-data/main/table_infos_valeurs.json?t='+Date.now());
+        if(rf.ok){
+          TABLE_INFOS=await rf.json();
+          openPanel(isin); // Réouvrir panel avec données fraîches
+          ppToast('✅ Interface mise à jour','var(--green)');
+        }
+      }catch(e){}
+    }, 1500);
   } else {
     ppToast('❌ Erreur '+r.status,'var(--red)');
   }

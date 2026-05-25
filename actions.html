@@ -575,13 +575,13 @@ async function saveZones(isin){
   toast('⏳ Sauvegarde…','var(--text3)');
   const ok=await ghPut(TABLE,`📍 Zones ${v.nom||isin}`);
   if(ok){
-    toast(`✅ ${v.nom||isin} sauvegardé`);
-    // Refresh immédiat depuis raw GitHub
-    try{
-      const rf=await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
-      if(rf.ok) TABLE=await rf.json();
-    }catch(e){}
-    setTimeout(render, 200);
+    toast('✅ Sauvegardé — actualisation…','var(--green)');
+    setTimeout(async ()=>{
+      try{
+        const rf=await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
+        if(rf.ok){ TABLE=await rf.json(); render(); toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)'); }
+      }catch(e){}
+    }, 1500);
   } else toast('❌ Erreur sauvegarde','var(--red)');
 }
 

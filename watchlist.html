@@ -187,9 +187,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13
 .wl-card-bar { padding: 0 12px 8px; }
 .wl-card-detail { display: none; border-top: 1px solid var(--border); padding: 12px; }
 .wl-card-detail.open { display: block; }
-.wl-card-detail .detail-inner { grid-template-columns: 1fr; }
-.wl-card-detail .detail-col { border-right: none; border-bottom: 1px solid var(--border); }
-.wl-card-detail .detail-col:last-child { border-bottom: none; }
 .wl-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
 .wl-card-cell { background: var(--bg3); border-radius: 6px; padding: 8px 10px; }
 .wl-card-cell-lbl { font-family: var(--mono); font-size: 8px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
@@ -575,13 +572,14 @@ async function saveZonesWL(isin){
   toast('⏳ Sauvegarde…','var(--text3)');
   const r=await fetch(url,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(r.ok){
-    toast(`✅ ${v.nom||isin} sauvegardé`);
-    // Refresh immédiat depuis raw GitHub
-    try{
-      const rf=await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
-      if(rf.ok) TABLE=await rf.json();
-    }catch(e){}
-    setTimeout(renderTable, 200);
+    toast('✅ Sauvegardé — actualisation en cours…','var(--green)');
+    // Attendre que GitHub propage, puis recharger et re-render
+    setTimeout(async ()=>{
+      try{
+        const rf=await fetch(RAW+'table_infos_valeurs.json?t='+Date.now());
+        if(rf.ok){ TABLE=await rf.json(); renderTable(); toast(`✅ ${v.nom||isin} mis à jour`,'var(--green)'); }
+      }catch(e){ toast('⚠️ Rafraîchi manuellement','var(--gold)'); }
+    }, 1500);
   } else toast('❌ Erreur sauvegarde','var(--red)');
 }
 
